@@ -2,6 +2,7 @@ class Level {
     enemies;
     clouds;
     backgroundObjects;
+    level_end_x = 2157; // End position of the level
 
     constructor(enemies, clouds, backgroundObjects) { // mman könnte auch hier x, y und z übergeben
         this.enemies = enemies; // dan wurde hier es so stehen hier: this.enemies = x;
