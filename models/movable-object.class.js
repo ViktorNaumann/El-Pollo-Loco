@@ -57,7 +57,7 @@ class MovableObject {
 
   isHurt() {
     let timepassed = new Date().getTime() - this.lastHit; // Calculate the time passed since the last hit
-    return timepassed < 1000; // Check if the time passed is less than 1 second
+    return timepassed < 500; // Check if the time passed is less than 1 second
   }
 
   isDead() {
