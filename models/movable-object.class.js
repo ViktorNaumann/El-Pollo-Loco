@@ -10,6 +10,8 @@ class MovableObject {
   otherDirection = false; // Direction of the object
   speedY = 0; // Speed in Y direction
   acceleration = 2; // Acceleration in Y direction
+  energy = 100; // Energy of the object
+  lastHit = 0; // Last hit time
 
   applyGravity() {
     setInterval(() => {
@@ -36,6 +38,32 @@ class MovableObject {
       ctx.rect(this.x, this.y, this.width, this.height);
     }
   }
+
+  isColliding(movableObject) {
+    return this.x + this.width > movableObject.x && 
+      this.y + this.height > movableObject.y && 
+      this.x < movableObject.x + movableObject.width &&
+      this.y < movableObject.y + movableObject.height;
+  }
+
+  hit() {
+    this.energy -= 5; // Decrease energy by 5
+    if (this.energy < 0) {
+      this.energy = 0; // Set energy to 0 if it goes below 0
+    } else {
+      this.lastHit = new Date().getTime(); // Set the last hit time to the current time
+    }
+  }
+
+  isHurt() {
+    let timepassed = new Date().getTime() - this.lastHit; // Calculate the time passed since the last hit
+    return timepassed < 1000; // Check if the time passed is less than 1 second
+  }
+
+  isDead() {
+    return this.energy == 0; // Check if the energy is 0
+  }
+
   // loadImage('img/test.png);
   loadImage(path) {
     this.img = new Image(); // this.img = document.getElementById('image') <img id="image" src>
