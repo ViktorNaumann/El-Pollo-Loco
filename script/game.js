@@ -6,11 +6,7 @@ let keyboard = new Keyboard(); // Create a new instance of the Keyboard class
 
 function init() {
     canvas = document.getElementById('canvas');
-    world = new World(canvas, keyboard);
-
-    console.log('My Character is', world.character);
-    console.log('Here are the', world.enemies);
-    
+    world = new World(canvas, keyboard);  
 }
 
 window.addEventListener("keydown", (event) => {
@@ -28,6 +24,9 @@ window.addEventListener("keydown", (event) => {
     }
     if (event.keyCode == 32) {
         keyboard.SPACE = true;
+    }
+    if (event.keyCode == 68) {
+        keyboard.d = true;
     }
     console.log(event);
 }
@@ -47,6 +46,9 @@ window.addEventListener("keyup", (event) => {
         keyboard.DOWN = false;
     }
     if (event.keyCode == 32) {
+        keyboard.SPACE = false;
+    }
+    if (event.keyCode == 68) {
         keyboard.SPACE = false;
     }
     console.log(event);
