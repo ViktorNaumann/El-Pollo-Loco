@@ -18,7 +18,7 @@ class Endboss extends MovableObject {
         super().loadImage(this.IMAGES_ENDBOSS[0]); // Load the first image
         this.loadImages(this.IMAGES_ENDBOSS); // Load the images
 
-        this.x = 2500; // Set the initial x position
+        this.x = 3900; // Set the initial x position
         this.animate();
     }
 
