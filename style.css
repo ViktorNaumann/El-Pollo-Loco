@@ -1,7 +1,28 @@
+@font-face {
+    font-family: 'nashvill';
+    src: url('fonts/nashvill.ttf');
+}
+
 body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    background-image: url('img/desert_background/desert.png');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: 'nashvill', arial, sans-serif;
+}
+
+h1 {
+    color: rgb(51, 6, 6);
+    text-align: center;
+    font-size: 4rem;
+    margin-bottom: 20px;
+    box-shadow: 20px 20px 20px 0px;
 }
 
 canvas {
