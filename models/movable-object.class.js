@@ -23,12 +23,27 @@ class MovableObject extends DrawableObject {
     }
   }
 
-  isColliding(movableObject) {
-    return this.x + this.width > movableObject.x && 
-      this.y + this.height > movableObject.y && 
-      this.x < movableObject.x + movableObject.width &&
-      this.y < movableObject.y + movableObject.height;
+  isColliding(other) {
+    const thisLeft   = this.x + this.offset.left;
+    const thisRight  = this.x + this.width - this.offset.right;
+    const thisTop    = this.y + this.offset.top;
+    const thisBottom = this.y + this.height - this.offset.bottom;
+  
+    const otherLeft   = other.x + other.offset.left;
+    const otherRight  = other.x + other.width - other.offset.right;
+    const otherTop    = other.y + other.offset.top;
+    const otherBottom = other.y + other.height - other.offset.bottom;
+  
+    return (
+      thisRight > otherLeft &&
+      thisLeft < otherRight &&
+      thisBottom > otherTop &&
+      thisTop < otherBottom
+    );
   }
+  
+  
+  
 
   hit() {
     this.energy -= 5; // Decrease energy by 5

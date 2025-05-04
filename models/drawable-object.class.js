@@ -7,6 +7,16 @@ class DrawableObject {
   imageCache = {};
   currentImage = 0;
 
+  constructor() {
+    this.offset = {
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+    };
+  }
+
+
   // loadImage('img/test.png);
   loadImage(path) {
     this.img = new Image(); // this.img = document.getElementById('image') <img id="image" src>
@@ -30,7 +40,12 @@ class DrawableObject {
       ctx.beginPath();
       ctx.lineWidth = "3";
       ctx.strokeStyle = "blue";
-      ctx.rect(this.x, this.y, this.width, this.height);
+      ctx.rect(
+        this.x + this.offset.left, 
+        this.y + this.offset.top, 
+        this.width - this.offset.left - this.offset.right, 
+        this.height - this.offset.top - this.offset.bottom
+      );
     }
   }
 }
