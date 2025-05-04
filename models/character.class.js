@@ -60,8 +60,8 @@ class Character extends MovableObject {
     this.jumpSound = new Audio("audio/jump.mp3");
     this.runSound = new Audio("audio/run.mp3");
   
-    this.jumpSound.volume = 0.3;
-    this.runSound.volume = 0.3;
+    this.jumpSound.volume = 0.4;
+    this.runSound.volume = 0.4;
   
     this.applyGravity();
     this.animate();
@@ -82,7 +82,9 @@ class Character extends MovableObject {
       }
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
         this.jump(); // Jump if not above ground
-        this.jumpSound.play(); // Play the jump sound
+        this.jumpSound.currentTime = 0;
+        this.jumpSound.play();
+
       }
       this.world.camera_x = -this.x + 100; // Move the camera to the left
     }, 1000 / 60); // 60 FPS

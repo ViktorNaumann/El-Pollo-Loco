@@ -8,6 +8,10 @@ class World {
   statusBar = new StatusBar(); // Create a new status bar instance
   throwableObject = []; // Create a new throwable object instance
   hitSound = new Audio('audio/hit.mp3'); // Load the hit sound
+  throwSound = new Audio('audio/throw.mp3');
+  breakSound = new Audio('audio/break.mp3');
+
+
   
 
   constructor(canvas, keyboard) {
@@ -27,12 +31,30 @@ class World {
     setInterval(() => {
       this.checkCollisitions();
       this.checkThrowObjects(); // Check for throwable objects
+      this.checkBottleHits();
     }, 200);
   }
+
+  checkBottleHits() {
+    this.throwableObject.forEach((bottle) => {
+      this.level.enemies.forEach((enemy) => {
+        if (bottle.isColliding(enemy) && !bottle.exploded) {
+          this.breakSound.currentTime = 0;
+          this.breakSound.play();
+          bottle.explode(); // löst Splash-Animation in bottle aus
+        }
+      });
+    });
+  }
+  
 
   checkThrowObjects() {
     if (this.keyboard.D) {
       let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100); // Create a new throwable object
+      bottle.world = this; // Set the world for the new object
+      this.throwSound.currentTime = 0;
+      this.throwSound.play();
+      this.throwSound.volume = 0.3;
       this.throwableObject.push(bottle); // Add the new object to the array
     }
   }
@@ -61,6 +83,8 @@ class World {
     this.addToMap(this.character);
     this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.enemies);
+
+    this.throwableObject = this.throwableObject.filter(obj => !obj.exploded);
     this.addObjectsToMap(this.throwableObject);
 
     this.ctx.translate(-this.camera_x, 0); // Move the camera to the left
