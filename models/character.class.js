@@ -11,6 +11,7 @@ class Character extends MovableObject {
     bottom: 10,
   };
 
+
   IMAGES_WALKING = [
     "img/2_character_pepe/2_walk/W-21.png",
     "img/2_character_pepe/2_walk/W-22.png",
@@ -51,26 +52,37 @@ class Character extends MovableObject {
 
   constructor() {
     super().loadImage("img/2_character_pepe/1_idle/idle/I-1.png");
-    super.loadImages(this.IMAGES_WALKING); // Load the walking images
-    super.loadImages(this.IMAGES_JUMPING); // Load the jumping images
+    super.loadImages(this.IMAGES_WALKING);
+    super.loadImages(this.IMAGES_JUMPING);
     super.loadImages(this.IMAGES_DEAD);
-    super.loadImages(this.IMAGES_HURT); // Load the hurt images
-    this.applyGravity(); // Apply gravity to the character
+    super.loadImages(this.IMAGES_HURT);
+    
+    this.jumpSound = new Audio("audio/jump.mp3");
+    this.runSound = new Audio("audio/run.mp3");
+  
+    this.jumpSound.volume = 0.3;
+    this.runSound.volume = 0.3;
+  
+    this.applyGravity();
     this.animate();
   }
+  
 
   animate() {
     setInterval(() => {
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
         this.moveRight();
         this.otherDirection = false; // Set the direction to right
+        if (!this.isAboveGround()) this.runSound.play();
       }
       if (this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
         this.otherDirection = true; // Set the direction to left
+        if (!this.isAboveGround()) this.runSound.play();
       }
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
         this.jump(); // Jump if not above ground
+        this.jumpSound.play(); // Play the jump sound
       }
       this.world.camera_x = -this.x + 100; // Move the camera to the left
     }, 1000 / 60); // 60 FPS

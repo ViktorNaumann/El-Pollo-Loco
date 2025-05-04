@@ -1,6 +1,16 @@
 let canvas;
 let world;
 let keyboard = new Keyboard(); // Create a new instance of the Keyboard class
+let backgroundMusic = new Audio('audio/background1.mp3');
+let windSound = new Audio('audio/background2.mp3');
+let musicStarted = false; // Flag to check if music has started
+
+backgroundMusic.loop = true;
+windSound.loop = true;
+
+backgroundMusic.volume  = 0.4;
+windSound.volume = 0.3;
+
 
 
 
@@ -10,6 +20,11 @@ function init() {
 }
 
 window.addEventListener("keydown", (event) => {
+    if (!musicStarted) {
+        backgroundMusic.play();
+        windSound.play();
+        musicStarted = true;
+    }
     if (event.keyCode == 37) {
         keyboard.LEFT = true;
     }

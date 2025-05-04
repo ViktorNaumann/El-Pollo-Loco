@@ -7,6 +7,8 @@ class World {
   camera_x = 0; // Initial camera position
   statusBar = new StatusBar(); // Create a new status bar instance
   throwableObject = []; // Create a new throwable object instance
+  hitSound = new Audio('audio/hit.mp3'); // Load the hit sound
+  
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -40,6 +42,8 @@ class World {
       if (this.character.isColliding(enemy)) {
         this.character.hit(); // Call the hit method on the character
         this.statusBar.setPercentage(this.character.energy); // Update the status bar percentage
+        this.hitSound.play(); // Play the hit sound
+        this.hitSound.volume = 0.2; // Lautstärke von 0.0 (stumm) bis 1.0 (max)
       }
     });
   }
