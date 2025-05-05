@@ -1,5 +1,15 @@
+let chickens = [];
+for (let i = 0; i < 12; i++) {
+    const isBig = Math.random() < 0.4; // ca. 40% große Chickens
+    chickens.push(new Chicken(isBig));
+}
+
 const level1 = new Level(
-  [new Chicken(), new Chicken(), new Chicken(), new Endboss()],
+  [
+    ...chickens,
+    new Endboss()
+  ],
+  
   [
     new Cloud(Math.random() * 3595),
     new Cloud(Math.random() * 3595),
