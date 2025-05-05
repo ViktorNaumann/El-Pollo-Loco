@@ -58,6 +58,8 @@ class World {
 
     if (bossLeft >= cameraLeft && bossRight <= cameraRight) {
       this.endbossStatusBar.visible = true;
+      boss.isVisible = true; // Endboss sichtbar
+      boss.isActive = true; // Endboss aktiv
     }
   }
 
@@ -150,5 +152,14 @@ class World {
       movableObject.drawFrame(this.ctx);
     }
   }
+
+  triggerGameOver() {
+    this.gameOver = true;
+    setTimeout(() => {
+      alert("GAME OVER!");
+      location.reload(); // Spiel neu laden
+    }, 1000);
+  }
+  
 }
 
