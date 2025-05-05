@@ -13,6 +13,8 @@ class World {
   hitSound = new Audio("audio/hit.mp3");
   throwSound = new Audio("audio/throw.mp3");
   breakSound = new Audio("audio/break.mp3");
+  bossHurtSound = new Audio('audio/boss_hurt.mp3');
+
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -22,11 +24,19 @@ class World {
     this.draw();
     this.setWorld();
     this.run();
+    this.bossHurtSound.volume = 0.4;
   }
 
   setWorld() {
     this.character.world = this;
+  
+    this.level.enemies.forEach((enemy) => {
+      if (enemy instanceof Endboss) {
+        enemy.world = this;
+      }
+    });
   }
+  
 
   run() {
     setInterval(() => {

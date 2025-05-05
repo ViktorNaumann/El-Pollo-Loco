@@ -70,6 +70,21 @@ class Endboss extends MovableObject {
       }
     }, 150);
   }
+
+  shakeAnimation() {
+    const originalX = this.x;
+    let offset = 15;
+    let i = 0;
+    let interval = setInterval(() => {
+      this.x = originalX + (i % 2 === 0 ? -offset : offset);
+      i++;
+      if (i > 4) {
+        clearInterval(interval);
+        this.x = originalX;
+      }
+    }, 50);
+  }
+  
   
 
   isHurt() {
@@ -85,5 +100,13 @@ class Endboss extends MovableObject {
     this.energy -= damage;
     if (this.energy < 0) this.energy = 0;
     this.lastHit = new Date().getTime();
+  
+    this.shakeAnimation(); // 🔁 sichtbar wackeln
+  
+    if (this.world && this.world.bossHurtSound) {
+      this.world.bossHurtSound.currentTime = 0;
+      this.world.bossHurtSound.play();
+    }
   }
+  
 }
