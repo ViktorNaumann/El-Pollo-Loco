@@ -70,6 +70,24 @@ class MovableObject extends DrawableObject {
     this.currentImage++; // Increment the current image index
   }
 
+  playAnimationOnce(images) {
+    let i = 0;
+    let interval = setInterval(() => {
+      if (i < images.length) {
+        let path = images[i];
+        this.img = this.imageCache[path];
+        i++;
+      } else {
+        clearInterval(interval);
+        // Bild explizit auf dem letzten Frame halten
+        let lastImage = images[images.length - 1];
+        this.img = this.imageCache[lastImage];
+      }
+    }, 150);
+  }
+  
+  
+
   moveRight() {
     this.x += this.speed; // Move right by speed
   }

@@ -11,15 +11,42 @@ class StatusBar extends DrawableObject {
 
     percentage = 100; // Percentage of health
 
-    constructor() {
+    constructor(type = "character") {
         super();
-        this.loadImages(this.IMAGES_HEALTH); // Load the health images
-        this.x = 20; // Set the x position of the status bar
-        this.y = 20; // Set the y position of the status bar
-        this.width = 200; // Set the width of the status bar
-        this.height = 60; // Set the height of the status bar
-        this.setPercentage(100); // Set the initial health percentage to 100
-    }
+      
+        if (type === "endboss") {
+          this.IMAGES_HEALTH = [
+            'img/7_statusbars/2_statusbar_endboss/blue/blue0.png',
+            'img/7_statusbars/2_statusbar_endboss/blue/blue20.png',
+            'img/7_statusbars/2_statusbar_endboss/blue/blue40.png',
+            'img/7_statusbars/2_statusbar_endboss/blue/blue60.png',
+            'img/7_statusbars/2_statusbar_endboss/blue/blue80.png',
+            'img/7_statusbars/2_statusbar_endboss/blue/blue100.png',
+          ];
+          this.x = 370;
+          this.y = 20;
+          this.width = 250;
+          this.height = 60;
+        } else {
+          this.IMAGES_HEALTH = [
+            'img/7_statusbars/1_statusbar/2_statusbar_health/blue/0.png',
+            'img/7_statusbars/1_statusbar/2_statusbar_health/blue/20.png',
+            'img/7_statusbars/1_statusbar/2_statusbar_health/blue/40.png',
+            'img/7_statusbars/1_statusbar/2_statusbar_health/blue/60.png',
+            'img/7_statusbars/1_statusbar/2_statusbar_health/blue/80.png',
+            'img/7_statusbars/1_statusbar/2_statusbar_health/blue/100.png',
+          ];
+          this.x = 20;
+          this.y = 20;
+          this.width = 200;
+          this.height = 60;
+        }
+      
+        this.visible = false;
+        this.loadImages(this.IMAGES_HEALTH);
+        this.setPercentage(100);
+      }
+      
 
    setPercentage(percentage) {
         this.percentage = percentage; // Set the health percentage
