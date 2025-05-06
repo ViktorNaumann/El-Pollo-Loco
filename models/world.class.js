@@ -15,6 +15,9 @@ class World {
   throwSound = new Audio("audio/throw.mp3");
   breakSound = new Audio("audio/break.mp3");
   bossHurtSound = new Audio('audio/boss_hurt.mp3');
+  collectSound = new Audio('audio/collect.mp3');
+
+
 
 
   constructor(canvas, keyboard) {
@@ -136,6 +139,10 @@ class World {
       if (this.character.isColliding(bottle)) {
           this.character.collectedBottles = (this.character.collectedBottles || 0) + 1;
           this.statusBarBottle.setPercentage(this.character.collectedBottles * 20); // 5 Flaschen = 100%
+
+          this.collectSound.currentTime = 0;
+          this.collectSound.play();
+          this.collectSound.volume = 0.3;
           return false;
       }
       return true;
