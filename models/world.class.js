@@ -128,6 +128,8 @@ class World {
       if (landedOnEnemy) {
         console.log('✅ Gegner wird besiegt!');
         this.level.enemies.splice(index, 1);
+        this.character.jump();
+        this.character.speedY = 20; // Schnellerer Sprung
       } else {
         console.log('❗ Charakter nimmt Schaden');
         this.character.hit();
@@ -137,16 +139,17 @@ class World {
     }
     this.level.bottles = this.level.bottles.filter((bottle) => {
       if (this.character.isColliding(bottle)) {
-          this.character.collectedBottles = (this.character.collectedBottles || 0) + 1;
-          this.statusBarBottle.setPercentage(this.character.collectedBottles * 20); // 5 Flaschen = 100%
-
-          this.collectSound.currentTime = 0;
-          this.collectSound.play();
-          this.collectSound.volume = 0.3;
-          return false;
+          if (this.character.collectedBottles < 5) {
+              this.character.collectedBottles++;
+              this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
+              this.collectSound.currentTime = 0;
+              this.collectSound.play();
+              return false; // Flasche entfernen
+          }
       }
-      return true;
+      return true; // Flasche bleibt liegen
   });
+  
   
   
   });

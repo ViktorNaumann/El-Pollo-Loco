@@ -11,6 +11,32 @@ class Character extends MovableObject {
     bottom: 10,
   };
 
+  IMAGES_IDLE = [
+    'img/2_character_pepe/1_idle/idle/I-1.png',
+    'img/2_character_pepe/1_idle/idle/I-2.png',
+    'img/2_character_pepe/1_idle/idle/I-3.png',
+    'img/2_character_pepe/1_idle/idle/I-4.png',
+    'img/2_character_pepe/1_idle/idle/I-5.png',
+    'img/2_character_pepe/1_idle/idle/I-6.png',
+    'img/2_character_pepe/1_idle/idle/I-7.png',
+    'img/2_character_pepe/1_idle/idle/I-8.png',
+    'img/2_character_pepe/1_idle/idle/I-9.png',
+    'img/2_character_pepe/1_idle/idle/I-10.png'
+  ];
+
+  IMAGES_LONG_IDLE = [
+    'img/2_character_pepe/1_idle/long_idle/I-11.png',
+    'img/2_character_pepe/1_idle/long_idle/I-12.png',
+    'img/2_character_pepe/1_idle/long_idle/I-13.png',
+    'img/2_character_pepe/1_idle/long_idle/I-14.png',
+    'img/2_character_pepe/1_idle/long_idle/I-15.png',
+    'img/2_character_pepe/1_idle/long_idle/I-16.png',
+    'img/2_character_pepe/1_idle/long_idle/I-17.png',
+    'img/2_character_pepe/1_idle/long_idle/I-18.png',
+    'img/2_character_pepe/1_idle/long_idle/I-19.png',
+    'img/2_character_pepe/1_idle/long_idle/I-20.png'
+  ];
+
 
   IMAGES_WALKING = [
     'img/2_character_pepe/2_walk/W-21.png',
@@ -56,9 +82,17 @@ class Character extends MovableObject {
     super.loadImages(this.IMAGES_JUMPING);
     super.loadImages(this.IMAGES_DEAD);
     super.loadImages(this.IMAGES_HURT);
+    this.loadImages(this.IMAGES_IDLE);
+    this.loadImages(this.IMAGES_LONG_IDLE);
+
     
     this.jumpSound = new Audio("audio/jump.mp3");
     this.runSound = new Audio("audio/run.mp3");
+
+    this.lastActionTime = new Date().getTime();
+    this.idleCheckInterval();
+    this.currentAnimation = null; // Merkt sich gerade aktive Animation
+
 
     this.collectedBottles = 5;
 
@@ -75,34 +109,48 @@ class Character extends MovableObject {
     setInterval(() => {
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
         this.moveRight();
-        this.otherDirection = false; // Set the direction to right
+        this.otherDirection = false;
         if (!this.isAboveGround()) this.runSound.play();
+        this.lastActionTime = new Date().getTime(); // ⬅️ hinzugefügt
       }
+    
       if (this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
-        this.otherDirection = true; // Set the direction to left
+        this.otherDirection = true;
         if (!this.isAboveGround()) this.runSound.play();
+        this.lastActionTime = new Date().getTime(); // ⬅️ hinzugefügt
       }
+    
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-        this.jump(); // Jump if not above ground
+        this.jump();
         this.jumpSound.currentTime = 0;
         this.jumpSound.play();
-
+        this.lastActionTime = new Date().getTime(); // ⬅️ hinzugefügt
       }
-      this.world.camera_x = -this.x + 100; // Move the camera to the left
-    }, 1000 / 60); // 60 FPS
+    
+      this.world.camera_x = -this.x + 100;
+    }, 1000 / 60);
+    
 
     setInterval(() => {
+      let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
+    
       if (this.isDead()) {
-        this.playAnimation(this.IMAGES_DEAD);
+        this.setAnimation(this.IMAGES_DEAD);
       } else if (this.isHurt()) {
-        this.playAnimation(this.IMAGES_HURT);
+        this.setAnimation(this.IMAGES_HURT);
       } else if (this.isAboveGround()) {
-        this.playAnimation(this.IMAGES_JUMPING);
+        this.setAnimation(this.IMAGES_JUMPING);
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-        this.playAnimation(this.IMAGES_WALKING);
+        this.setAnimation(this.IMAGES_WALKING);
+      } else if (timeSinceLastAction > 5000) {
+        this.setAnimation(this.IMAGES_LONG_IDLE);
+      } else {
+        this.setAnimation(this.IMAGES_IDLE);
       }
-    }, 50);
+    }, 150);
+    
+    
     
   }
 
@@ -111,6 +159,35 @@ class Character extends MovableObject {
     this.move();
     this.applyGravity();
   }
+
+  idleCheckInterval() {
+    setInterval(() => {
+      let now = new Date().getTime();
+      let timeSinceLastAction = now - this.lastActionTime;
+  
+      if (timeSinceLastAction > 5000 && !this.isDead() && !this.isHurt()) {
+        if (!this.longIdleInterval) {
+          this.longIdleInterval = setInterval(() => {
+            this.playAnimation(this.IMAGES_LONG_IDLE);
+          }, 400); // langsamer als Standard-Animation
+        }
+      } else {
+        clearInterval(this.longIdleInterval);
+        this.longIdleInterval = null;
+      }
+      
+    }, 250);
+  }
+
+  setAnimation(images) {
+    if (this.currentAnimation !== images) {
+      this.currentImage = 0; // zurücksetzen
+      this.currentAnimation = images;
+    }
+    this.playAnimation(images);
+  }
+  
+  
   
 
 
