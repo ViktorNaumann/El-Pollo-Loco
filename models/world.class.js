@@ -123,6 +123,7 @@ class World {
         console.log('❗ Charakter nimmt Schaden');
         this.character.hit();
         this.hitSound.play();
+        this.statusBar.setPercentage(this.character.energy);
       }
     }
   });
