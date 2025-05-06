@@ -40,7 +40,7 @@ class World {
 
   run() {
     setInterval(() => {
-      this.checkCollisitions();
+      this.checkCollisions();
       this.checkThrowObjects();
       this.checkBottleHits();
       this.checkEndbossVisibility(); // ✅ neu
@@ -93,16 +93,46 @@ class World {
     }
   }
 
-  checkCollisitions() {
-    this.level.enemies.forEach((enemy) => {
-      if (this.character.isColliding(enemy)) {
+  checkCollisions() {
+    this.level.enemies.forEach((enemy, index) => {
+    if (this.character.isColliding(enemy)) {
+      console.log('🟥 Kollision erkannt mit: ', enemy);
+
+      const characterBottom = this.character.y + this.character.height - this.character.offset.bottom;
+      const characterPrevBottom = this.character.previousY + this.character.height - this.character.offset.bottom;
+      const enemyTop = enemy.y;
+
+      const horizontallyOverlaps =
+        this.character.x + this.character.width - this.character.offset.right > enemy.x &&
+        this.character.x + this.character.offset.left < enemy.x + enemy.width;
+
+      const landedOnEnemy =
+        characterPrevBottom <= enemyTop &&
+        characterBottom >= enemyTop &&
+        horizontallyOverlaps;
+
+      console.log('🟦 characterBottom:', characterBottom);
+      console.log('🟩 enemyTop:', enemyTop);
+      console.log('↔️ Horizontal über Gegner?', horizontallyOverlaps);
+      console.log('⬇️ Bottom trifft Top? (landedOnEnemy)', landedOnEnemy);
+
+      if (landedOnEnemy) {
+        console.log('✅ Gegner wird besiegt!');
+        this.level.enemies.splice(index, 1);
+      } else {
+        console.log('❗ Charakter nimmt Schaden');
         this.character.hit();
-        this.statusBar.setPercentage(this.character.energy);
         this.hitSound.play();
-        this.hitSound.volume = 0.2;
       }
-    });
-  }
+    }
+  });
+
+  // Am Ende die aktuelle Y-Position speichern
+  this.character.previousY = this.character.y;
+} 
+  
+
+  
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);

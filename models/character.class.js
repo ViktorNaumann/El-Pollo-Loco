@@ -103,4 +103,13 @@ class Character extends MovableObject {
     
   }
 
+  update() {
+    this.previousY = this.y;
+    this.move();
+    this.applyGravity();
+  }
+  
+
+
+
 }
