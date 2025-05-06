@@ -126,6 +126,15 @@ class World {
         this.statusBar.setPercentage(this.character.energy);
       }
     }
+    this.level.bottles = this.level.bottles.filter((bottle) => {
+      if (this.character.isColliding(bottle)) {
+          // Flasche wird eingesammelt
+          this.character.collectedBottles = (this.character.collectedBottles || 0) + 1;
+          return false; // aus der Liste entfernen
+      }
+      return true;
+  });
+  
   });
 
   // Am Ende die aktuelle Y-Position speichern
@@ -153,6 +162,7 @@ class World {
     this.addToMap(this.character);
     this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.enemies);
+    this.addObjectsToMap(this.level.bottles);
 
     this.throwableObject = this.throwableObject.filter(obj => !obj.exploded);
     this.addObjectsToMap(this.throwableObject);

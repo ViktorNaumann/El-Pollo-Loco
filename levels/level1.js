@@ -4,6 +4,12 @@ for (let i = 0; i < 12; i++) {
     chickens.push(new Chicken(isBig));
 }
 
+let bottles = [];
+for (let i = 0; i < 10; i++) {
+    let x = 400 + Math.random() * 3000;
+    bottles.push(new CollectableBottle(x));
+}
+
 const level1 = new Level(
   [
     ...chickens,
@@ -59,6 +65,7 @@ const level1 = new Level(
     new BackgroundObject("img/5_background/layers/3_third_layer/2.png", 3595),
     new BackgroundObject("img/5_background/layers/2_second_layer/2.png", 3595), 
     new BackgroundObject("img/5_background/layers/1_first_layer/2.png", 3595),
-  ]
+  ],
+  bottles
 );
   
