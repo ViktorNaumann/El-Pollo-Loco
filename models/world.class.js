@@ -7,6 +7,7 @@ class World {
   camera_x = 0;
 
   statusBar = new StatusBar(); // für Spieler
+  statusBarBottle = new StatusBar("bottle"); // für Flaschen
   endbossStatusBar = new StatusBar("endboss"); // für Endboss
   throwableObject = [];
 
@@ -83,14 +84,19 @@ class World {
   
 
   checkThrowObjects() {
-    if (this.keyboard.D) {
+    if (this.keyboard.D && this.character.collectedBottles > 0) {
+      this.character.collectedBottles--;
+      this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
+  
       let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
       bottle.world = this;
       this.throwSound.currentTime = 0;
       this.throwSound.play();
       this.throwSound.volume = 0.3;
       this.throwableObject.push(bottle);
-    }
+  }
+  
+  
   }
 
   checkCollisions() {
@@ -128,12 +134,13 @@ class World {
     }
     this.level.bottles = this.level.bottles.filter((bottle) => {
       if (this.character.isColliding(bottle)) {
-          // Flasche wird eingesammelt
           this.character.collectedBottles = (this.character.collectedBottles || 0) + 1;
-          return false; // aus der Liste entfernen
+          this.statusBarBottle.setPercentage(this.character.collectedBottles * 20); // 5 Flaschen = 100%
+          return false;
       }
       return true;
   });
+  
   
   });
 
@@ -152,6 +159,7 @@ class World {
     this.ctx.translate(-this.camera_x, 0);
 
     this.addToMap(this.statusBar);
+    this.addToMap(this.statusBarBottle);
 
     if (this.endbossStatusBar.visible) {
       this.addToMap(this.endbossStatusBar);

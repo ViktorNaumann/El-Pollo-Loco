@@ -59,6 +59,9 @@ class Character extends MovableObject {
     
     this.jumpSound = new Audio("audio/jump.mp3");
     this.runSound = new Audio("audio/run.mp3");
+
+    this.collectedBottles = 0;
+
   
     this.jumpSound.volume = 0.4;
     this.runSound.volume = 0.4;
