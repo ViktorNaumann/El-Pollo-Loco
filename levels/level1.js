@@ -97,10 +97,29 @@ function createBottles() {
     return bottles;
 }
 
+function createTumbleweeds() {
+    const tumbleweeds = [];
+    // Erstelle 3 Steppenhexen, die bereits auf dem Spielfeld sind
+    for (let i = 0; i < 3; i++) {
+        const x = 500 + Math.random() * 2900; // Zufällige Position zwischen Start und Endboss
+        const y = 380;
+        tumbleweeds.push(new Tumbleweed(x, y));
+    }
+    
+    // Erstelle 5 Steppenhexen hinter dem Endboss
+    for (let i = 0; i < 5; i++) {
+        const x = 3800 + Math.random() * 1500; // Startposition hinter dem Endboss (3400)
+        const y = 380;
+        tumbleweeds.push(new Tumbleweed(x, y));
+    }
+    return tumbleweeds;
+}
+
 const level1 = new Level(
     createLevelEnemies(),
     createClouds(),
     createBackgrounds(),
     createCoins(),
-    createBottles()
+    createBottles(),
+    createTumbleweeds() // Neue Zeile
 );

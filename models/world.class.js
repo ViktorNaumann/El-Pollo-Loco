@@ -220,6 +220,10 @@ class World {
     this.throwableObject = this.throwableObject.filter((obj) => !obj.exploded);
     this.addObjectsToMap(this.throwableObject);
 
+    this.level.tumbleweeds.forEach(tumbleweed => {
+      tumbleweed.draw(this.ctx);
+    });
+
     this.ctx.translate(-this.camera_x, 0);
 
     requestAnimationFrame(() => {
