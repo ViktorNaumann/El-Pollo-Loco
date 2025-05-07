@@ -10,6 +10,8 @@ class Character extends MovableObject {
     right: 40,
     bottom: 10,
   };
+  isDeadAnimationPlayed = false;
+
 
   IMAGES_IDLE = [
     'img/2_character_pepe/1_idle/idle/I-1.png',
@@ -103,6 +105,17 @@ class Character extends MovableObject {
     this.applyGravity();
     this.animate();
   }
+
+  playAnimationWithSpeed(images, delay) {
+    if (this.animationInterval) {
+      clearInterval(this.animationInterval);
+    }
+  
+    this.animationInterval = setInterval(() => {
+      this.playAnimation(images);
+    }, delay);
+  }
+  
   
 
   animate() {
@@ -148,7 +161,8 @@ class Character extends MovableObject {
       } else {
         this.setAnimation(this.IMAGES_IDLE);
       }
-    }, 150);
+    }, 1000 / 10); // statt 150ms → ca. 60–100ms für flüssigere Animation
+    
     
     
     
@@ -180,16 +194,33 @@ class Character extends MovableObject {
   }
 
   setAnimation(images) {
-    if (this.currentAnimation !== images) {
-      this.currentImage = 0; // zurücksetzen
-      this.currentAnimation = images;
+    if (images === this.IMAGES_DEAD) {
+      if (!this.isDeadAnimationPlayed) {
+        this.isDeadAnimationPlayed = true;
+        this.playAnimationOnce(images);
+        setTimeout(() => {
+          if (this.world) {
+            this.world.triggerGameOver();
+          }
+        }, images.length * 150);
+      }
+      return;
     }
-    this.playAnimation(images);
+  
+    if (this.currentAnimation !== images) {
+      this.currentImage = 0;
+      this.currentAnimation = images;
+  
+      // Wähle Animationsgeschwindigkeit je nach Set
+      let delay = 100;
+      if (images === this.IMAGES_IDLE) delay = 300;
+      if (images === this.IMAGES_LONG_IDLE) delay = 300;
+      if (images === this.IMAGES_WALKING) delay = 60;
+      if (images === this.IMAGES_JUMPING) delay = 120;
+      if (images === this.IMAGES_HURT) delay = 80;
+  
+      this.playAnimationWithSpeed(images, delay);
+    }
   }
-  
-  
-  
-
-
 
 }
