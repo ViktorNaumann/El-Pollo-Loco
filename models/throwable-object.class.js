@@ -71,7 +71,7 @@ class ThrowableObject extends MovableObject {
         this.world.breakSound.play();
       }
   
-      let splashDuration = this.IMAGES_SPLASH.length * 500;
+      let splashDuration = this.IMAGES_SPLASH.length * 150;
       setTimeout(() => {
         this.exploded = true;
       }, splashDuration);

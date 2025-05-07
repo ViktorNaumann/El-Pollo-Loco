@@ -79,7 +79,13 @@ class World {
           if (enemy instanceof Endboss) {
             enemy.hit(20);
             this.endbossStatusBar.setPercentage(enemy.energy);
+          } else if (enemy instanceof Chicken) {
+            const index = this.level.enemies.indexOf(enemy);
+            if (index !== -1) {
+              this.level.enemies.splice(index, 1); // Chicken entfernen
+            }
           }
+          
         }
       });
     });
@@ -177,10 +183,12 @@ class World {
 
     this.ctx.translate(this.camera_x, 0);
 
-    this.addToMap(this.character);
+    
     this.addObjectsToMap(this.level.clouds);
-    this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.bottles);
+    this.addObjectsToMap(this.level.enemies);
+    this.addToMap(this.character);
+    
 
     this.throwableObject = this.throwableObject.filter(obj => !obj.exploded);
     this.addObjectsToMap(this.throwableObject);
