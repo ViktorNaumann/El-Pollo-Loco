@@ -16,6 +16,8 @@ class World {
   breakSound = new Audio("audio/break.mp3");
   bossHurtSound = new Audio("audio/boss_hurt.mp3");
   collectSound = new Audio("audio/collect.mp3");
+  squeezeChickenSound = new Audio("audio/squeeze_chicken.mp3");
+
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -131,6 +133,9 @@ class World {
           horizontallyOverlaps;
 
         if (landedOnEnemy && enemy instanceof Chicken) {
+          this.squeezeChickenSound.currentTime = 0;
+          this.squeezeChickenSound.play();
+          this.squeezeChickenSound.volume = 0.3;
           enemy.die();
           enemiesToRemove.push(enemy); // merken für später
           this.character.jump();
