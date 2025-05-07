@@ -20,6 +20,7 @@ class World {
   bossHurtSound = new Audio("audio/boss_hurt.mp3");
   collectSound = new Audio("audio/collect.mp3");
   squeezeChickenSound = new Audio("audio/squeeze_chicken.mp3");
+  collectCoin = new Audio("audio/collect_coin.mp3");
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -184,8 +185,8 @@ class World {
         if (this.collectedCoins < 5) {
           this.collectedCoins++;
           this.statusBarCoin.setPercentage(this.collectedCoins * 20);
-          this.collectSound.currentTime = 0;
-          this.collectSound.play();
+          this.collectCoin.currentTime = 0;
+          this.collectCoin.play();
           return false;
         }
       }
