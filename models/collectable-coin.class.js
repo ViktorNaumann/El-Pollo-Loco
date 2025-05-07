@@ -3,13 +3,13 @@ class CollectableCoin extends MovableObject {
         "img/8_coin/coin_1.png",
         "img/8_coin/coin_2.png"
     ];
+    height = 100; // Verdoppelt von 40 auf 80
+    width = 100;  // Verdoppelt von 40 auf 80
 
     constructor(x, y) {
         super();
         this.x = x;
         this.y = y;
-        this.width = 50;
-        this.height = 50;
         this.offset = { top: 5, left: 5, right: 5, bottom: 5 };
         this.loadImage(this.IMAGES[0]);
         this.loadImages(this.IMAGES);
