@@ -10,5 +10,6 @@ class Level {
         this.clouds = clouds; // und hier: this.clouds = y;
         this.backgroundObjects = backgroundObjects; // und hier: this.backgroundObjects = z;
         this.bottles = bottles;
+        this.coins = coins; // ✅ Coins speichern
     }
 }

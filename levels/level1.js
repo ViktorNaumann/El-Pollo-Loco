@@ -10,6 +10,13 @@ for (let i = 0; i < 10; i++) {
     bottles.push(new CollectableBottle(x));
 }
 
+let coins = [];
+for (let i = 0; i < 5; i++) {
+    let x = 400 + i * 500;
+    let y = 300;
+    coins.push(new CollectableCoin(x, y));
+}
+
 const level1 = new Level(
   [
     ...chickens,

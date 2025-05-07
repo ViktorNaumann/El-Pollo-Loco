@@ -11,13 +11,15 @@ class World {
   endbossStatusBar = new StatusBar("endboss"); // für Endboss
   throwableObject = [];
 
+  statusBarCoin = new StatusBar("coin");
+  collectedCoins = 0;
+
   hitSound = new Audio("audio/hit.mp3");
   throwSound = new Audio("audio/throw.mp3");
   breakSound = new Audio("audio/break.mp3");
   bossHurtSound = new Audio("audio/boss_hurt.mp3");
   collectSound = new Audio("audio/collect.mp3");
   squeezeChickenSound = new Audio("audio/squeeze_chicken.mp3");
-
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -175,6 +177,20 @@ class World {
     });
 
     this.character.previousY = this.character.y;
+
+    // Coins sammeln
+    this.level.coins = this.level.coins.filter((coin) => {
+      if (this.character.isColliding(coin)) {
+        if (this.collectedCoins < 5) {
+          this.collectedCoins++;
+          this.statusBarCoin.setPercentage(this.collectedCoins * 20);
+          this.collectSound.currentTime = 0;
+          this.collectSound.play();
+          return false;
+        }
+      }
+      return true;
+    });
   }
 
   draw() {
@@ -186,6 +202,7 @@ class World {
 
     this.addToMap(this.statusBar);
     this.addToMap(this.statusBarBottle);
+    this.addToMap(this.statusBarCoin); // ✅ Coins zeichnen
 
     if (this.endbossStatusBar.visible) {
       this.addToMap(this.endbossStatusBar);
@@ -194,6 +211,7 @@ class World {
     this.ctx.translate(this.camera_x, 0);
 
     this.addObjectsToMap(this.level.clouds);
+    this.addObjectsToMap(this.level.coins); // ✅ Coins zeichnen
     this.addObjectsToMap(this.level.bottles);
     this.addObjectsToMap(this.level.enemies);
     this.addToMap(this.character);
