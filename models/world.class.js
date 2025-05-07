@@ -14,11 +14,8 @@ class World {
   hitSound = new Audio("audio/hit.mp3");
   throwSound = new Audio("audio/throw.mp3");
   breakSound = new Audio("audio/break.mp3");
-  bossHurtSound = new Audio('audio/boss_hurt.mp3');
-  collectSound = new Audio('audio/collect.mp3');
-
-
-
+  bossHurtSound = new Audio("audio/boss_hurt.mp3");
+  collectSound = new Audio("audio/collect.mp3");
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -33,14 +30,13 @@ class World {
 
   setWorld() {
     this.character.world = this;
-  
+
     this.level.enemies.forEach((enemy) => {
       if (enemy instanceof Endboss) {
         enemy.world = this;
       }
     });
   }
-  
 
   run() {
     setInterval(() => {
@@ -52,7 +48,7 @@ class World {
   }
 
   checkEndbossVisibility() {
-    const boss = this.level.enemies.find(e => e instanceof Endboss);
+    const boss = this.level.enemies.find((e) => e instanceof Endboss);
     if (!boss) return;
 
     const bossLeft = boss.x;
@@ -75,7 +71,7 @@ class World {
           this.breakSound.currentTime = 0;
           this.breakSound.play();
           bottle.explode();
-  
+
           if (enemy instanceof Endboss) {
             enemy.hit(20);
             this.endbossStatusBar.setPercentage(enemy.energy);
@@ -85,87 +81,96 @@ class World {
               this.level.enemies.splice(index, 1); // Chicken entfernen
             }
           }
-          
         }
       });
     });
   }
-  
 
   checkThrowObjects() {
     if (this.keyboard.D && this.character.collectedBottles > 0) {
       this.character.collectedBottles--;
       this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
-  
-      let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
+
+      let bottle = new ThrowableObject(
+        this.character.x + 100,
+        this.character.y + 100
+      );
       bottle.world = this;
       this.throwSound.currentTime = 0;
       this.throwSound.play();
       this.throwSound.volume = 0.3;
       this.throwableObject.push(bottle);
-  }
-  
-  
+    }
   }
 
   checkCollisions() {
-    this.level.enemies.forEach((enemy, index) => {
-    if (this.character.isColliding(enemy)) {
-      console.log('🟥 Kollision erkannt mit: ', enemy);
+    let enemiesToRemove = [];
 
-      const characterBottom = this.character.y + this.character.height - this.character.offset.bottom;
-      const characterPrevBottom = this.character.previousY + this.character.height - this.character.offset.bottom;
-      const enemyTop = enemy.y;
+    this.level.enemies.forEach((enemy) => {
+      if (this.character.isColliding(enemy)) {
+        const characterBottom =
+          this.character.y +
+          this.character.height -
+          this.character.offset.bottom;
+        const characterPrevBottom =
+          this.character.previousY +
+          this.character.height -
+          this.character.offset.bottom;
+        const enemyTop = enemy.y;
 
-      const horizontallyOverlaps =
-        this.character.x + this.character.width - this.character.offset.right > enemy.x &&
-        this.character.x + this.character.offset.left < enemy.x + enemy.width;
+        const horizontallyOverlaps =
+          this.character.x +
+            this.character.width -
+            this.character.offset.right >
+            enemy.x &&
+          this.character.x + this.character.offset.left < enemy.x + enemy.width;
 
-      const landedOnEnemy =
-        characterPrevBottom <= enemyTop &&
-        characterBottom >= enemyTop &&
-        horizontallyOverlaps;
+        const landedOnEnemy =
+          characterPrevBottom <= enemyTop &&
+          characterBottom >= enemyTop &&
+          horizontallyOverlaps;
 
-      console.log('🟦 characterBottom:', characterBottom);
-      console.log('🟩 enemyTop:', enemyTop);
-      console.log('↔️ Horizontal über Gegner?', horizontallyOverlaps);
-      console.log('⬇️ Bottom trifft Top? (landedOnEnemy)', landedOnEnemy);
-
-      if (landedOnEnemy) {
-        console.log('✅ Gegner wird besiegt!');
-        this.level.enemies.splice(index, 1);
-        this.character.jump();
-        this.character.speedY = 20; // Schnellerer Sprung
-      } else {
-        console.log('❗ Charakter nimmt Schaden');
-        this.character.hit();
-        this.hitSound.play();
-        this.statusBar.setPercentage(this.character.energy);
+        if (landedOnEnemy && enemy instanceof Chicken) {
+          enemy.die();
+          enemiesToRemove.push(enemy); // merken für später
+          this.character.jump();
+          this.character.speedY = 20;
+        } else {
+          this.character.hit();
+          this.hitSound.play();
+          this.statusBar.setPercentage(this.character.energy);
+        }
       }
-    }
+    });
+
+    // Nachträglich tote Hühner entfernen
+    enemiesToRemove.forEach((enemy) => {
+      setTimeout(() => {
+        const index = this.level.enemies.indexOf(enemy);
+        if (index !== -1) {
+          this.level.enemies.splice(index, 1);
+        }
+      }, 300); // ggf. 300ms sichtbar bleiben
+    });
+
+    // Flaschen sammeln wie vorher
     this.level.bottles = this.level.bottles.filter((bottle) => {
       if (this.character.isColliding(bottle)) {
-          if (this.character.collectedBottles < 5) {
-              this.character.collectedBottles++;
-              this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
-              this.collectSound.currentTime = 0;
-              this.collectSound.play();
-              return false; // Flasche entfernen
-          }
+        if (this.character.collectedBottles < 5) {
+          this.character.collectedBottles++;
+          this.statusBarBottle.setPercentage(
+            this.character.collectedBottles * 20
+          );
+          this.collectSound.currentTime = 0;
+          this.collectSound.play();
+          return false;
+        }
       }
-      return true; // Flasche bleibt liegen
-  });
-  
-  
-  
-  });
+      return true;
+    });
 
-  // Am Ende die aktuelle Y-Position speichern
-  this.character.previousY = this.character.y;
-} 
-  
-
-  
+    this.character.previousY = this.character.y;
+  }
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -183,14 +188,12 @@ class World {
 
     this.ctx.translate(this.camera_x, 0);
 
-    
     this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.bottles);
     this.addObjectsToMap(this.level.enemies);
     this.addToMap(this.character);
-    
 
-    this.throwableObject = this.throwableObject.filter(obj => !obj.exploded);
+    this.throwableObject = this.throwableObject.filter((obj) => !obj.exploded);
     this.addObjectsToMap(this.throwableObject);
 
     this.ctx.translate(-this.camera_x, 0);
@@ -210,9 +213,18 @@ class World {
     this.ctx.stroke();
     if (movableObject.otherDirection) {
       this.ctx.save();
-      this.ctx.translate(movableObject.x + movableObject.width, movableObject.y);
+      this.ctx.translate(
+        movableObject.x + movableObject.width,
+        movableObject.y
+      );
       this.ctx.scale(-1, 1);
-      this.ctx.drawImage(movableObject.img, 0, 0, movableObject.width, movableObject.height);
+      this.ctx.drawImage(
+        movableObject.img,
+        0,
+        0,
+        movableObject.width,
+        movableObject.height
+      );
       this.ctx.restore();
     } else {
       movableObject.draw(this.ctx);
@@ -227,6 +239,4 @@ class World {
       location.reload(); // Spiel neu laden
     }, 1000);
   }
-  
 }
-
