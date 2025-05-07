@@ -79,6 +79,12 @@ function createBackgrounds() {
         new BackgroundObject("img/5_background/layers/3_third_layer/2.png", 3595),
         new BackgroundObject("img/5_background/layers/2_second_layer/2.png", 3595), 
         new BackgroundObject("img/5_background/layers/1_first_layer/2.png", 3595),
+
+        // Start-Schild (am Anfang des Levels)
+        new BackgroundObject("img/desert_background/start_sign_transparent.png", 300, 350), // y-Position angepasst für Boden
+
+        // End-Schild (beim Endboss, ca. bei x=3400)
+        new BackgroundObject("img/desert_background/ende_sign_transparent.png", 3400, 350)
     ];
 }
 
