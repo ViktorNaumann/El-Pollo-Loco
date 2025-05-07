@@ -182,12 +182,13 @@ class World {
     // Coins sammeln
     this.level.coins = this.level.coins.filter((coin) => {
       if (this.character.isColliding(coin)) {
-        if (this.collectedCoins < 5) {
-          this.collectedCoins++;
-          this.statusBarCoin.setPercentage(this.collectedCoins * 20);
-          this.collectCoin.currentTime = 0;
-          this.collectCoin.play();
-          return false;
+        // Erhöhe auf z.B. 20 coins
+        if (this.collectedCoins < 20) {  // Hier von 5 auf 20 erhöht
+            this.collectedCoins++;
+            this.statusBarCoin.setPercentage(this.collectedCoins * 5);  // Von 20 auf 5 geändert
+            this.collectCoin.currentTime = 0;
+            this.collectCoin.play();
+            return false;
         }
       }
       return true;
