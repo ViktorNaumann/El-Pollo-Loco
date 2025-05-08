@@ -70,26 +70,27 @@ class World {
 
   checkBottleHits() {
     this.throwableObject.forEach((bottle) => {
-      this.level.enemies.forEach((enemy) => {
-        if (bottle.isColliding(enemy) && !bottle.exploded) {
-          bottle.exploded = true; // ❗ verhindert Mehrfachsound
-          this.breakSound.currentTime = 0;
-          this.breakSound.play();
-          bottle.explode();
-
-          if (enemy instanceof Endboss) {
-            enemy.hit(20);
-            this.endbossStatusBar.setPercentage(enemy.energy);
-          } else if (enemy instanceof Chicken) {
-            const index = this.level.enemies.indexOf(enemy);
-            if (index !== -1) {
-              this.level.enemies.splice(index, 1); // Chicken entfernen
+        this.level.enemies.forEach((enemy) => {
+            if (bottle.isColliding(enemy) && !bottle.exploded) {
+                // Flasche explodiert
+                bottle.explode();
+                
+                if (enemy instanceof Endboss) {
+                    enemy.hit(20);
+                    this.endbossStatusBar.setPercentage(enemy.energy);
+                } else if (enemy instanceof Chicken) {
+                    enemy.die(); // Chicken stirbt mit Animation
+                    setTimeout(() => {
+                        const index = this.level.enemies.indexOf(enemy);
+                        if (index !== -1) {
+                            this.level.enemies.splice(index, 1);
+                        }
+                    }, 500); // Wartezeit für die Todesanimation
+                }
             }
-          }
-        }
-      });
+        });
     });
-  }
+}
 
   checkThrowObjects() {
     if (this.keyboard.D && this.character.collectedBottles > 0) {
