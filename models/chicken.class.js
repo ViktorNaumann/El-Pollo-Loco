@@ -27,9 +27,17 @@ class Chicken extends MovableObject {
 
     constructor(isBig = false, x = 200 + Math.random() * 3300) {
         super();
-
         this.x = x;
-        this.speed = 0.15 + Math.random() * 0.2;
+        // Zufällige individuelle Eigenschaften für jedes Huhn
+        this.speed = 0.15 + Math.random() * 0.25; // Geschwindigkeit zwischen 0.15 und 0.4
+        this.otherDirection = Math.random() < 0.5; // Zufällige Startrichtung
+        this.changeDirectionTime = Date.now();
+        this.minDirectionTime = 3000 + Math.random() * 2000; // 3-5 Sekunden
+        this.maxDirectionTime = 5000 + Math.random() * 3000; // 5-8 Sekunden
+        this.pauseProbability = 0.005; // 0.5% Chance pro Frame zum Pausieren
+        this.pauseDuration = 1000 + Math.random() * 2000; // 1-3 Sekunden Pause
+        this.isPaused = false;
+        this.lastPauseTime = 0;
 
         if (isBig) {
             this.height = 80;
@@ -53,12 +61,47 @@ class Chicken extends MovableObject {
 
     animate() {
         this.moveInterval = setInterval(() => {
-            this.moveLeft();
+            // Bewegung und Richtungswechsel
+            if (this.otherDirection) {
+                this.moveRight();
+            } else {
+                this.moveLeft();
+            }
+
+            // Zufälliger Richtungswechsel mit neuer Geschwindigkeit
+            let currentTime = Date.now();
+            if (currentTime - this.changeDirectionTime > this.getRandomDirectionTime()) {
+                this.otherDirection = Math.random() < 0.6 ? !this.otherDirection : this.otherDirection;
+                this.changeDirectionTime = currentTime;
+                // Neue zufällige Geschwindigkeit beim Richtungswechsel
+                this.speed = 0.15 + Math.random() * 0.25;
+            }
         }, 1000 / 60);
 
+        // Animation kontinuierlich abspielen
         this.animationInterval = setInterval(() => {
             this.playAnimation(this.animationSet);
         }, 150);
+    }
+
+    getRandomDirectionTime() {
+        return Math.random() * (this.maxDirectionTime - this.minDirectionTime) + this.minDirectionTime;
+    }
+
+    moveRight() {
+        super.moveRight();
+        if (this.x > 3500) { // Spielfeldgrenze rechts
+            this.otherDirection = false;
+            this.changeDirectionTime = Date.now();
+        }
+    }
+
+    moveLeft() {
+        super.moveLeft();
+        if (this.x < 0) { // Spielfeldgrenze links
+            this.otherDirection = true;
+            this.changeDirectionTime = Date.now();
+        }
     }
 
     die() {
