@@ -13,21 +13,25 @@ class Cloud extends MovableObject {
     this.loadImage(selectedImage);
   
     this.x = x;
-    this.y = 20;
+    this.y = 20 + Math.random() * 50; // Zufällige Höhe für Variation
     this.width = 450;
     this.height = 250;
-    this.speed = 0.05 + Math.random() * 0.25; // ergibt 0.05–0.3
+    this.speed = 0.15 + Math.random() * 0.25; // Etwas schneller: 0.15-0.4
     this.animate();
   }
-  
 
   animate() {
     const move = () => {
       this.moveLeft();
+      // Wenn Wolke links aus dem Bild ist
+      if (this.x < -this.width) {
+        // Zurück ans Ende des Levels + zufälliger Abstand
+        this.x = 3900 + Math.random() * 200;
+        // Neue zufällige Höhe
+        this.y = 20 + Math.random() * 50;
+      }
       requestAnimationFrame(move);
     };
     move();
   }
-  
-  
 }

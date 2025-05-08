@@ -31,23 +31,12 @@ function createLevelEnemies() {
 }
 
 function createClouds() {
-    return [
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595),
-        new Cloud(Math.random() * 3595)
-    ];
+    let clouds = [];
+    // Mehr Wolken mit geringerem Abstand
+    for (let i = 0; i < 12; i++) { // Erhöht von 8 auf 12 Wolken
+        clouds.push(new Cloud(i * 400)); // Reduzierter Abstand zwischen Wolken
+    }
+    return clouds;
 }
 
 function createBackgrounds() {
