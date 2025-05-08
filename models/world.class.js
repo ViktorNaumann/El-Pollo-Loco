@@ -93,18 +93,25 @@ class World {
 
   checkThrowObjects() {
     if (this.keyboard.D && this.character.collectedBottles > 0) {
-      this.character.collectedBottles--;
-      this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
+        this.character.collectedBottles--;
+        this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
 
-      let bottle = new ThrowableObject(
-        this.character.x + 100,
-        this.character.y + 100
-      );
-      bottle.world = this;
-      this.throwSound.currentTime = 0;
-      this.throwSound.play();
-      this.throwSound.volume = 0.3;
-      this.throwableObject.push(bottle);
+        // Startposition der Flasche anpassen basierend auf Richtung
+        let bottleX = this.character.otherDirection ? 
+            this.character.x : // Wenn nach links schauend
+            this.character.x + 100; // Wenn nach rechts schauend
+
+        let bottle = new ThrowableObject(
+            bottleX,
+            this.character.y + 100,
+            this.character.otherDirection // Übergebe die Richtung
+        );
+        
+        bottle.world = this;
+        this.throwSound.currentTime = 0;
+        this.throwSound.play();
+        this.throwSound.volume = 0.3;
+        this.throwableObject.push(bottle);
     }
   }
 
