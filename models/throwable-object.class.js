@@ -92,14 +92,14 @@ class ThrowableObject extends MovableObject {
     }
   
     throw(otherDirection) {
-      this.speedY = 30;
+      this.speedY = 20; // von 30 auf 15 reduziert für niedrigere Flugbahn
       this.applyGravity();
       this.throwInterval = setInterval(() => {
-        if (otherDirection) {
-          this.x -= 10; // Bewegung nach links
-        } else {
-          this.x += 10; // Bewegung nach rechts
-        }
+          if (otherDirection) {
+              this.x -= 7; // von 10 auf 7 reduziert für kürzere Distanz nach links
+          } else {
+              this.x += 7; // von 10 auf 7 reduziert für kürzere Distanz nach rechts
+          }
       }, 25);
     }
   }

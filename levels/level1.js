@@ -16,7 +16,7 @@ function createCoins() {
 
 function createLevelEnemies() {
     let chickens = [];
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i <   30; i++) {
         const isBig = Math.random() < 0.4; // ca. 40% große Chickens
         chickens.push(new Chicken(isBig));
     }

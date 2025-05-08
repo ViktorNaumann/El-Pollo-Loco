@@ -24,7 +24,24 @@ class DrawableObject {
   }
 
   draw(ctx) {
-    ctx.drawImage(this.img, this.x, this.y, this.width, this.height); // Draw the image at the specified position and size
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    
+    // Entferne oder kommentiere den folgenden Code-Block aus
+    /*
+    if (this instanceof Character || this instanceof Chicken || this instanceof CollectableCoin || 
+        this instanceof CollectableBottle || this instanceof ThrowableObject || this instanceof Endboss) {
+        ctx.beginPath();
+        ctx.lineWidth = "5";
+        ctx.strokeStyle = "blue";
+        ctx.rect(
+            this.x + this.offset.left,
+            this.y + this.offset.top,
+            this.width - this.offset.left - this.offset.right,
+            this.height - this.offset.top - this.offset.bottom
+        );
+        ctx.stroke();
+    }
+    */
   }
 
   loadImages(arr) {
@@ -36,6 +53,8 @@ class DrawableObject {
   }
 
   drawFrame(ctx) {
+    // Entferne oder kommentiere den gesamten Code-Block aus
+    /*
     if (this instanceof Character || this instanceof Chicken || this instanceof Endboss || this instanceof ThrowableObject) {
       ctx.beginPath();
       ctx.lineWidth = "3";
@@ -47,5 +66,6 @@ class DrawableObject {
         this.height - this.offset.top - this.offset.bottom
       );
     }
+    */
   }
 }
