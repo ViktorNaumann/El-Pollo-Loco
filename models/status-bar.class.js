@@ -22,10 +22,10 @@ class StatusBar extends DrawableObject {
         "img/7_statusbars/2_statusbar_endboss/blue/blue80.png",
         "img/7_statusbars/2_statusbar_endboss/blue/blue100.png",
       ];
-      this.x = 370;
-      this.y = 20;
-      this.width = 250;
-      this.height = 60;
+      this.x = 470; // mehr nach rechts
+      this.y = 10;  // höher
+      this.width = 200; // schmaler
+      this.height = 40; // niedriger
     } else if (type === "bottle") {
       this.IMAGES_HEALTH = [
         "img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/0.png",
@@ -36,9 +36,9 @@ class StatusBar extends DrawableObject {
         "img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/100.png",
       ];
       this.x = 20;
-      this.y = 80; // unterhalb der Lebensleiste
-      this.width = 200;
-      this.height = 60;
+      this.y = 50;  // höher
+      this.width = 150; // schmaler
+      this.height = 40; // niedriger
     } else if (type === "coin") {
       this.IMAGES_HEALTH = [
           "img/7_statusbars/1_statusbar/1_statusbar_coin/blue/0.png",
@@ -49,9 +49,9 @@ class StatusBar extends DrawableObject {
           "img/7_statusbars/1_statusbar/1_statusbar_coin/blue/100.png"
       ];
       this.x = 20;
-      this.y = 140;
-      this.width = 200;
-      this.height = 60;
+      this.y = 90;  // höher
+      this.width = 150; // schmaler
+      this.height = 40; // niedriger
   } else {
       this.IMAGES_HEALTH = [
         "img/7_statusbars/1_statusbar/2_statusbar_health/blue/0.png",
@@ -62,9 +62,9 @@ class StatusBar extends DrawableObject {
         "img/7_statusbars/1_statusbar/2_statusbar_health/blue/100.png",
       ];
       this.x = 20;
-      this.y = 20;
-      this.width = 200;
-      this.height = 60;
+      this.y = 10;  // höher
+      this.width = 150; // schmaler
+      this.height = 40; // niedriger
     }
 
     this.visible = false; 

@@ -16,9 +16,13 @@ function createCoins() {
 
 function createLevelEnemies() {
     let chickens = [];
-    for (let i = 0; i <   30; i++) {
+    for (let i = 0; i < 30; i++) {
         const isBig = Math.random() < 0.4; // ca. 40% große Chickens
-        chickens.push(new Chicken(isBig));
+        // Startposition nach dem Schild (x > 500) und zufällig über das restliche Level verteilt
+        const x = 500 + Math.random() * 2500; // Zufällige Position zwischen x=500 und x=3000
+        const chicken = new Chicken(isBig);
+        chicken.x = x; // Überschreibe die Standard-X-Position
+        chickens.push(chicken);
     }
     return [
         ...chickens,

@@ -71,9 +71,9 @@ class World {
   checkBottleHits() {
     this.throwableObject.forEach((bottle) => {
         this.level.enemies.forEach((enemy) => {
-            if (bottle.isColliding(enemy) && !bottle.exploded) {
-                // Flasche explodiert
+            if (bottle.isColliding(enemy) && !bottle.exploded && !bottle.hasHit) { // Neuer Check mit hasHit
                 bottle.explode();
+                bottle.hasHit = true; // Markiere die Flasche als "getroffen"
                 
                 if (enemy instanceof Endboss) {
                     enemy.hit(20);
