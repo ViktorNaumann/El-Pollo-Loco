@@ -27,6 +27,11 @@ class World {
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.endbossStatusBar.visible = false;
+    
+    // Coin-Statusbar explizit auf 0% setzen
+    this.statusBarCoin.setPercentage(0);
+    
+    
     this.draw();
     this.setWorld();
     this.run();
@@ -116,91 +121,87 @@ class World {
     }
   }
 
+  // Die Hauptmethode für alle Kollisionen
   checkCollisions() {
-    let enemiesToRemove = [];
-
-    this.level.enemies.forEach((enemy) => {
-      if (this.character.isColliding(enemy)) {
-        const characterBottom =
-          this.character.y +
-          this.character.height -
-          this.character.offset.bottom;
-        const characterPrevBottom =
-          this.character.previousY +
-          this.character.height -
-          this.character.offset.bottom;
-        const enemyTop = enemy.y;
-
-        const horizontallyOverlaps =
-          this.character.x +
-            this.character.width -
-            this.character.offset.right >
-            enemy.x &&
-          this.character.x + this.character.offset.left < enemy.x + enemy.width;
-
-        const landedOnEnemy =
-          characterPrevBottom <= enemyTop &&
-          characterBottom >= enemyTop &&
-          horizontallyOverlaps;
-
-        if (landedOnEnemy && enemy instanceof Chicken) {
-          this.squeezeChickenSound.currentTime = 0;
-          this.squeezeChickenSound.play();
-          this.squeezeChickenSound.volume = 0.3;
-          enemy.die();
-          enemiesToRemove.push(enemy); // merken für später
-          this.character.jump();
-          this.character.speedY = 20;
-        } else {
-          this.character.hit();
-          this.hitSound.play();
-          this.statusBar.setPercentage(this.character.energy);
-        }
-      }
-    });
-
-    // Nachträglich tote Hühner entfernen
-    enemiesToRemove.forEach((enemy) => {
-      setTimeout(() => {
-        const index = this.level.enemies.indexOf(enemy);
-        if (index !== -1) {
-          this.level.enemies.splice(index, 1);
-        }
-      }, 300); // ggf. 300ms sichtbar bleiben
-    });
-
-    // Flaschen sammeln wie vorher
-    this.level.bottles = this.level.bottles.filter((bottle) => {
-      if (this.character.isColliding(bottle)) {
-        if (this.character.collectedBottles < 5) {
-          this.character.collectedBottles++;
-          this.statusBarBottle.setPercentage(
-            this.character.collectedBottles * 20
-          );
-          this.collectSound.currentTime = 0;
-          this.collectSound.play();
-          return false;
-        }
-      }
-      return true;
-    });
-
+    // Früher Return bei totem Character
+    if (this.character.isDead()) return;
+    
+    this.checkEnemyCollisions();
+    this.checkBottleCollection();
+    this.checkCoinCollection();
+    
+    // Position für die nächste Kollisionsprüfung speichern
     this.character.previousY = this.character.y;
+  }
 
-    // Coins sammeln
-    this.level.coins = this.level.coins.filter((coin) => {
-      if (this.character.isColliding(coin)) {
-        // Erhöhe auf z.B. 20 coins
-        if (this.collectedCoins < 20) {  // Hier von 5 auf 20 erhöht
-            this.collectedCoins++;
-            this.statusBarCoin.setPercentage(this.collectedCoins * 5);  // Von 20 auf 5 geändert
-            this.collectCoin.currentTime = 0;
-            this.collectCoin.play();
-            return false;
+  // Prüft Kollisionen mit Feinden
+  checkEnemyCollisions() {
+    this.level.enemies.forEach((enemy) => {
+        if (this.character.isColliding(enemy)) {
+            // Verbesserte Sprung-Erkennung
+            const isJumpingOnTop = 
+                this.character.speedY < 0 && // Character fällt nach unten (in diesem Spiel ist negative speedY abwärts)
+                this.character.previousY + this.character.height - this.character.offset.bottom <= enemy.y + enemy.offset.top && // War vorher oberhalb
+                this.character.x + this.character.width - this.character.offset.right > enemy.x + enemy.offset.left && // Horizontale Überlappung 
+                this.character.x + this.character.offset.left < enemy.x + enemy.width - enemy.offset.right; // Horizontale Überlappung
+            
+            if (isJumpingOnTop) {
+                // Character springt auf Gegner
+                this.squeezeChickenSound.play();
+                this.squeezeChickenSound.volume = 0.3;
+                
+                if (enemy instanceof Chicken) {
+                    enemy.die();
+                    setTimeout(() => {
+                        const index = this.level.enemies.indexOf(enemy);
+                        if (index !== -1) {
+                            this.level.enemies.splice(index, 1);
+                        }
+                    }, 300);
+                    
+                    // Character springt wieder hoch (stärkerer Sprung)
+                    this.character.speedY = 17;
+                }
+            } else {
+                // Seitliche Kollision - Character nimmt Schaden
+                if (!this.character.isHurt()) {
+                    this.character.hit(5);
+                    this.hitSound.play();
+                    this.statusBar.setPercentage(this.character.energy);
+                }
+            }
         }
-      }
-      return true;
     });
+}
+
+  // Prüft Kollisionen mit Coins
+  checkCoinCollection() {
+    for (let i = this.level.coins.length - 1; i >= 0; i--) {
+        const coin = this.level.coins[i];
+        if (this.character.isColliding(coin)) {
+            // Coin einsammeln
+            this.level.coins.splice(i, 1);
+            this.collectedCoins++;
+            this.statusBarCoin.setPercentage(this.collectedCoins * 5);
+            this.collectCoin.play();
+            this.collectCoin.volume = 0.3;
+        }
+    }
+  }
+
+  // Prüft Kollisionen mit Flaschen
+  checkBottleCollection() {
+    for (let i = this.level.bottles.length - 1; i >= 0; i--) {
+        const bottle = this.level.bottles[i];
+        if (this.character.isColliding(bottle) && this.character.collectedBottles < 5) {
+            // Flasche einsammeln
+            this.level.bottles.splice(i, 1);
+            this.character.collectedBottles++;
+            this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
+            this.collectSound.play();
+            this.collectSound.volume = 0.3;
+        }
+    }
   }
 
   draw() {
