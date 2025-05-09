@@ -2,9 +2,10 @@ class Endboss extends MovableObject {
   height = 400;
   width = 300;
   y = 50;
-  speed = 3.5;
+  baseSpeed = 3.5;
+  speed = this.baseSpeed;
+  speedVariationTimer = 0;
 
- 
   offset = {
     top: 100,
     left: 50,
@@ -63,6 +64,9 @@ class Endboss extends MovableObject {
 
     this.x = 3900;
     this.animate();
+    
+    // Starte die zufälligen Geschwindigkeitsänderungen
+    this.startRandomSpeedChanges();
   }
 
   animate() {
@@ -163,8 +167,30 @@ class Endboss extends MovableObject {
       
   }
   
-  
-  
-  
+  /**
+   * Ändert die Geschwindigkeit des Endbosses zufällig
+   */
+  startRandomSpeedChanges() {
+    setInterval(() => {
+      // Nur ändern, wenn der Endboss aktiv ist
+      if (this.isActive) {
+        // Zufällige Geschwindigkeit zwischen 70% und 200% der Basisgeschwindigkeit
+        const randomFactor = 0.7 + Math.random() * 1.3;
+        this.speed = this.baseSpeed * randomFactor;
+        
+        // Kurzer Geschwindigkeitsschub mit 20% Wahrscheinlichkeit
+        if (Math.random() < 0.2) {
+          // Kurzzeitig sehr schnell (2.5x)
+          this.speed = this.baseSpeed * 2.5;
+          
+          // Nach kurzer Zeit wieder auf normale zufällige Geschwindigkeit zurück
+          setTimeout(() => {
+            const normalRandomFactor = 0.7 + Math.random() * 1.3;
+            this.speed = this.baseSpeed * normalRandomFactor;
+          }, 500 + Math.random() * 1000); // 0.5-1.5 Sekunden Schub
+        }
+      }
+    }, 2000 + Math.random() * 3000); // Alle 2-5 Sekunden ändern
+  }
   
 }
