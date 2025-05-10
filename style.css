@@ -62,6 +62,11 @@ canvas {
 
 .overlay-content {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .overlay-content img {
@@ -71,8 +76,8 @@ canvas {
 
 .restart-button {
   margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 20px;
+  padding: 10px 30px; /* Von 20px auf 30px wie beim Start-Button */
+  font-size: 24px;    /* Von 20px auf 24px wie beim Start-Button */
   background-color: #FFAE00;
   color: white;
   border: none;
@@ -82,6 +87,42 @@ canvas {
 }
 
 .restart-button:hover {
+  background-color: #FF8C00;
+  transform: scale(1.1);
+}
+
+.start-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.start-screen img {
+  max-width: 80%;
+  max-height: 70vh;
+}
+
+.start-button {
+  margin-top: 20px;
+  padding: 10px 30px;
+  font-size: 24px;
+  background-color: #FFAE00;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.start-button:hover {
   background-color: #FF8C00;
   transform: scale(1.1);
 }

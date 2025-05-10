@@ -3,7 +3,7 @@ class Character extends MovableObject {
   width = 130;
   x = 100;
   y = 85;
-  speed = 10;
+  speed = 6;
   offset = {
     top: 120,  
     left: 40,
@@ -215,7 +215,7 @@ class Character extends MovableObject {
       let delay = 100;
       if (images === this.IMAGES_IDLE) delay = 300;
       if (images === this.IMAGES_LONG_IDLE) delay = 300;
-      if (images === this.IMAGES_WALKING) delay = 60;
+      if (images === this.IMAGES_WALKING) delay = 80;
       if (images === this.IMAGES_JUMPING) delay = 120;
       if (images === this.IMAGES_HURT) delay = 80;
   

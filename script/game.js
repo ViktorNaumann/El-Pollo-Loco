@@ -5,6 +5,7 @@ let backgroundMusic = new Audio('audio/background1.mp3');
 let windSound = new Audio('audio/background2.mp3');
 let musicStarted = false; // Flag to check if music has started
 let isMuted = false; // Neue Variable für Mute-Status
+let gameStarted = false;
 
 backgroundMusic.loop = true;
 windSound.loop = true;
@@ -16,7 +17,10 @@ windSound.volume = 0.3;
 
 
 // In der game.js oder einem globalen Bereich
+// In game.js - verbesserte restartGame Funktion
 function restartGame() {
+    console.log("Restarting game..."); // Debug-Log
+    
     // Overlay verstecken
     document.getElementById('game-overlay').classList.add('hidden');
     
@@ -29,8 +33,11 @@ function restartGame() {
         clearAllIntervals();
     }
     
-    // Spiel neu initialisieren
-    init();
+    // Keyboard zurücksetzen
+    keyboard = new Keyboard(); // Neues Keyboard-Objekt erstellen
+    
+    // Spiel neu initialisieren (direkt mit startGame)
+    startGame();
 }
 
 // Hilfsfunktion zum Stoppen aller Intervalle
@@ -68,10 +75,37 @@ function initLevel() {
 function init() {
     canvas = document.getElementById('canvas');
     
-    // Level vor der World-Erstellung initialisieren
-    let level = initLevel();
+    // Event-Listener für Restart-Button (direkt und unabhängig von keyboard)
+    const restartButton = document.querySelector('.restart-button');
+    if (restartButton) {
+        // Alten Event-Listener entfernen falls vorhanden
+        restartButton.removeEventListener('click', restartGame);
+        // Neuen Event-Listener hinzufügen
+        restartButton.addEventListener('click', restartGame);
+    }
     
-    // Neue World mit dem initialisierten Level erstellen
+    // Rest der Initialisierung...
+    
+    // Spiel starten mit Startbildschirm wenn vorhanden
+    if (document.getElementById('start-screen')) {
+        const startButton = document.getElementById('start-button');
+        const startScreen = document.getElementById('start-screen');
+        
+        startButton.addEventListener('click', () => {
+            startScreen.style.display = 'none';
+            startGame();
+        });
+    } else {
+        // Direktstart ohne Startbildschirm
+        startGame();
+    }
+}
+
+function startGame() {
+    gameStarted = true;
+    
+    // Spiel initialisieren
+    let level = initLevel();
     world = new World(canvas, keyboard, level);
     
     // Character-Status zurücksetzen

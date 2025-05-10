@@ -97,6 +97,6 @@ class MovableObject extends DrawableObject {
   }
 
   jump() {
-    this.speedY = 30; // Set the speedY to a positive value to move up
+    this.speedY = 22; // Set the speedY to a positive value to move up
   }
 }
