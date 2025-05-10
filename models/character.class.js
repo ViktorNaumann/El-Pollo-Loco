@@ -223,4 +223,27 @@ class Character extends MovableObject {
     }
   }
 
+  // In der Character-Klasse, wo der Tod geprüft wird
+  isDead() {
+    if (this.energy <= 0) {
+      // Nur einmal auslösen
+      if (!this.gameOverTriggered) {
+        this.gameOverTriggered = true;
+        // Todes-Animation abspielen wenn vorhanden
+        if (this.playDeathAnimation) {
+          this.playDeathAnimation();
+        }
+        
+        // Game Over mit Niederlage auslösen
+        setTimeout(() => {
+          if (this.world) {
+            this.world.triggerGameOver(false);
+          }
+        }, 1000); // Kurze Verzögerung
+      }
+      return true;
+    }
+    return false;
+  }
+
 }

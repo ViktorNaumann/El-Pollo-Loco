@@ -137,6 +137,12 @@ class Endboss extends MovableObject {
       this.world.bossHurtSound.currentTime = 0;
       this.world.bossHurtSound.play();
     }
+    
+    // NEU: Prüfen ob der Endboss stirbt und die() aufrufen
+    if (this.energy <= 0 && !this.isDying) {
+      this.isDying = true; // Flag setzen um mehrfache Aufrufe zu vermeiden
+      this.die();
+    }
   }
 
   attackPlayer() {
@@ -191,6 +197,23 @@ class Endboss extends MovableObject {
         }
       }
     }, 2000 + Math.random() * 3000); // Alle 2-5 Sekunden ändern
+  }
+  
+  // In der Endboss-Klasse
+  die() {
+    this.energy = 0;
+    
+    // Animation direkt abspielen statt playDeathAnimation zu verwenden
+    clearInterval(this.animationInterval);
+    this.playAnimationOnce(this.IMAGES_DEAD);
+    this.deadPlayed = true;
+    
+    // Game Over mit Sieg auslösen
+    setTimeout(() => {
+      if (this.world) {
+        this.world.triggerGameOver(true);
+      }
+    }, 1500); // Längere Verzögerung für Boss-Tod
   }
   
 }

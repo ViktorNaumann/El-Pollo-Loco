@@ -4,6 +4,7 @@ let keyboard = new Keyboard(); // Create a new instance of the Keyboard class
 let backgroundMusic = new Audio('audio/background1.mp3');
 let windSound = new Audio('audio/background2.mp3');
 let musicStarted = false; // Flag to check if music has started
+let isMuted = false; // Neue Variable für Mute-Status
 
 backgroundMusic.loop = true;
 windSound.loop = true;
@@ -14,9 +15,84 @@ windSound.volume = 0.3;
 
 
 
+// In der game.js oder einem globalen Bereich
+function restartGame() {
+    // Overlay verstecken
+    document.getElementById('game-overlay').classList.add('hidden');
+    
+    // Alte Animationen und Intervalle stoppen
+    if (world) {
+        // RequestAnimationFrame stoppen (falls möglich)
+        window.cancelAnimationFrame(world.animationFrame);
+        
+        // Eventuelle Intervalle stoppen
+        clearAllIntervals();
+    }
+    
+    // Spiel neu initialisieren
+    init();
+}
+
+// Hilfsfunktion zum Stoppen aller Intervalle
+function clearAllIntervals() {
+    // Höchste bekannte Intervall-ID ermitteln
+    var highestIntervalId = window.setInterval(function(){}, 0);
+    
+    // Alle Intervalle stoppen
+    for (var i = 1; i <= highestIntervalId; i++) {
+        window.clearInterval(i);
+    }
+}
+
+// Level-Initialisierung
+function initLevel() {
+  // Neues Level erstellen
+  let level = new Level(
+    createLevelEnemies(),
+    createClouds(),
+    createBackgrounds(),
+    createCoins(),
+    createBottles(),
+    createTumbleweeds()
+  );
+  
+  // Level in der globalen Variable speichern, damit die World darauf zugreifen kann
+  window.level = level;
+  
+  // Game-State zurücksetzen
+  musicStarted = false;
+  
+  return level; // Level zurückgeben für sofortige Verwendung
+}
+
 function init() {
     canvas = document.getElementById('canvas');
-    world = new World(canvas, keyboard);  
+    
+    // Level vor der World-Erstellung initialisieren
+    let level = initLevel();
+    
+    // Neue World mit dem initialisierten Level erstellen
+    world = new World(canvas, keyboard, level);
+    
+    // Character-Status zurücksetzen
+    world.character.energy = 100;
+    world.character.collectedBottles = 0;
+    world.collectedCoins = 0;
+    
+    // Statusbars aktualisieren
+    world.statusBar.setPercentage(100);
+    world.statusBarBottle.setPercentage(0);
+    world.statusBarCoin.setPercentage(0);
+    
+    // Musik zurücksetzen und starten
+    backgroundMusic.currentTime = 0;
+    windSound.currentTime = 0;
+    backgroundMusic.play();
+    windSound.play();
+    musicStarted = true;
+    
+    // Tastatureingaben aktivieren
+    keyboard.enabled = true;
 }
 
 window.addEventListener("keydown", (event) => {
