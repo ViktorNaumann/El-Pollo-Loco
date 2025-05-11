@@ -21,6 +21,11 @@ class World {
   collectSound = new Audio("audio/collect.mp3");
   squeezeChickenSound = new Audio("audio/squeeze_chicken.mp3");
   collectCoin = new Audio("audio/collect_coin.mp3");
+  endbossFightMusic = new Audio("audio/endboss_fight.mp3");
+  endbossMusicPlayed = false; // Flag für einmalige Aktivierung
+  winSound = new Audio("audio/win_sound.mp3");
+  lostSound = new Audio("audio/lost_sound.mp3");
+  lostSpeakSound = new Audio("audio/lost_speak.mp3");
 
   constructor(canvas, keyboard, level) {
     this.ctx = canvas.getContext("2d");
@@ -71,7 +76,60 @@ class World {
       this.endbossStatusBar.visible = true;
       boss.isVisible = true; // Endboss sichtbar
       boss.isActive = true; // Endboss aktiv
+      
+      // Endboss-Musik nur einmal abspielen
+      if (!this.endbossMusicPlayed) {
+        console.log('Endboss Fight beginnt! Musik wechselt...');
+        
+        // Sanfteres Ausblenden der normalen Musik
+        if (window.backgroundMusic) {
+          this.fadeOutAudio(window.backgroundMusic);
+        }
+        if (window.windSound) {
+          this.fadeOutAudio(window.windSound);
+        }
+        
+        // Endboss-Kampfmusik einblenden und abspielen
+        this.endbossFightMusic.loop = true;
+        this.endbossFightMusic.volume = 0;
+        this.endbossFightMusic.play()
+          .then(() => this.fadeInAudio(this.endbossFightMusic, 0.2))
+          .catch(err => console.error('Musik konnte nicht gestartet werden:', err));
+        
+        this.endbossMusicPlayed = true;
+      }
     }
+  }
+
+  // Hilfsmethode zum sanften Ausblenden von Audio
+  fadeOutAudio(audio) {
+    if (!audio) return;
+    
+    const originalVolume = audio.volume;
+    const fadeInterval = setInterval(() => {
+      if (audio.volume > 0.05) {
+        audio.volume -= 0.05;
+      } else {
+        audio.pause();
+        audio.volume = originalVolume; // Für späteren Gebrauch
+        clearInterval(fadeInterval);
+      }
+    }, 100);
+  }
+
+  // Hilfsmethode zum sanften Einblenden von Audio
+  fadeInAudio(audio, targetVolume = 0.2) {
+    if (!audio) return;
+    
+    audio.volume = 0.05;
+    const fadeInterval = setInterval(() => {
+      if (audio.volume < targetVolume - 0.05) {
+        audio.volume += 0.05;
+      } else {
+        audio.volume = targetVolume;
+        clearInterval(fadeInterval);
+      }
+    }, 100);
   }
 
   checkBottleHits() {
@@ -321,12 +379,33 @@ handleCharacterDamage() {
     // Alle beweglichen Objekte anhalten
     this.freezeGame();
     
-    // Das richtige Overlay-Bild setzen
+    // Hintergrundmusik stoppen
+    if (this.endbossFightMusic) {
+      this.fadeOutAudio(this.endbossFightMusic);
+    }
+    
+    // Das richtige Overlay-Bild setzen und Sound abspielen
     const overlayImg = document.getElementById('overlay-image');
     if (playerWon) {
+      // Gewonnen
       overlayImg.src = 'img/You won, you lost/You won A.png';
+      
+      // Sieges-Sound abspielen
+      this.winSound.volume = 0.7;
+      this.winSound.play();
     } else {
+      // Verloren
       overlayImg.src = 'img/You won, you lost/You lost.png';
+      
+      // Verloren-Sound abspielen
+      this.lostSound.volume = 0.9;
+      this.lostSound.play();
+      
+      // Nach dem ersten Sound den Sprachsound abspielen
+      this.lostSound.onended = () => {
+        this.lostSpeakSound.volume = 0.9;
+        this.lostSpeakSound.play();
+      };
     }
     
     // Overlay anzeigen
