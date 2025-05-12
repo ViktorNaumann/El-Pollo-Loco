@@ -84,6 +84,13 @@ function init() {
         restartButton.addEventListener('click', restartGame);
     }
     
+    // Event-Listener für Zurück-Button hinzufügen
+    const backButton = document.querySelector('.back-button');
+    if (backButton) {
+        backButton.removeEventListener('click', backToStartScreen);
+        backButton.addEventListener('click', backToStartScreen);
+    }
+    
     // Rest der Initialisierung...
     
     // Spiel starten mit Startbildschirm wenn vorhanden
@@ -127,6 +134,48 @@ function startGame() {
     
     // Tastatureingaben aktivieren
     keyboard.enabled = true;
+}
+
+/**
+ * Wechselt zurück zum Start-Screen
+ */
+function backToStartScreen() {
+    console.log("Zurück zum Start-Screen..."); // Debug-Log
+    
+    // Alte Animationen und Intervalle stoppen
+    if (world) {
+        window.cancelAnimationFrame(world.animationFrame);
+        clearAllIntervals();
+    }
+    
+    // Game-Overlay ausblenden
+    document.getElementById('game-overlay').classList.add('hidden');
+    
+    // Canvas zurücksetzen
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Spielstatus zurücksetzen
+    gameStarted = false;
+    
+    // Start-Screen einblenden
+    const startScreen = document.getElementById('start-screen');
+    startScreen.classList.remove('hidden');
+    startScreen.style.display = 'flex'; // Explizites Display setzen
+    
+    // Musik zurücksetzen
+    backgroundMusic.currentTime = 0;
+    backgroundMusic.pause();
+    
+    windSound.currentTime = 0;
+    windSound.pause();
+    
+    if (window.endbossMusic) {
+        window.endbossMusic.currentTime = 0;
+        window.endbossMusic.pause();
+    }
+    
+    musicStarted = false;
 }
 
 window.addEventListener("keydown", (event) => {

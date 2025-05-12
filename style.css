@@ -60,6 +60,11 @@ canvas {
   display: none;
 }
 
+/* Stelle sicher, dass diese CSS-Regel existiert und korrekt ist */
+.hidden {
+    display: none !important;
+}
+
 .overlay-content {
   text-align: center;
   display: flex;
@@ -142,4 +147,42 @@ canvas {
 .start-button:hover {
   background-color: #FF8C00;
   transform: scale(1.1);
+}
+
+/* Button-Container für horizontale Ausrichtung */
+.button-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Zurück-Button (gleicher Stil wie restart-button) */
+.back-button {
+  padding: 10px 30px;
+  font-size: 24px;
+  background-color: #2E86C1; /* Blaue Farbe für Unterscheidung */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.back-button:hover {
+  background-color: #1A5276;
+  transform: scale(1.1);
+}
+
+/* Responsive Anpassungen */
+@media (max-width: 768px) {
+  .button-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .restart-button, .back-button {
+    width: 80%;
+    margin-bottom: 10px;
+  }
 }

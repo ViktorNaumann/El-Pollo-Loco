@@ -32,15 +32,18 @@
     <!-- Overlay für Game Over/Victory -->
     <div id="game-overlay" class="game-overlay hidden">
       <div class="overlay-content">
-        <img id="overlay-image" src="">
-        <button onclick="restartGame()" class="restart-button">RESTART</button>
+        <img id="overlay-image" src="desert">
+        <div class="button-container">
+          <button onclick="restartGame()" class="restart-button">RESTART</button>
+          <button onclick="backToStartScreen()" class="back-button">ZURÜCK ZUM START</button>
+        </div>
       </div>
     </div>
 
     <!-- In index.html -->
     <div id="start-screen" class="start-screen">
       <img src="img/9_intro_outro_screens/start/startscreen_1.png" alt="Start Screen">
-      <button id="start-button" class="start-button">SPIELEN</button>
+      <button id="start-button" class="start-button">PLAY</button>
     </div>
   </body>
 </html>

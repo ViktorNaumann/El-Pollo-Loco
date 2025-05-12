@@ -79,7 +79,6 @@ class World {
       
       // Endboss-Musik nur einmal abspielen
       if (!this.endbossMusicPlayed) {
-        console.log('Endboss Fight beginnt! Musik wechselt...');
         
         // Sanfteres Ausblenden der normalen Musik
         if (window.backgroundMusic) {
@@ -94,7 +93,6 @@ class World {
         this.endbossFightMusic.volume = 0;
         this.endbossFightMusic.play()
           .then(() => this.fadeInAudio(this.endbossFightMusic, 0.2))
-          .catch(err => console.error('Musik konnte nicht gestartet werden:', err));
         
         this.endbossMusicPlayed = true;
       }
