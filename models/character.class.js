@@ -11,6 +11,7 @@ class Character extends MovableObject {
     bottom: 10,
   };
   isDeadAnimationPlayed = false;
+  isRunning = false;
 
   IMAGES_IDLE = [
     'img/2_character_pepe/1_idle/idle/I-1.png',
@@ -78,31 +79,43 @@ class Character extends MovableObject {
   world;
 
   constructor() {
-    super().loadImage("img/2_character_pepe/1_idle/idle/I-1.png");
-    super.loadImages(this.IMAGES_WALKING);
-    super.loadImages(this.IMAGES_JUMPING);
-    super.loadImages(this.IMAGES_DEAD);
-    super.loadImages(this.IMAGES_HURT);
-    this.loadImages(this.IMAGES_IDLE);
-    this.loadImages(this.IMAGES_LONG_IDLE);
-
+    super();
+    // Lade zuerst das Standard-Bild
+    this.loadImage("img/2_character_pepe/1_idle/idle/I-1.png");
     
-    this.jumpSound = new Audio("audio/jump.mp3");
-    this.runSound = new Audio("audio/run.mp3");
-
+    // Lade dann alle Animations-Bilder
+    this.loadAllAnimationImages();
+    
+    // Sounds zentral initialisieren (nicht in animate()-Methode)
+    this.initSounds();
+    
+    // Andere Initialisierungen
     this.lastActionTime = new Date().getTime();
-    this.idleCheckInterval();
-    this.currentAnimation = null; // Merkt sich gerade aktive Animation
-
-
     this.collectedBottles = 5;
-
-  
-    this.jumpSound.volume = 0.4;
-    this.runSound.volume = 0.4;
-  
+    
+    // Animation und Gravitation starten
     this.applyGravity();
     this.animate();
+  }
+  
+  // Extrahiere Bild-Laden in separate Methode für bessere Übersicht
+  loadAllAnimationImages() {
+    this.loadImages(this.IMAGES_WALKING);
+    this.loadImages(this.IMAGES_JUMPING);
+    this.loadImages(this.IMAGES_DEAD);
+    this.loadImages(this.IMAGES_HURT);
+    this.loadImages(this.IMAGES_IDLE);
+    this.loadImages(this.IMAGES_LONG_IDLE);
+  }
+  
+  // Extrahiere Sound-Initialisierung
+  initSounds() {
+    this.jumpSound = new Audio("audio/jump.mp3");
+    this.runSound = new Audio("audio/run.mp3");
+    
+    // Volumen nur einmal setzen
+    this.jumpSound.volume = 0.4;
+    this.runSound.volume = 0.4;
   }
 
   playAnimationWithSpeed(images, delay) {
@@ -119,34 +132,49 @@ class Character extends MovableObject {
 
   animate() {
     setInterval(() => {
+      // Rechts laufen
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
         this.moveRight();
         this.otherDirection = false;
-        if (!this.isAboveGround()) {
-          window.playSound(this.runSound, 0.4);
+        
+        // Sound-Steuerung verbessert
+        if (!this.isAboveGround() && !this.isRunning) {
+          this.startRunningSound();
         }
         this.lastActionTime = new Date().getTime();
       }
-    
-      if (this.world.keyboard.LEFT && this.x > 0) {
+      // Links laufen
+      else if (this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
         this.otherDirection = true;
-        if (!this.isAboveGround()) {
-          window.playSound(this.runSound, 0.4);
+        
+        // Sound-Steuerung verbessert
+        if (!this.isAboveGround() && !this.isRunning) {
+          this.startRunningSound();
         }
         this.lastActionTime = new Date().getTime();
       }
-    
+      // Keine Lauftaste gedrückt → Sound stoppen
+      else {
+        this.stopRunningSound();
+      }
+      
+      // Springen-Steuerung bleibt unverändert
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
         this.jump();
         window.playSound(this.jumpSound, 0.4);
         this.lastActionTime = new Date().getTime();
       }
-    
+      
+      // In der Luft → Laufsound stoppen
+      if (this.isAboveGround()) {
+        this.stopRunningSound();
+      }
+      
       this.world.camera_x = -this.x + 100;
     }, 1000 / 60);
-    
-
+  
+    // Rest der Methode bleibt unverändert...
     setInterval(() => {
       let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
     
@@ -164,10 +192,6 @@ class Character extends MovableObject {
         this.setAnimation(this.IMAGES_IDLE);
       }
     }, 1000 / 10); // statt 150ms → ca. 60–100ms für flüssigere Animation
-    
-    
-    
-    
   }
 
   update() {
@@ -248,4 +272,21 @@ class Character extends MovableObject {
     return false;
   }
 
+  // Neue Hilfsmethoden für Sound-Steuerung
+  startRunningSound() {
+    if (!this.isRunning && !window.isMuted) {
+      this.isRunning = true;
+      this.runSound.loop = true; // Sound läuft kontinuierlich
+      this.runSound.volume = 0.4;
+      this.runSound.play().catch(err => console.log('Sound-Fehler:', err));
+    }
+  }
+  
+  stopRunningSound() {
+    if (this.isRunning) {
+      this.isRunning = false;
+      this.runSound.pause();
+      this.runSound.currentTime = 0;
+    }
+  }
 }
