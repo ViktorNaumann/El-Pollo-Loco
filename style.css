@@ -284,4 +284,50 @@ canvas {
   line-height: 1.6;
 }
 
+/* Minimalistisches Design für die Controls-Box */
+.controls-box {
+  position: absolute;
+  bottom: 20px; /* Von 80px auf 20px geändert - gleiche Höhe wie Impressum-Button */
+  left: 30px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid #ffb900;
+  border-radius: 5px;
+  padding: 12px;
+  color: white;
+  max-width: 250px;
+}
+
+.controls-box h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #ffb900;
+  font-size: 16px; /* Kleinere Überschrift */
+  letter-spacing: 1px; /* Bessere Lesbarkeit */
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  font-size: 14px; /* Kleinere Schrift */
+}
+
+.key-icon {
+  background-color: transparent; /* Kein Hintergrund */
+  border: 1px solid #ffb900; /* Nur Umrandung */
+  color: #ffb900; /* Goldene Schrift statt schwarz */
+  font-weight: normal;
+  padding: 3px 8px;
+  margin-right: 12px;
+  border-radius: 3px;
+  min-width: 40px; /* Schmaler */
+  text-align: center;
+  box-shadow: none; /* Kein Schatten */
+}
+
+.key-icon:active {
+  transform: none; /* Kein Effekt */
+}
+
 

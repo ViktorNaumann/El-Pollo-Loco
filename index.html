@@ -44,13 +44,27 @@
     <div id="start-screen" class="start-screen">
       <img src="img/9_intro_outro_screens/start/startscreen_1.png" alt="Start Screen">
       
-      <!-- Sound-Button hinzufügen -->
-      <button id="mute-button" class="mute-button sound-on" onclick="toggleMute()">SOUND</button>
-      
+      <!-- Bestehende Buttons -->
       <button id="start-button" class="start-button">PLAY</button>
-      
-      <!-- Impressum Button (neu) -->
+      <button id="mute-button" class="mute-button sound-on" onclick="toggleMute()">SOUND</button>
       <button id="impressum-button" class="impressum-button" onclick="openImpressum()">IMPRESSUM</button>
+      
+      <!-- Neu: Controls-Box für Spielsteuerung -->
+      <div class="controls-box">
+        <h3>CONTROLS</h3>
+        <div class="control-item">
+          <div class="key-icon">←→</div>
+          <span>Run</span>
+        </div>
+        <div class="control-item">
+          <div class="key-icon">SPACE</div>
+          <span>Jump</span>
+        </div>
+        <div class="control-item">
+          <div class="key-icon">D</div>
+          <span>Throw bottle</span>
+        </div>
+      </div>
     </div>
 
     <!-- Modal für Impressum (neu) -->
