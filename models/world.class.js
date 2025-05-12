@@ -208,17 +208,19 @@ class World {
 
 // Behandelt Kollisionen mit dem Endboss
 handleEndbossCollision(endboss) {
-    // Direkter Schaden bei Endboss-Kollision
-    this.character.energy -= 5;
-    if (this.character.energy < 0) this.character.energy = 0;
-    
-    // Garantierter Sound für Endboss-Treffer
-    const bossHitSound = new Audio("audio/hit.mp3");
-    bossHitSound.volume = 0.4;
-    bossHitSound.play();
-    
-    this.statusBar.setPercentage(this.character.energy);
-    this.character.lastHit = new Date().getTime();
+    // Immunitätsprüfung hinzufügen
+    if (!this.character.isHurt()) {
+        // hit() Methode verwenden statt direkter Manipulation
+        this.character.hit(20);
+        
+        // Sound abspielen
+        const bossHitSound = new Audio("audio/hit.mp3");
+        bossHitSound.volume = 0.4;
+        bossHitSound.play();
+        
+        // Statusbar aktualisieren
+        this.statusBar.setPercentage(this.character.energy);
+    }
 }
 
 // Behandelt Kollisionen mit Chickens
@@ -230,8 +232,18 @@ handleChickenCollision(chicken) {
         // Character springt auf Chicken
         this.handleChickenJumpedOn(chicken);
     } else {
-        // Seitliche Kollision mit Chicken
-        this.handleCharacterDamage();
+        // Chicken trifft Character von der Seite
+        if (!this.character.isHurt()) {
+            // Character erhält Schaden - von 5 auf 20 erhöht
+            this.character.hit(20); // Hier 5 auf 20 erhöht
+            
+            // Sound abspielen
+            this.hitSound.currentTime = 0;
+            this.hitSound.play();
+            
+            // Status Bar aktualisieren
+            this.statusBar.setPercentage(this.character.energy);
+        }
     }
 }
 

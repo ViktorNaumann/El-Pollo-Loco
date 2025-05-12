@@ -46,17 +46,21 @@ class MovableObject extends DrawableObject {
   
 
   hit() {
-    this.energy -= 5; // Decrease energy by 5
+    // Immer lastHit setzen, unabhängig vom Energiestand
+    this.lastHit = new Date().getTime();
+    
+    // Dann Energie reduzieren
+    this.energy -= 20; 
+    
+    // Energie nicht unter 0 fallen lassen
     if (this.energy < 0) {
-      this.energy = 0; // Set energy to 0 if it goes below 0
-    } else {
-      this.lastHit = new Date().getTime(); // Set the last hit time to the current time
+      this.energy = 0;
     }
   }
 
   isHurt() {
     let timepassed = new Date().getTime() - this.lastHit; // Calculate the time passed since the last hit
-    return timepassed < 500; // Check if the time passed is less than 1 second
+    return timepassed < 1000; // Check if the time passed is less than 1 second
   }
 
   isDead() {

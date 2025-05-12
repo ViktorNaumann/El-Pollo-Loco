@@ -147,14 +147,27 @@ class Endboss extends MovableObject {
 
   attackPlayer() {
     if (!this.world || !this.world.character || this.isDead()) return;
-  
+
     if (this.isColliding(this.world.character)) {
+      // Animation immer abspielen bei Kollision
       this.playAnimation(this.IMAGES_ATTACK);
-      this.world.character.hit();
-      this.world.statusBar.setPercentage(this.world.character.energy);
+      
+      // Schaden nur zufügen, wenn der Character nicht immun ist
+      if (!this.world.character.isHurt()) {
+        this.world.character.hit(20);
+        
+        // Sound abspielen wenn Character getroffen wird
+        if (this.world.hitSound) {
+          this.world.hitSound.currentTime = 0;
+          this.world.hitSound.volume = 0.4;
+          this.world.hitSound.play();
+        }
+        
+        this.world.statusBar.setPercentage(this.world.character.energy);
   
-      if (this.world.character.energy <= 0) {
-        this.world.triggerGameOver();
+        if (this.world.character.energy <= 0) {
+          this.world.triggerGameOver(false);
+        }
       }
     }
   }  

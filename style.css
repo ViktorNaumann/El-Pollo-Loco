@@ -97,7 +97,9 @@ canvas {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: black;
+  background-image: url('img/desert_background/desert.png'); /* Wüstenhintergrund */
+  background-size: cover;
+  background-position: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -105,9 +107,24 @@ canvas {
   z-index: 1000;
 }
 
+/* Optional: leichte Verdunklung für besseren Kontrast */
+.start-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3); /* Leicht transparent */
+  z-index: -1;
+}
+
 .start-screen img {
   max-width: 80%;
-  max-height: 70vh;
+  max-height: 60vh;
+  margin-bottom: 20px;
+  position: relative; /* Damit das Bild über der Verdunklung liegt */
+  z-index: 1;
 }
 
 .start-button {
