@@ -302,3 +302,53 @@ window.playSound = function(sound, volume = 0.3) {
         });
     }
 }
+
+// Funktionen für Impressum
+function openImpressum() {
+  // Pausiere Hintergrundmusik wenn sie läuft
+  if (backgroundMusic && !window.isMuted && musicStarted) {
+    backgroundMusic.pause();
+  }
+  
+  // Zeige das Modal an
+  document.getElementById('impressum-modal').classList.remove('hidden');
+  
+  // Verhindere Scrolling im Hintergrund
+  document.body.style.overflow = 'hidden';
+}
+
+function closeImpressum() {
+  // Verstecke das Modal
+  document.getElementById('impressum-modal').classList.add('hidden');
+  
+  // Erlaube wieder Scrolling
+  document.body.style.overflow = 'auto';
+  
+  // Setze Musik fort wenn nicht gemuted und wenn Spiel nicht gestartet
+  if (backgroundMusic && !window.isMuted && musicStarted && !gameStarted) {
+    backgroundMusic.play();
+  }
+}
+
+// Event-Listener für ESC-Taste zum Schließen
+window.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeImpressum();
+  }
+});
+
+// Nach den bestehenden Impressum-Funktionen einfügen:
+
+// Event-Listener hinzufügen, sobald die Seite geladen ist
+document.addEventListener('DOMContentLoaded', function() {
+  // Das Modal-Element
+  const impressumModal = document.getElementById('impressum-modal');
+  
+  // Event-Listener für Klicks auf das Modal
+  impressumModal.addEventListener('click', function(event) {
+    // Prüfen, ob der Klick außerhalb des modal-content erfolgte
+    if (event.target === impressumModal) {
+      closeImpressum();
+    }
+  });
+});
