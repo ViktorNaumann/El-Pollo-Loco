@@ -326,14 +326,6 @@ handleCharacterDamage() {
         this.ctx.translate(-this.camera_x, 0);
     }
     
-    this.addToMap(this.statusBar);
-    this.addToMap(this.statusBarBottle);
-    this.addToMap(this.statusBarCoin); // ✅ Coins zeichnen
-
-    if (this.endbossStatusBar.visible) {
-      this.addToMap(this.endbossStatusBar);
-    }
-
     this.ctx.translate(this.camera_x, 0);
 
     this.addObjectsToMap(this.level.clouds);
@@ -350,6 +342,14 @@ handleCharacterDamage() {
     });
 
     this.ctx.translate(-this.camera_x, 0);
+
+    this.addToMap(this.statusBar);
+    this.addToMap(this.statusBarBottle);
+    this.addToMap(this.statusBarCoin); // ✅ Coins zeichnen
+
+    if (this.endbossStatusBar.visible) {
+      this.addToMap(this.endbossStatusBar);
+    }
 
     this.animationFrame = requestAnimationFrame(() => {
       this.draw();
