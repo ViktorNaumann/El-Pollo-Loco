@@ -330,15 +330,6 @@ function closeImpressum() {
   }
 }
 
-// Event-Listener für ESC-Taste zum Schließen
-window.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    closeImpressum();
-  }
-});
-
-// Nach den bestehenden Impressum-Funktionen einfügen:
-
 // Event-Listener hinzufügen, sobald die Seite geladen ist
 document.addEventListener('DOMContentLoaded', function() {
   // Das Modal-Element
