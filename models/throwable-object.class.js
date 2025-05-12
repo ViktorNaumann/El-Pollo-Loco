@@ -26,6 +26,10 @@ class ThrowableObject extends MovableObject {
       this.throw(otherDirection);
       this.loadImages(this.IMAGES_ROTATE);
       this.loadImages(this.IMAGES_SPLASH);
+      
+      // Sound initialisieren
+      this.breakSound = new Audio("audio/break.mp3");
+      
       this.animateRotation();
     }
   
@@ -68,9 +72,8 @@ class ThrowableObject extends MovableObject {
   
       this.animateSplash();
   
-      if (this.world && this.world.breakSound) {
-        window.playSound(this.breakSound, 0.3);
-      }
+      // Korrigierte Version:
+      window.playSound(this.breakSound, 0.5); // Erhöhte Lautstärke für bessere Hörbarkeit
   
       let splashDuration = this.IMAGES_SPLASH.length * 150;
       setTimeout(() => {
