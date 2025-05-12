@@ -134,8 +134,7 @@ class Endboss extends MovableObject {
     this.shakeAnimation(); // 🔁 sichtbar wackeln
   
     if (this.world && this.world.bossHurtSound) {
-      this.world.bossHurtSound.currentTime = 0;
-      this.world.bossHurtSound.play();
+      window.playSound(this.world.bossHurtSound, 0.4);
     }
     
     // NEU: Prüfen ob der Endboss stirbt und die() aufrufen
@@ -158,9 +157,7 @@ class Endboss extends MovableObject {
         
         // Sound abspielen wenn Character getroffen wird
         if (this.world.hitSound) {
-          this.world.hitSound.currentTime = 0;
-          this.world.hitSound.volume = 0.4;
-          this.world.hitSound.play();
+          window.playSound(this.world.hitSound, 0.4);
         }
         
         this.world.statusBar.setPercentage(this.world.character.energy);

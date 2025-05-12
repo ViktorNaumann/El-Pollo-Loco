@@ -4,7 +4,7 @@ let keyboard = new Keyboard(); // Create a new instance of the Keyboard class
 let backgroundMusic = new Audio('audio/background1.mp3');
 let windSound = new Audio('audio/background2.mp3');
 let musicStarted = false; // Flag to check if music has started
-let isMuted = false; // Neue Variable für Mute-Status
+window.isMuted = false; // Als globale Property verfügbar machen
 let gameStarted = false;
 
 backgroundMusic.loop = true;
@@ -128,8 +128,18 @@ function startGame() {
     // Musik zurücksetzen und starten
     backgroundMusic.currentTime = 0;
     windSound.currentTime = 0;
-    backgroundMusic.play();
-    windSound.play();
+    if (!window.isMuted) {
+        backgroundMusic.play();
+        windSound.play();
+        backgroundMusic.volume = 0.4;
+        windSound.volume = 0.3;
+    } else {
+        // Trotzdem abspielen aber mit Lautstärke 0
+        backgroundMusic.volume = 0;
+        windSound.volume = 0;
+        backgroundMusic.play();
+        windSound.play();
+    }
     musicStarted = true;
     
     // Tastatureingaben aktivieren
@@ -228,3 +238,67 @@ window.addEventListener("keyup", (event) => {
     console.log(event);
 }
 );
+
+// In game.js einfügen, wo die restlichen Funktionen sind
+function toggleMute() {
+    window.isMuted = !window.isMuted; // Nur diese eine Variable umschalten
+    
+    // Button-Aussehen ändern
+    const muteButton = document.getElementById('mute-button');
+    if (window.isMuted) {
+        muteButton.textContent = "MUTED";
+        muteButton.classList.remove('sound-on');
+        muteButton.classList.add('sound-off');
+    } else {
+        muteButton.textContent = "SOUND";
+        muteButton.classList.remove('sound-off');
+        muteButton.classList.add('sound-on');
+    }
+    
+    // Musik-Status anwenden
+    backgroundMusic.volume = window.isMuted ? 0 : 0.4;
+    windSound.volume = window.isMuted ? 0 : 0.3;
+    
+    // Wenn world existiert, auch dort den Mute-Status anwenden
+    if (world) {
+        if (world.endbossFightMusic) {
+            world.endbossFightMusic.volume = window.isMuted ? 0 : 0.2;
+        }
+    }
+    
+    console.log('Sound ist jetzt:', window.isMuted ? 'aus' : 'an');
+}
+
+// Hilfsfunktion für Standard-Lautstärke verschiedener Sounds
+function getDefaultVolume(soundKey) {
+    const volumes = {
+        'hitSound': 0.3,
+        'jumpSound': 0.4,
+        'runSound': 0.3,
+        'throwSound': 0.3,
+        'breakSound': 0.3,
+        'collectSound': 0.3,
+        'collectCoinSound': 0.3,
+        'bossHurtSound': 0.4,
+        'squeezeChickenSound': 0.3,
+        'winSound': 0.7,
+        'lostSound': 0.9,
+        'lostSpeakSound': 0.9
+    };
+    
+    return volumes[soundKey] || 0.3; // Standard ist 0.3 wenn nicht definiert
+}
+
+// Nur die globale Funktion behalten und verbessern:
+window.playSound = function(sound, volume = 0.3) {
+    if (!sound) return; // Sicherheitscheck
+    
+    if (!window.isMuted) {
+        sound.currentTime = 0;
+        sound.volume = volume || getDefaultVolume(sound.id) || 0.3;
+        sound.play().catch(error => {
+            // Fehler beim Abspielen ignorieren (häufig bei mobilen Geräten)
+            console.log('Fehler beim Abspielen eines Sounds:', error);
+        });
+    }
+}

@@ -69,8 +69,7 @@ class ThrowableObject extends MovableObject {
       this.animateSplash();
   
       if (this.world && this.world.breakSound) {
-        this.world.breakSound.currentTime = 0;
-        this.world.breakSound.play();
+        window.playSound(this.breakSound, 0.3);
       }
   
       let splashDuration = this.IMAGES_SPLASH.length * 150;

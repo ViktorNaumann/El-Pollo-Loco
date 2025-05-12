@@ -88,11 +88,15 @@ class World {
           this.fadeOutAudio(window.windSound);
         }
         
-        // Endboss-Kampfmusik einblenden und abspielen
+        // Endboss-Kampfmusik einblenden und abspielen 
         this.endbossFightMusic.loop = true;
-        this.endbossFightMusic.volume = 0;
-        this.endbossFightMusic.play()
-          .then(() => this.fadeInAudio(this.endbossFightMusic, 0.2))
+        
+        // NUR abspielen, wenn nicht stummgeschaltet
+        if (!window.isMuted) {
+          this.endbossFightMusic.volume = 0;
+          this.endbossFightMusic.play()
+            .then(() => this.fadeInAudio(this.endbossFightMusic, 0.2));
+        }
         
         this.endbossMusicPlayed = true;
       }
@@ -101,7 +105,7 @@ class World {
 
   // Hilfsmethode zum sanften Ausblenden von Audio
   fadeOutAudio(audio) {
-    if (!audio) return;
+    if (!audio || window.isMuted) return;
     
     const originalVolume = audio.volume;
     const fadeInterval = setInterval(() => {
@@ -117,10 +121,16 @@ class World {
 
   // Hilfsmethode zum sanften Einblenden von Audio
   fadeInAudio(audio, targetVolume = 0.2) {
-    if (!audio) return;
+    if (!audio || window.isMuted) return;
     
     audio.volume = 0.05;
     const fadeInterval = setInterval(() => {
+      if (window.isMuted) {
+        audio.volume = 0;
+        clearInterval(fadeInterval);
+        return;
+      }
+      
       if (audio.volume < targetVolume - 0.05) {
         audio.volume += 0.05;
       } else {
@@ -171,9 +181,8 @@ class World {
         );
         
         bottle.world = this;
-        this.throwSound.currentTime = 0;
-        this.throwSound.play();
-        this.throwSound.volume = 0.3;
+        // Nutze window.playSound statt direktem Aufruf
+        window.playSound(this.throwSound, 0.3);
         this.throwableObject.push(bottle);
     }
   }
@@ -211,10 +220,8 @@ handleEndbossCollision(endboss) {
         // hit() Methode verwenden statt direkter Manipulation
         this.character.hit(20);
         
-        // Sound abspielen
-        const bossHitSound = new Audio("audio/hit.mp3");
-        bossHitSound.volume = 0.4;
-        bossHitSound.play();
+        // Sound abspielen mit window.playSound
+        window.playSound(this.hitSound, 0.4);
         
         // Statusbar aktualisieren
         this.statusBar.setPercentage(this.character.energy);
@@ -233,11 +240,10 @@ handleChickenCollision(chicken) {
         // Chicken trifft Character von der Seite
         if (!this.character.isHurt()) {
             // Character erhält Schaden - von 5 auf 20 erhöht
-            this.character.hit(20); // Hier 5 auf 20 erhöht
+            this.character.hit(20);
             
-            // Sound abspielen
-            this.hitSound.currentTime = 0;
-            this.hitSound.play();
+            // Sound abspielen mit window.playSound
+            window.playSound(this.hitSound, 0.3);
             
             // Status Bar aktualisieren
             this.statusBar.setPercentage(this.character.energy);
@@ -255,9 +261,8 @@ isCharacterJumpingOnEnemy(enemy) {
 
 // Behandelt Chicken-Eliminierung durch Sprung
 handleChickenJumpedOn(chicken) {
-    const squeezeSound = new Audio("audio/squeeze_chicken.mp3");
-    squeezeSound.volume = 0.3;
-    squeezeSound.play();
+    // Sound mit window.playSound abspielen
+    window.playSound(this.squeezeChickenSound, 0.3);
     
     chicken.die();
     setTimeout(() => {
@@ -275,9 +280,8 @@ handleCharacterDamage() {
     if (!this.character.isHurt()) {
         this.character.hit(5);
         
-        const hitSound = new Audio("audio/hit.mp3");
-        hitSound.volume = 0.3;
-        hitSound.play();
+        // Sound abspielen mit window.playSound
+        window.playSound(this.hitSound, 0.3);
         
         this.statusBar.setPercentage(this.character.energy);
     }
@@ -293,10 +297,8 @@ handleCharacterDamage() {
             this.collectedCoins++;
             this.statusBarCoin.setPercentage(this.collectedCoins * 5);
             
-            // Neues Audio-Objekt für jeden Coin erstellen
-            const coinSound = new Audio("audio/collect_coin.mp3");
-            coinSound.volume = 0.3;
-            coinSound.play();
+            // Sound mit window.playSound abspielen - hier collectCoin verwenden
+            window.playSound(this.collectCoin, 0.3);
         }
     }
   }
@@ -310,8 +312,8 @@ handleCharacterDamage() {
             this.level.bottles.splice(i, 1);
             this.character.collectedBottles++;
             this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
-            this.collectSound.play();
-            this.collectSound.volume = 0.3;
+            // Sound mit window.playSound abspielen
+            window.playSound(this.collectSound, 0.3);
         }
     }
   }
@@ -400,21 +402,20 @@ handleCharacterDamage() {
       // Gewonnen
       overlayImg.src = 'img/You won, you lost/You won A.png';
       
-      // Sieges-Sound abspielen
-      this.winSound.volume = 0.7;
-      this.winSound.play();
+      // Sieges-Sound abspielen mit window.playSound
+      window.playSound(this.winSound, 0.7);
     } else {
       // Verloren
       overlayImg.src = 'img/You won, you lost/You lost.png';
       
-      // Verloren-Sound abspielen
-      this.lostSound.volume = 0.9;
-      this.lostSound.play();
+      // Verloren-Sound abspielen mit window.playSound
+      window.playSound(this.lostSound, 0.9);
       
       // Nach dem ersten Sound den Sprachsound abspielen
       this.lostSound.onended = () => {
-        this.lostSpeakSound.volume = 0.9;
-        this.lostSpeakSound.play();
+        if (!window.isMuted) {
+          window.playSound(this.lostSpeakSound, 0.9);
+        }
       };
     }
     

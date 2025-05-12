@@ -12,7 +12,6 @@ class Character extends MovableObject {
   };
   isDeadAnimationPlayed = false;
 
-
   IMAGES_IDLE = [
     'img/2_character_pepe/1_idle/idle/I-1.png',
     'img/2_character_pepe/1_idle/idle/I-2.png',
@@ -123,22 +122,25 @@ class Character extends MovableObject {
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
         this.moveRight();
         this.otherDirection = false;
-        if (!this.isAboveGround()) this.runSound.play();
-        this.lastActionTime = new Date().getTime(); // ⬅️ hinzugefügt
+        if (!this.isAboveGround()) {
+          window.playSound(this.runSound, 0.4);
+        }
+        this.lastActionTime = new Date().getTime();
       }
     
       if (this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
         this.otherDirection = true;
-        if (!this.isAboveGround()) this.runSound.play();
-        this.lastActionTime = new Date().getTime(); // ⬅️ hinzugefügt
+        if (!this.isAboveGround()) {
+          window.playSound(this.runSound, 0.4);
+        }
+        this.lastActionTime = new Date().getTime();
       }
     
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
         this.jump();
-        this.jumpSound.currentTime = 0;
-        this.jumpSound.play();
-        this.lastActionTime = new Date().getTime(); // ⬅️ hinzugefügt
+        window.playSound(this.jumpSound, 0.4);
+        this.lastActionTime = new Date().getTime();
       }
     
       this.world.camera_x = -this.x + 100;

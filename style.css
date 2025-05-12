@@ -186,3 +186,31 @@ canvas {
     margin-bottom: 10px;
   }
 }
+
+/* In style.css hinzufügen */
+.mute-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.sound-on {
+  background-color: #28a745; /* Grün */
+  color: white;
+}
+
+.sound-off {
+  background-color: #dc3545; /* Rot */
+  color: white;
+}
+
+.mute-button:hover {
+  transform: scale(1.05);
+}
