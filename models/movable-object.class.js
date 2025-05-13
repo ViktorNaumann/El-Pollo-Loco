@@ -11,6 +11,13 @@ class MovableObject extends DrawableObject {
       if (this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY; // Move the object down by speedY
         this.speedY -= this.acceleration; // Increase the speedY by acceleration
+        
+        // Landung auf dem Boden - ABER nur wenn es wirklich der Hauptboden ist
+        if (this.y >= 195 && this.speedY <= 0) {
+          // Zum exakten Boden-Level zurücksetzen
+          this.y = 185;
+          this.speedY = 0;
+        }
       }
     }, 1000 / 25);
   }
