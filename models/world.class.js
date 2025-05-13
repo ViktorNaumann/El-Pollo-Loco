@@ -388,6 +388,11 @@ handleCharacterDamage() {
   }
 
   triggerGameOver(playerWon) {
+    // Character Laufsound stoppen - NEU HINZUGEFÜGT
+    if (this.character && this.character.isRunning) {
+      this.character.stopRunningSound();
+    }
+    
     // Alle beweglichen Objekte anhalten
     this.freezeGame();
     
