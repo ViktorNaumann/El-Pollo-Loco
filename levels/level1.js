@@ -16,7 +16,7 @@ function createCoins() {
 
 function createLevelEnemies() {
     let chickens = [];
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 10; i++) {
         const isBig = Math.random() < 0.4; // ca. 40% große Chickens
         // Startposition nach dem Schild (x > 500) und zufällig über das restliche Level verteilt
         const x = 500 + Math.random() * 2500; // Zufällige Position zwischen x=500 und x=3000
@@ -93,14 +93,14 @@ function createBottles() {
 function createTumbleweeds() {
     const tumbleweeds = [];
     // Erstelle 3 Steppenhexen, die bereits auf dem Spielfeld sind
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 2; i++) {
         const x = 500 + Math.random() * 2900; // Zufällige Position zwischen Start und Endboss
         const y = 380;
         tumbleweeds.push(new Tumbleweed(x, y));
     }
     
     // Erstelle 5 Steppenhexen hinter dem Endboss
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 3; i++) {
         const x = 3800 + Math.random() * 1500; // Startposition hinter dem Endboss (3400)
         const y = 380;
         tumbleweeds.push(new Tumbleweed(x, y));

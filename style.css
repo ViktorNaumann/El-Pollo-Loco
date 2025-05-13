@@ -48,7 +48,7 @@ canvas {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Verdunkelte Transparenz */
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -60,7 +60,6 @@ canvas {
   display: none;
 }
 
-/* Stelle sicher, dass diese CSS-Regel existiert und korrekt ist */
 .hidden {
     display: none !important;
 }
@@ -81,8 +80,8 @@ canvas {
 
 .restart-button {
   margin-top: 20px;
-  padding: 10px 30px; /* Von 20px auf 30px wie beim Start-Button */
-  font-size: 24px;    /* Von 20px auf 24px wie beim Start-Button */
+  padding: 10px 30px;
+  font-size: 24px;
   background-color: #FFAE00;
   color: white;
   border: none;
@@ -102,7 +101,7 @@ canvas {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('img/desert_background/desert.png'); /* Wüstenhintergrund */
+  background-image: url('img/desert_background/desert.png');
   background-size: cover;
   background-position: center;
   display: flex;
@@ -112,7 +111,6 @@ canvas {
   z-index: 1000;
 }
 
-/* Optional: leichte Verdunklung für besseren Kontrast */
 .start-screen::before {
   content: '';
   position: absolute;
@@ -120,7 +118,7 @@ canvas {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.3); /* Leicht transparent */
+  background-color: rgba(0, 0, 0, 0.3);
   z-index: -1;
 }
 
@@ -128,7 +126,7 @@ canvas {
   max-width: 80%;
   max-height: 60vh;
   margin-bottom: 20px;
-  position: relative; /* Damit das Bild über der Verdunklung liegt */
+  position: relative;
   z-index: 1;
 }
 
@@ -161,7 +159,7 @@ canvas {
 .back-button {
   padding: 10px 30px;
   font-size: 24px;
-  background-color: #2E86C1; /* Blaue Farbe für Unterscheidung */
+  background-color: #2E86C1;
   color: white;
   border: none;
   border-radius: 5px;
@@ -202,12 +200,12 @@ canvas {
 }
 
 .sound-on {
-  background-color: #28a745; /* Grün */
+  background-color: #28a745;
   color: white;
 }
 
 .sound-off {
-  background-color: #dc3545; /* Rot */
+  background-color: #dc3545;
   color: white;
 }
 
@@ -259,7 +257,7 @@ canvas {
   max-height: 80vh;
   overflow-y: auto;
   position: relative;
-  font-family: Arial, sans-serif; /* Diese Zeile hinzufügen */
+  font-family: Arial, sans-serif;
 }
 
 .close-button {
@@ -287,7 +285,7 @@ canvas {
 /* Minimalistisches Design für die Controls-Box */
 .controls-box {
   position: absolute;
-  bottom: 20px; /* Von 80px auf 20px geändert - gleiche Höhe wie Impressum-Button */
+  bottom: 20px;
   left: 30px;
   background-color: rgba(0, 0, 0, 0.5);
   border: 1px solid #ffb900;
@@ -302,35 +300,34 @@ canvas {
   margin-bottom: 10px;
   text-align: center;
   color: #ffb900;
-  font-size: 16px; /* Kleinere Überschrift */
-  letter-spacing: 1px; /* Bessere Lesbarkeit */
+  font-size: 16px;
+  letter-spacing: 1px;
 }
 
 .control-item {
   display: flex;
   align-items: center;
   margin: 8px 0;
-  font-size: 14px; /* Kleinere Schrift */
+  font-size: 14px;
 }
 
 .key-icon {
-  background-color: transparent; /* Kein Hintergrund */
-  border: 1px solid #ffb900; /* Nur Umrandung */
-  color: #ffb900; /* Goldene Schrift statt schwarz */
+  background-color: transparent;
+  border: 1px solid #ffb900;
+  color: #ffb900;
   font-weight: normal;
   padding: 3px 8px;
   margin-right: 12px;
   border-radius: 3px;
-  min-width: 40px; /* Schmaler */
+  min-width: 40px;
   text-align: center;
-  box-shadow: none; /* Kein Schatten */
+  box-shadow: none;
 }
 
 .key-icon:active {
-  transform: none; /* Kein Effekt */
+  transform: none;
 }
 
-/* Feste Breite für beide Buttons */
 .restart-button, .back-button {
   width: 150px; 
   padding: 10px 15px;
@@ -339,12 +336,11 @@ canvas {
   margin: 0 10px;
 }
 
-/* Optional: Weitere gemeinsame Stile für bessere Einheitlichkeit */
 .button-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px; /* Gleichmäßiger Abstand zwischen Buttons */
+  gap: 20px;
 }
 
 

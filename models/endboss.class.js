@@ -1,3 +1,8 @@
+/**
+ * Endboss class
+ * Represents the final boss enemy in the game
+ * @extends MovableObject
+ */
 class Endboss extends MovableObject {
   height = 400;
   width = 300;
@@ -40,7 +45,6 @@ class Endboss extends MovableObject {
     'img/4_enemie_boss_chicken/3_attack/G18.png',
     'img/4_enemie_boss_chicken/3_attack/G19.png',
     'img/4_enemie_boss_chicken/3_attack/G20.png',
-
   ];
 
   IMAGES_HURT = [
@@ -54,6 +58,9 @@ class Endboss extends MovableObject {
     'img/4_enemie_boss_chicken/5_dead/G26.png',
   ];
 
+  /**
+   * Creates a new Endboss instance
+   */
   constructor() {
     super().loadImage(this.IMAGES_ALERT[0]);
     this.loadImages(this.IMAGES_ALERT);
@@ -64,43 +71,43 @@ class Endboss extends MovableObject {
 
     this.x = 3900;
     this.animate();
-    
-    // Starte die zufälligen Geschwindigkeitsänderungen
     this.startRandomSpeedChanges();
   }
 
+  /**
+   * Sets up animation and movement intervals for the endboss
+   */
   animate() {
-    // Animationen steuern (hurt, dead, idle)
     this.animationInterval = setInterval(() => {
-        if (this.isDead() && !this.deadPlayed) {
-          clearInterval(this.animationInterval);
-          this.playAnimationOnce(this.IMAGES_DEAD);
-          this.deadPlayed = true;
-        } else if (this.isHurt()) {
-          this.playAnimation(this.IMAGES_HURT);
-        } else if (this.isActive && !this.isDead()) {
-          this.playAnimation(this.IMAGES_WALKING); // ✅ hier einfügen!
-        } else {
-          this.playAnimation(this.IMAGES_ALERT);
-        }
-      }, 150);
+      if (this.isDead() && !this.deadPlayed) {
+        clearInterval(this.animationInterval);
+        this.playAnimationOnce(this.IMAGES_DEAD);
+        this.deadPlayed = true;
+      } else if (this.isHurt()) {
+        this.playAnimation(this.IMAGES_HURT);
+      } else if (this.isActive && !this.isDead()) {
+        this.playAnimation(this.IMAGES_WALKING);
+      } else {
+        this.playAnimation(this.IMAGES_ALERT);
+      }
+    }, 150);
   
-    // Bewegung, wenn aktiv
     this.moveInterval = setInterval(() => {
       if (this.isActive && !this.isDead()) {
         this.followCharacter();
       }
     }, 1000 / 30);
   
-    // Angriff prüfen
     this.attackInterval = setInterval(() => {
       if (this.isActive && !this.isDead()) {
         this.attackPlayer();
       }
-    }, 1000 / 10); // 10x pro Sekunde prüfen
+    }, 1000 / 10);
   }
   
-
+  /**
+   * Creates a shaking visual effect when the boss is hit
+   */
   shakeAnimation() {
     const originalX = this.x;
     let offset = 15;
@@ -115,47 +122,55 @@ class Endboss extends MovableObject {
     }, 50);
   }
   
-  
-
+  /**
+   * Checks if the endboss is currently in hurt state
+   * @returns {boolean} True if the endboss is hurt
+   */
   isHurt() {
     let timePassed = new Date().getTime() - this.lastHit;
     return timePassed < 1000;
   }
 
+  /**
+   * Checks if the endboss is dead
+   * @returns {boolean} True if the endboss's energy is zero or below
+   */
   isDead() {
     return this.energy <= 0;
   }
 
+  /**
+   * Applies damage to the endboss and handles hurt/death effects
+   * @param {number} damage - Amount of damage to apply
+   */
   hit(damage = 20) {
     this.energy -= damage;
     if (this.energy < 0) this.energy = 0;
     this.lastHit = new Date().getTime();
-  
-    this.shakeAnimation(); // 🔁 sichtbar wackeln
+    this.shakeAnimation();
   
     if (this.world && this.world.bossHurtSound) {
       window.playSound(this.world.bossHurtSound, 0.4);
     }
     
-    // NEU: Prüfen ob der Endboss stirbt und die() aufrufen
     if (this.energy <= 0 && !this.isDying) {
-      this.isDying = true; // Flag setzen um mehrfache Aufrufe zu vermeiden
+      this.isDying = true;
       this.die();
     }
   }
 
+  /**
+   * Handles attacking the player when in proximity
+   */
   attackPlayer() {
     if (!this.world || !this.world.character || this.isDead()) return;
 
     if (this.isColliding(this.world.character)) {
-      // Animation immer abspielen bei Kollision
       this.playAnimation(this.IMAGES_ATTACK);
       
-      // Schaden nur zufügen, wenn der Character nicht immun ist
       if (!this.world.character.isHurt()) {
         this.world.character.hit(20);
         
-        // Sound abspielen wenn Character getroffen wird
         if (this.world.hitSound) {
           window.playSound(this.world.hitSound, 0.4);
         }
@@ -169,61 +184,55 @@ class Endboss extends MovableObject {
     }
   }  
 
+  /**
+   * Moves the endboss to follow the player character
+   */
   followCharacter() {
     if (!this.world || !this.world.character) return;
-  
     const char = this.world.character;
   
     if (this.x - char.x > 10) {
-      this.otherDirection = false; // 🔁 Boss schaut nach rechts (weil Bilder so sind)
+      this.otherDirection = false;
       this.x -= this.speed;
     } else {
-        this.attackPlayer(); // oder: aktiv angreifen statt nur in Intervall
-      }
-      
+      this.attackPlayer();
+    }
   }
   
   /**
-   * Ändert die Geschwindigkeit des Endbosses zufällig
+   * Implements random speed variations for more dynamic movement
    */
   startRandomSpeedChanges() {
     setInterval(() => {
-      // Nur ändern, wenn der Endboss aktiv ist
       if (this.isActive) {
-        // Zufällige Geschwindigkeit zwischen 70% und 200% der Basisgeschwindigkeit
         const randomFactor = 0.7 + Math.random() * 1.3;
         this.speed = this.baseSpeed * randomFactor;
         
-        // Kurzer Geschwindigkeitsschub mit 20% Wahrscheinlichkeit
         if (Math.random() < 0.2) {
-          // Kurzzeitig sehr schnell (2.5x)
           this.speed = this.baseSpeed * 2.5;
           
-          // Nach kurzer Zeit wieder auf normale zufällige Geschwindigkeit zurück
           setTimeout(() => {
             const normalRandomFactor = 0.7 + Math.random() * 1.3;
             this.speed = this.baseSpeed * normalRandomFactor;
-          }, 500 + Math.random() * 1000); // 0.5-1.5 Sekunden Schub
+          }, 500 + Math.random() * 1000);
         }
       }
-    }, 2000 + Math.random() * 3000); // Alle 2-5 Sekunden ändern
+    }, 2000 + Math.random() * 3000);
   }
   
-  // In der Endboss-Klasse
+  /**
+   * Handles the endboss death sequence and triggers victory
+   */
   die() {
     this.energy = 0;
-    
-    // Animation direkt abspielen statt playDeathAnimation zu verwenden
     clearInterval(this.animationInterval);
     this.playAnimationOnce(this.IMAGES_DEAD);
     this.deadPlayed = true;
     
-    // Game Over mit Sieg auslösen
     setTimeout(() => {
       if (this.world) {
         this.world.triggerGameOver(true);
       }
-    }, 1500); // Längere Verzögerung für Boss-Tod
+    }, 1500);
   }
-  
 }

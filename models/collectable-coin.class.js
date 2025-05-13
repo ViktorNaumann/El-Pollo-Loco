@@ -1,11 +1,21 @@
+/**
+ * CollectableCoin class
+ * Represents collectable coins that can be picked up by the player
+ * @extends MovableObject
+ */
 class CollectableCoin extends MovableObject {
     IMAGES = [
         "img/8_coin/coin_1.png",
         "img/8_coin/coin_2.png"
     ];
-    height = 100; // Verdoppelt von 40 auf 80
-    width = 100;  // Verdoppelt von 40 auf 80
+    height = 100;
+    width = 100;
 
+    /**
+     * Creates a new collectable coin at the specified position
+     * @param {number} x - The x-coordinate position of the coin
+     * @param {number} y - The y-coordinate position of the coin
+     */
     constructor(x, y) {
         super();
         this.x = x;
@@ -16,9 +26,14 @@ class CollectableCoin extends MovableObject {
         this.animate();
     }
 
+    /**
+     * Sets up coin animation
+     * Continuously cycles through coin images to create spinning effect
+     */
     animate() {
         setInterval(() => {
             this.playAnimation(this.IMAGES);
         }, 300);
     }
 }
+

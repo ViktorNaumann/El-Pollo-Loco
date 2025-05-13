@@ -21,15 +21,11 @@
     <script src="./levels/level1.js"></script>
     <script src="./models/world.class.js"></script>
     <script src="./script/game.js"></script>
-
     <title>El Pollo Loco</title>
   </head>
   <body onload="init()">
     <h1>El Pollo Loco</h1>
-
     <canvas id="canvas" width="720" height="480"></canvas>
-
-    <!-- Overlay für Game Over/Victory -->
     <div id="game-overlay" class="game-overlay hidden">
       <div class="overlay-content">
         <img id="overlay-image" src="desert">
@@ -39,17 +35,11 @@
         </div>
       </div>
     </div>
-
-    <!-- In index.html -->
     <div id="start-screen" class="start-screen">
       <img src="img/9_intro_outro_screens/start/startscreen_1.png" alt="Start Screen">
-      
-      <!-- Bestehende Buttons -->
       <button id="start-button" class="start-button">PLAY</button>
       <button id="mute-button" class="mute-button sound-on" onclick="toggleMute()">SOUND</button>
       <button id="impressum-button" class="impressum-button" onclick="openImpressum()">IMPRESSUM</button>
-      
-      <!-- Neu: Controls-Box für Spielsteuerung -->
       <div class="controls-box">
         <h3>CONTROLS</h3>
         <div class="control-item">
@@ -66,8 +56,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Modal für Impressum (neu) -->
     <div id="impressum-modal" class="modal hidden">
       <div class="modal-content">
         <span class="close-button" onclick="closeImpressum()">&times;</span>

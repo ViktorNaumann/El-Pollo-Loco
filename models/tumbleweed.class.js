@@ -1,3 +1,8 @@
+/**
+ * Tumbleweed class
+ * Represents rolling tumbleweed objects for desert atmosphere
+ * @extends MovableObject
+ */
 class Tumbleweed extends MovableObject {
     width = 60;
     height = 60;
@@ -5,15 +10,18 @@ class Tumbleweed extends MovableObject {
     imageLoaded = false;
     rotationSpeed;
 
+    /**
+     * Creates a new tumbleweed at specified position
+     * @param {number} x - The x-coordinate position
+     * @param {number} y - The y-coordinate position
+     */
     constructor(x, y) {
         super();
         this.x = x;
         this.y = y;
-        // Negative Geschwindigkeit für Bewegung von rechts nach links
         this.speed = -(Math.random() * 2.5 + 1.5);
-        // Negative Rotationsgeschwindigkeit für Drehung gegen den Uhrzeigersinn
         this.rotationSpeed = -(Math.random() * 5 + 3);
-        // Zufällige Größenvariation (80% bis 120% der Originalgröße)
+        
         const scale = Math.random() * 0.4 + 0.8;
         this.width *= scale;
         this.height *= scale;
@@ -24,6 +32,11 @@ class Tumbleweed extends MovableObject {
         this.animate();
     }
 
+    /**
+     * Loads an image and returns a promise that resolves when loaded
+     * @param {string} path - Path to the image file
+     * @returns {Promise} Promise that resolves when image is loaded
+     */
     loadImage(path) {
         return new Promise((resolve) => {
             this.img = new Image();
@@ -34,22 +47,27 @@ class Tumbleweed extends MovableObject {
         });
     }
 
+    /**
+     * Sets up animation for the tumbleweed
+     * Controls movement, rotation and respawning when offscreen
+     */
     animate() {
         setInterval(() => {
             this.x += this.speed;
             this.rotation += this.rotationSpeed;
             
-            // Wenn außerhalb des Bildschirms links, dann rechts neu positionieren
             if (this.x < -100) {
-                this.x = 3600 + Math.random() * 500; // Zufällige Startposition rechts
-                // Neue zufällige negative Geschwindigkeit
+                this.x = 3600 + Math.random() * 500;
                 this.speed = -(Math.random() * 2.5 + 1.5);
-                // Neue zufällige negative Rotationsgeschwindigkeit
                 this.rotationSpeed = -(Math.random() * 5 + 3);
             }
         }, 1000 / 60);
     }
 
+    /**
+     * Custom drawing method to handle rotation
+     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
+     */
     draw(ctx) {
         if (!this.img || !this.imageLoaded) return;
         

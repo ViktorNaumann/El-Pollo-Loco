@@ -1,3 +1,8 @@
+/**
+ * World class
+ * Represents the game world containing all game objects and managing their interactions
+ * Handles collision detection, drawing, sound effects, and game state
+ */
 class World {
   character = new Character();
   level = level1;
@@ -6,9 +11,9 @@ class World {
   keyboard;
   camera_x = 0;
 
-  statusBar = new StatusBar(); // für Spieler
-  statusBarBottle = new StatusBar("bottle"); // für Flaschen
-  endbossStatusBar = new StatusBar("endboss"); // für Endboss
+  statusBar = new StatusBar();
+  statusBarBottle = new StatusBar("bottle");
+  endbossStatusBar = new StatusBar("endboss");
   throwableObject = [];
 
   statusBarCoin = new StatusBar("coin");
@@ -22,21 +27,25 @@ class World {
   squeezeChickenSound = new Audio("audio/squeeze_chicken.mp3");
   collectCoin = new Audio("audio/collect_coin.mp3");
   endbossFightMusic = new Audio("audio/endboss_fight.mp3");
-  endbossMusicPlayed = false; // Flag für einmalige Aktivierung
+  endbossMusicPlayed = false;
   winSound = new Audio("audio/win_sound.mp3");
   lostSound = new Audio("audio/lost_sound.mp3");
   lostSpeakSound = new Audio("audio/lost_speak.mp3");
 
+  /**
+   * Creates a new game world instance
+   * @param {HTMLCanvasElement} canvas - The canvas element for rendering
+   * @param {Keyboard} keyboard - Keyboard input handler
+   * @param {Level} level - The game level containing all objects
+   */
   constructor(canvas, keyboard, level) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
-    this.level = level || initLevel(); // Fallback wenn kein Level übergeben wird
+    this.level = level || initLevel();
     this.endbossStatusBar.visible = false;
     
-    // Coin-Statusbar explizit auf 0% setzen
     this.statusBarCoin.setPercentage(0);
-    
     
     this.draw();
     this.setWorld();
@@ -44,6 +53,9 @@ class World {
     this.bossHurtSound.volume = 0.4;
   }
 
+  /**
+   * Sets this world reference on character and endboss objects
+   */
   setWorld() {
     this.character.world = this;
 
@@ -54,15 +66,21 @@ class World {
     });
   }
 
+  /**
+   * Starts the main game loop for collision checks and other game logic
+   */
   run() {
     setInterval(() => {
       this.checkCollisions();
       this.checkThrowObjects();
       this.checkBottleHits();
-      this.checkEndbossVisibility(); // ✅ neu
+      this.checkEndbossVisibility();
     }, 200);
   }
 
+  /**
+   * Checks if endboss is visible on screen and activates related game elements
+   */
   checkEndbossVisibility() {
     const boss = this.level.enemies.find((e) => e instanceof Endboss);
     if (!boss) return;
@@ -74,13 +92,10 @@ class World {
 
     if (bossLeft >= cameraLeft && bossRight <= cameraRight) {
       this.endbossStatusBar.visible = true;
-      boss.isVisible = true; // Endboss sichtbar
-      boss.isActive = true; // Endboss aktiv
+      boss.isVisible = true;
+      boss.isActive = true;
       
-      // Endboss-Musik nur einmal abspielen
       if (!this.endbossMusicPlayed) {
-        
-        // Sanfteres Ausblenden der normalen Musik
         if (window.backgroundMusic) {
           this.fadeOutAudio(window.backgroundMusic);
         }
@@ -88,10 +103,8 @@ class World {
           this.fadeOutAudio(window.windSound);
         }
         
-        // Endboss-Kampfmusik einblenden und abspielen 
         this.endbossFightMusic.loop = true;
         
-        // NUR abspielen, wenn nicht stummgeschaltet
         if (!window.isMuted) {
           this.endbossFightMusic.volume = 0;
           this.endbossFightMusic.play()
@@ -103,7 +116,10 @@ class World {
     }
   }
 
-  // Hilfsmethode zum sanften Ausblenden von Audio
+  /**
+   * Gradually decreases audio volume until silent
+   * @param {HTMLAudioElement} audio - The audio element to fade out
+   */
   fadeOutAudio(audio) {
     if (!audio || window.isMuted) return;
     
@@ -113,13 +129,17 @@ class World {
         audio.volume -= 0.05;
       } else {
         audio.pause();
-        audio.volume = originalVolume; // Für späteren Gebrauch
+        audio.volume = originalVolume;
         clearInterval(fadeInterval);
       }
     }, 100);
   }
 
-  // Hilfsmethode zum sanften Einblenden von Audio
+  /**
+   * Gradually increases audio volume to target level
+   * @param {HTMLAudioElement} audio - The audio element to fade in
+   * @param {number} targetVolume - Target volume level
+   */
   fadeInAudio(audio, targetVolume = 0.2) {
     if (!audio || window.isMuted) return;
     
@@ -140,198 +160,236 @@ class World {
     }, 100);
   }
 
+  /**
+   * Checks for collisions between thrown bottles and enemies
+   */
   checkBottleHits() {
     this.throwableObject.forEach((bottle) => {
-        this.level.enemies.forEach((enemy) => {
-            if (bottle.isColliding(enemy) && !bottle.exploded && !bottle.hasHit) { // Neuer Check mit hasHit
-                bottle.explode();
-                bottle.hasHit = true; // Markiere die Flasche als "getroffen"
-                
-                if (enemy instanceof Endboss) {
-                    enemy.hit(20);
-                    this.endbossStatusBar.setPercentage(enemy.energy);
-                } else if (enemy instanceof Chicken) {
-                    enemy.die(); // Chicken stirbt mit Animation
-                    setTimeout(() => {
-                        const index = this.level.enemies.indexOf(enemy);
-                        if (index !== -1) {
-                            this.level.enemies.splice(index, 1);
-                        }
-                    }, 500); // Wartezeit für die Todesanimation
-                }
-            }
-        });
+      this.level.enemies.forEach((enemy) => {
+        if (bottle.isColliding(enemy) && !bottle.exploded && !bottle.hasHit) {
+          bottle.explode();
+          bottle.hasHit = true;
+          
+          if (enemy instanceof Endboss) {
+            enemy.hit(20);
+            this.endbossStatusBar.setPercentage(enemy.energy);
+          } else if (enemy instanceof Chicken) {
+            enemy.die();
+            setTimeout(() => {
+              const index = this.level.enemies.indexOf(enemy);
+              if (index !== -1) {
+                this.level.enemies.splice(index, 1);
+              }
+            }, 500);
+          }
+        }
+      });
     });
-}
+  }
 
+  /**
+   * Handles throwing objects when D key is pressed
+   */
   checkThrowObjects() {
     if (this.keyboard.D && this.character.collectedBottles > 0) {
-        this.character.collectedBottles--;
-        this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
+      this.character.collectedBottles--;
+      this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
 
-        // Startposition der Flasche anpassen basierend auf Richtung
-        let bottleX = this.character.otherDirection ? 
-            this.character.x : // Wenn nach links schauend
-            this.character.x + 100; // Wenn nach rechts schauend
+      let bottleX = this.character.otherDirection ? 
+        this.character.x : 
+        this.character.x + 100;
 
-        let bottle = new ThrowableObject(
-            bottleX,
-            this.character.y + 100,
-            this.character.otherDirection // Übergebe die Richtung
-        );
-        
-        bottle.world = this;
-        // Nutze window.playSound statt direktem Aufruf
-        window.playSound(this.throwSound, 0.3);
-        this.throwableObject.push(bottle);
+      let bottle = new ThrowableObject(
+        bottleX,
+        this.character.y + 100,
+        this.character.otherDirection
+      );
+      
+      bottle.world = this;
+      window.playSound(this.throwSound, 0.3);
+      this.throwableObject.push(bottle);
     }
   }
 
-  // Die Hauptmethode für alle Kollisionen
+  /**
+   * Main collision detection method that handles all collision types
+   */
   checkCollisions() {
-    // Früher Return bei totem Character
     if (this.character.isDead()) return;
     
     this.checkEnemyCollisions();
     this.checkBottleCollection();
     this.checkCoinCollection();
     
-    // Position für die nächste Kollisionsprüfung speichern
     this.character.previousY = this.character.y;
   }
 
-  // Hauptmethode für Feindkollisionen
+  /**
+   * Checks for collisions with enemy objects
+   */
   checkEnemyCollisions() {
     this.level.enemies.forEach((enemy) => {
-        if (this.character.isColliding(enemy)) {
-            if (enemy instanceof Endboss) {
-                this.handleEndbossCollision(enemy);
-            } else if (enemy instanceof Chicken) {
-                this.handleChickenCollision(enemy);
-            }
+      if (this.character.isColliding(enemy)) {
+        if (enemy instanceof Endboss) {
+          this.handleEndbossCollision(enemy);
+        } else if (enemy instanceof Chicken) {
+          this.handleChickenCollision(enemy);
         }
+      }
     });
-}
+  }
 
-// Behandelt Kollisionen mit dem Endboss
-handleEndbossCollision(endboss) {
-    // Immunitätsprüfung hinzufügen
+  /**
+   * Handles collision with the endboss
+   * @param {Endboss} endboss - The endboss object
+   */
+  handleEndbossCollision(endboss) {
     if (!this.character.isHurt()) {
-        // hit() Methode verwenden statt direkter Manipulation
-        this.character.hit(20);
-        
-        // Sound abspielen mit window.playSound
-        window.playSound(this.hitSound, 0.4);
-        
-        // Statusbar aktualisieren
-        this.statusBar.setPercentage(this.character.energy);
+      this.character.hit(20);
+      
+      window.playSound(this.hitSound, 0.4);
+      
+      this.statusBar.setPercentage(this.character.energy);
     }
-}
+  }
 
-// Behandelt Kollisionen mit Chickens
-handleChickenCollision(chicken) {
-    // Prüfe, ob Character auf Chicken springt
+  /**
+   * Handles collision with chicken enemies
+   * @param {Chicken} chicken - The chicken object
+   */
+  handleChickenCollision(chicken) {
     const isJumpingOnTop = this.isCharacterJumpingOnEnemy(chicken);
     
     if (isJumpingOnTop) {
-        // Character springt auf Chicken
-        this.handleChickenJumpedOn(chicken);
-    } else {
-        // Chicken trifft Character von der Seite
-        if (!this.character.isHurt()) {
-            // Character erhält Schaden - von 5 auf 20 erhöht
-            this.character.hit(20);
-            
-            // Sound abspielen mit window.playSound
-            window.playSound(this.hitSound, 0.3);
-            
-            // Status Bar aktualisieren
-            this.statusBar.setPercentage(this.character.energy);
-        }
+      this.handleChickenJumpedOn(chicken);
+      
+      this.recentlyKilledChicken = true;
+      setTimeout(() => {
+        this.recentlyKilledChicken = false;
+      }, 500);
+    } else if (!this.recentlyKilledChicken) {
+      if (!this.character.isHurt()) {
+        this.character.hit(20);
+        window.playSound(this.hitSound, 0.3);
+        this.statusBar.setPercentage(this.character.energy);
+      }
     }
-}
+  }
 
-// Prüft ob Character auf Gegner springt
-isCharacterJumpingOnEnemy(enemy) {
-    return this.character.speedY < 0 && 
-           this.character.previousY + this.character.height - this.character.offset.bottom <= enemy.y + enemy.offset.top && 
-           this.character.x + this.character.width - this.character.offset.right > enemy.x + enemy.offset.left && 
-           this.character.x + this.character.offset.left < enemy.x + enemy.width - enemy.offset.right;
-}
+  /**
+   * Determines if character is jumping on top of an enemy
+   * @param {MovableObject} enemy - The enemy to check
+   * @returns {boolean} True if character is jumping on enemy from above
+   */
+  isCharacterJumpingOnEnemy(enemy) {
+    const characterBottom = this.character.y + this.character.height - this.character.offset.bottom;
+    const characterLeft = this.character.x + this.character.offset.left;
+    const characterRight = this.character.x + this.character.width - this.character.offset.right;
+    
+    const enemyTop = enemy.y + enemy.offset.top;
+    const enemyLeft = enemy.x + enemy.offset.left;
+    const enemyRight = enemy.x + enemy.width - enemy.offset.right;
+    
+    const verticalDistance = characterBottom - enemyTop;
+    
+    let tolerance = 30;
+    if (enemy instanceof Chicken && enemy.height > 50) {
+      tolerance = 50;
+    } else if (enemy instanceof Endboss) {
+      tolerance = 40;
+    }
+    
+    const isLandingFromAbove = verticalDistance <= tolerance && verticalDistance >= -10;
+    
+    const isFalling = this.character.speedY < 0;
+    
+    const isOverlapping = characterRight > enemyLeft && characterLeft < enemyRight;
+    
+    if (this.recentlyKilledChicken) {
+      return true;
+    }
+    
+    return isLandingFromAbove && isFalling && isOverlapping;
+  }
 
-// Behandelt Chicken-Eliminierung durch Sprung
-handleChickenJumpedOn(chicken) {
-    // Sound mit window.playSound abspielen
+  /**
+   * Handles events when character jumps on a chicken
+   * @param {Chicken} chicken - The chicken that was jumped on
+   */
+  handleChickenJumpedOn(chicken) {
     window.playSound(this.squeezeChickenSound, 0.3);
     
     chicken.die();
     setTimeout(() => {
-        const index = this.level.enemies.indexOf(chicken);
-        if (index !== -1) {
-            this.level.enemies.splice(index, 1);
-        }
+      const index = this.level.enemies.indexOf(chicken);
+      if (index !== -1) {
+        this.level.enemies.splice(index, 1);
+      }
     }, 300);
     
-    this.character.speedY = 17; // Bounce-Effekt
-}
+    this.character.speedY = 17;
+  }
 
-// Behandelt Schaden am Character
-handleCharacterDamage() {
+  /**
+   * Handles damage to the character
+   */
+  handleCharacterDamage() {
     if (!this.character.isHurt()) {
-        this.character.hit(5);
-        
-        // Sound abspielen mit window.playSound
-        window.playSound(this.hitSound, 0.3);
-        
-        this.statusBar.setPercentage(this.character.energy);
+      this.character.hit(5);
+      
+      window.playSound(this.hitSound, 0.3);
+      
+      this.statusBar.setPercentage(this.character.energy);
     }
-}
+  }
 
-  // Prüft Kollisionen mit Coins
+  /**
+   * Checks for collisions with collectable coins
+   */
   checkCoinCollection() {
     for (let i = this.level.coins.length - 1; i >= 0; i--) {
-        const coin = this.level.coins[i];
-        if (this.character.isColliding(coin)) {
-            // Coin einsammeln
-            this.level.coins.splice(i, 1);
-            this.collectedCoins++;
-            this.statusBarCoin.setPercentage(this.collectedCoins * 5);
-            
-            // Sound mit window.playSound abspielen - hier collectCoin verwenden
-            window.playSound(this.collectCoin, 0.3);
-        }
+      const coin = this.level.coins[i];
+      if (this.character.isColliding(coin)) {
+        this.level.coins.splice(i, 1);
+        this.collectedCoins++;
+        this.statusBarCoin.setPercentage(this.collectedCoins * 5);
+        
+        window.playSound(this.collectCoin, 0.3);
+      }
     }
   }
 
-  // Prüft Kollisionen mit Flaschen
+  /**
+   * Checks for collisions with collectable bottles
+   */
   checkBottleCollection() {
     for (let i = this.level.bottles.length - 1; i >= 0; i--) {
-        const bottle = this.level.bottles[i];
-        if (this.character.isColliding(bottle) && this.character.collectedBottles < 5) {
-            // Flasche einsammeln
-            this.level.bottles.splice(i, 1);
-            this.character.collectedBottles++;
-            this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
-            // Sound mit window.playSound abspielen
-            window.playSound(this.collectSound, 0.3);
-        }
+      const bottle = this.level.bottles[i];
+      if (this.character.isColliding(bottle) && this.character.collectedBottles < 5) {
+        this.level.bottles.splice(i, 1);
+        this.character.collectedBottles++;
+        this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
+        window.playSound(this.collectSound, 0.3);
+      }
     }
   }
 
+  /**
+   * Main drawing method that renders all game objects to the canvas
+   */
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Überprüfen, ob this.level und seine Eigenschaften existieren
     if (this.level && this.level.backgroundObjects) {
-        this.ctx.translate(this.camera_x, 0);
-        this.addObjectsToMap(this.level.backgroundObjects);
-        this.ctx.translate(-this.camera_x, 0);
+      this.ctx.translate(this.camera_x, 0);
+      this.addObjectsToMap(this.level.backgroundObjects);
+      this.ctx.translate(-this.camera_x, 0);
     }
     
     this.ctx.translate(this.camera_x, 0);
 
     this.addObjectsToMap(this.level.clouds);
-    this.addObjectsToMap(this.level.coins); // ✅ Coins zeichnen
+    this.addObjectsToMap(this.level.coins);
     this.addObjectsToMap(this.level.bottles);
     this.addObjectsToMap(this.level.enemies);
     this.addToMap(this.character);
@@ -347,7 +405,7 @@ handleCharacterDamage() {
 
     this.addToMap(this.statusBar);
     this.addToMap(this.statusBarBottle);
-    this.addToMap(this.statusBarCoin); // ✅ Coins zeichnen
+    this.addToMap(this.statusBarCoin);
 
     if (this.endbossStatusBar.visible) {
       this.addToMap(this.endbossStatusBar);
@@ -358,12 +416,20 @@ handleCharacterDamage() {
     });
   }
 
+  /**
+   * Adds an array of objects to the map
+   * @param {Array<MovableObject>} objects - Array of objects to add to the map
+   */
   addObjectsToMap(objects) {
     objects.forEach((object) => {
       this.addToMap(object);
     });
   }
 
+  /**
+   * Adds a single object to the map with proper direction handling
+   * @param {MovableObject} movableObject - Object to add to the map
+   */
   addToMap(movableObject) {
     this.ctx.stroke();
     if (movableObject.otherDirection) {
@@ -387,36 +453,31 @@ handleCharacterDamage() {
     }
   }
 
+  /**
+   * Triggers game over state with win or lose conditions
+   * @param {boolean} playerWon - Whether the player won or lost
+   */
   triggerGameOver(playerWon) {
-    // Character Laufsound stoppen - NEU HINZUGEFÜGT
     if (this.character && this.character.isRunning) {
       this.character.stopRunningSound();
     }
     
-    // Alle beweglichen Objekte anhalten
     this.freezeGame();
     
-    // Hintergrundmusik stoppen
     if (this.endbossFightMusic) {
       this.fadeOutAudio(this.endbossFightMusic);
     }
     
-    // Das richtige Overlay-Bild setzen und Sound abspielen
     const overlayImg = document.getElementById('overlay-image');
     if (playerWon) {
-      // Gewonnen
       overlayImg.src = 'img/You won, you lost/You won A.png';
       
-      // Sieges-Sound abspielen mit window.playSound
       window.playSound(this.winSound, 0.7);
     } else {
-      // Verloren
       overlayImg.src = 'img/You won, you lost/You lost.png';
       
-      // Verloren-Sound abspielen mit window.playSound
       window.playSound(this.lostSound, 0.9);
       
-      // Nach dem ersten Sound den Sprachsound abspielen
       this.lostSound.onended = () => {
         if (!window.isMuted) {
           window.playSound(this.lostSpeakSound, 0.9);
@@ -424,21 +485,19 @@ handleCharacterDamage() {
       };
     }
     
-    // Overlay anzeigen
     const overlay = document.getElementById('game-overlay');
     overlay.classList.remove('hidden');
   }
   
+  /**
+   * Freezes all game objects and stops animations when game is over
+   */
   freezeGame() {
-    // Spiel-Flag setzen
     this.gameIsOver = true;
     
-    // Animation-Frame stoppen
     cancelAnimationFrame(this.animationFrame);
     
-    // Tastatur deaktivieren
     if (this.keyboard) {
-      // Alle Tasten auf false setzen
       this.keyboard.RIGHT = false;
       this.keyboard.LEFT = false;
       this.keyboard.UP = false;
@@ -446,20 +505,16 @@ handleCharacterDamage() {
       this.keyboard.SPACE = false;
       this.keyboard.D = false;
       
-      // Tastatur-Events deaktivieren
       this.keyboard.deactivate();
     }
     
-    // Bewegliche Objekte anhalten
     if (this.character) {
       this.character.speedX = 0;
       this.character.speedY = 0;
     }
     
-    // Alle Intervalle stoppen
     clearAllIntervals();
     
-    // Alle Chickens und den Endboss anhalten
     if (this.level && this.level.enemies) {
       this.level.enemies.forEach(enemy => {
         enemy.speed = 0;
@@ -469,7 +524,6 @@ handleCharacterDamage() {
       });
     }
     
-    // Wolken und Tumbleweeds anhalten
     if (this.level) {
       if (this.level.clouds) this.level.clouds.forEach(cloud => cloud.speed = 0);
       if (this.level.tumbleweeds) this.level.tumbleweeds.forEach(tumbleweed => tumbleweed.speed = 0);

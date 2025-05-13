@@ -1,3 +1,9 @@
+/**
+ * ThrowableObject class
+ * Represents throwable bottle objects that can be thrown by the player
+ * Includes rotation animation and splash effects on impact
+ * @extends MovableObject
+ */
 class ThrowableObject extends MovableObject {
     IMAGES_ROTATE = [
       "img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png",
@@ -15,8 +21,14 @@ class ThrowableObject extends MovableObject {
       "img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png",
     ];
   
-    hasHit = false; // Neue Variable
+    hasHit = false;
 
+    /**
+     * Creates a new throwable bottle object
+     * @param {number} x - Starting x position
+     * @param {number} y - Starting y position
+     * @param {boolean} otherDirection - Direction flag (true = left, false = right)
+     */
     constructor(x, y, otherDirection) {
       super().loadImage("img/6_salsa_bottle/salsa_bottle.png");
       this.x = x;
@@ -27,12 +39,15 @@ class ThrowableObject extends MovableObject {
       this.loadImages(this.IMAGES_ROTATE);
       this.loadImages(this.IMAGES_SPLASH);
       
-      // Sound initialisieren
       this.breakSound = new Audio("audio/break.mp3");
       
       this.animateRotation();
     }
   
+    /**
+     * Applies custom gravity to the throwable object
+     * Creates a parabolic trajectory and handles landing
+     */
     applyGravity() {
       let gravityInterval = setInterval(() => {
         if (this.exploded) {
@@ -51,6 +66,9 @@ class ThrowableObject extends MovableObject {
       }, 1000 / 25);
     }
   
+    /**
+     * Starts the bottle rotation animation while in flight
+     */
     animateRotation() {
       let interval = setInterval(() => {
         if (this.exploded || this.isSplashing) {
@@ -61,6 +79,10 @@ class ThrowableObject extends MovableObject {
       }, 50);
     }
   
+    /**
+     * Handles bottle impact with ground or enemies
+     * Plays splash animation and sound
+     */
     explode() {
       if (this.exploding) return;
       this.exploding = true;
@@ -72,8 +94,7 @@ class ThrowableObject extends MovableObject {
   
       this.animateSplash();
   
-      // Korrigierte Version:
-      window.playSound(this.breakSound, 0.5); // Erhöhte Lautstärke für bessere Hörbarkeit
+      window.playSound(this.breakSound, 0.5);
   
       let splashDuration = this.IMAGES_SPLASH.length * 150;
       setTimeout(() => {
@@ -81,6 +102,9 @@ class ThrowableObject extends MovableObject {
       }, splashDuration);
     }
   
+    /**
+     * Plays the bottle splash animation sequence
+     */
     animateSplash() {
       let i = 0;
       let splashInterval = setInterval(() => {
@@ -95,16 +119,19 @@ class ThrowableObject extends MovableObject {
       }, 150);
     }
   
+    /**
+     * Initiates the throwing motion of the bottle
+     * @param {boolean} otherDirection - Direction flag (true = left, false = right)
+     */
     throw(otherDirection) {
-      this.speedY = 20; // von 30 auf 15 reduziert für niedrigere Flugbahn
+      this.speedY = 20;
       this.applyGravity();
       this.throwInterval = setInterval(() => {
           if (otherDirection) {
-              this.x -= 7; // von 10 auf 7 reduziert für kürzere Distanz nach links
+              this.x -= 7;
           } else {
-              this.x += 7; // von 10 auf 7 reduziert für kürzere Distanz nach rechts
+              this.x += 7;
           }
       }, 25);
     }
-  }
-
+}
