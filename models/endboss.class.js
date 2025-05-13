@@ -7,9 +7,10 @@ class Endboss extends MovableObject {
   height = 400;
   width = 300;
   y = 50;
-  baseSpeed = 3.5;
+  baseSpeed = 5.5; 
   speed = this.baseSpeed;
   speedVariationTimer = 0;
+  attackDistance = 5; 
 
   offset = {
     top: 100,
@@ -186,38 +187,46 @@ class Endboss extends MovableObject {
 
   /**
    * Moves the endboss to follow the player character
+   * Includes aggressive pursuit behavior based on distance
    */
   followCharacter() {
     if (!this.world || !this.world.character) return;
     const char = this.world.character;
   
-    if (this.x - char.x > 10) {
+    const distance = this.x - char.x;
+    
+    if (distance > this.attackDistance) {
       this.otherDirection = false;
-      this.x -= this.speed;
+      
+      const speedMultiplier = Math.min(2.0, distance / 200);
+      this.x -= this.speed * speedMultiplier;
     } else {
       this.attackPlayer();
+      
+      this.x -= Math.random() * 3 - 1.5;
     }
   }
   
   /**
    * Implements random speed variations for more dynamic movement
+   * Features aggressive speed burst patterns
    */
   startRandomSpeedChanges() {
     setInterval(() => {
       if (this.isActive) {
-        const randomFactor = 0.7 + Math.random() * 1.3;
+        const randomFactor = 0.9 + Math.random() * 1.2;
         this.speed = this.baseSpeed * randomFactor;
         
-        if (Math.random() < 0.2) {
-          this.speed = this.baseSpeed * 2.5;
+        if (Math.random() < 0.35) {
+          this.speed = this.baseSpeed * 3.5;
           
           setTimeout(() => {
-            const normalRandomFactor = 0.7 + Math.random() * 1.3;
+            const normalRandomFactor = 0.9 + Math.random() * 1.1;
             this.speed = this.baseSpeed * normalRandomFactor;
-          }, 500 + Math.random() * 1000);
+          }, 300 + Math.random() * 700);
         }
       }
-    }, 2000 + Math.random() * 3000);
+    }, 1000 + Math.random() * 2000);
   }
   
   /**
