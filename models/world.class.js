@@ -10,15 +10,12 @@ class World {
   ctx;
   keyboard;
   camera_x = 0;
-
   statusBar = new StatusBar();
   statusBarBottle = new StatusBar("bottle");
   endbossStatusBar = new StatusBar("endboss");
   throwableObject = [];
-
   statusBarCoin = new StatusBar("coin");
   collectedCoins = 0;
-
   hitSound = new Audio("audio/hit.mp3");
   throwSound = new Audio("audio/throw.mp3");
   breakSound = new Audio("audio/break.mp3");
@@ -44,9 +41,7 @@ class World {
     this.keyboard = keyboard;
     this.level = level || initLevel();
     this.endbossStatusBar.visible = false;
-    
     this.statusBarCoin.setPercentage(0);
-    
     this.draw();
     this.setWorld();
     this.run();
@@ -58,7 +53,6 @@ class World {
    */
   setWorld() {
     this.character.world = this;
-
     this.level.enemies.forEach((enemy) => {
       if (enemy instanceof Endboss) {
         enemy.world = this;
@@ -84,17 +78,14 @@ class World {
   checkEndbossVisibility() {
     const boss = this.level.enemies.find((e) => e instanceof Endboss);
     if (!boss) return;
-
     const bossLeft = boss.x;
     const bossRight = boss.x + boss.width;
     const cameraLeft = -this.camera_x;
     const cameraRight = -this.camera_x + this.canvas.width;
-
     if (bossLeft >= cameraLeft && bossRight <= cameraRight) {
       this.endbossStatusBar.visible = true;
       boss.isVisible = true;
       boss.isActive = true;
-      
       if (!this.endbossMusicPlayed) {
         if (window.backgroundMusic) {
           this.fadeOutAudio(window.backgroundMusic);
@@ -102,15 +93,12 @@ class World {
         if (window.windSound) {
           this.fadeOutAudio(window.windSound);
         }
-        
         this.endbossFightMusic.loop = true;
-        
         if (!window.isMuted) {
           this.endbossFightMusic.volume = 0;
           this.endbossFightMusic.play()
             .then(() => this.fadeInAudio(this.endbossFightMusic, 0.2));
         }
-        
         this.endbossMusicPlayed = true;
       }
     }
@@ -122,7 +110,6 @@ class World {
    */
   fadeOutAudio(audio) {
     if (!audio || window.isMuted) return;
-    
     const originalVolume = audio.volume;
     const fadeInterval = setInterval(() => {
       if (audio.volume > 0.05) {
@@ -142,7 +129,6 @@ class World {
    */
   fadeInAudio(audio, targetVolume = 0.2) {
     if (!audio || window.isMuted) return;
-    
     audio.volume = 0.05;
     const fadeInterval = setInterval(() => {
       if (window.isMuted) {
@@ -150,7 +136,6 @@ class World {
         clearInterval(fadeInterval);
         return;
       }
-      
       if (audio.volume < targetVolume - 0.05) {
         audio.volume += 0.05;
       } else {
@@ -169,7 +154,6 @@ class World {
         if (bottle.isColliding(enemy) && !bottle.exploded && !bottle.hasHit) {
           bottle.explode();
           bottle.hasHit = true;
-          
           if (enemy instanceof Endboss) {
             enemy.hit(20);
             this.endbossStatusBar.setPercentage(enemy.energy);
@@ -194,17 +178,14 @@ class World {
     if (this.keyboard.D && this.character.collectedBottles > 0) {
       this.character.collectedBottles--;
       this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
-
       let bottleX = this.character.otherDirection ? 
         this.character.x : 
         this.character.x + 100;
-
       let bottle = new ThrowableObject(
         bottleX,
         this.character.y + 100,
         this.character.otherDirection
       );
-      
       bottle.world = this;
       window.playSound(this.throwSound, 0.3);
       this.throwableObject.push(bottle);
@@ -216,11 +197,9 @@ class World {
    */
   checkCollisions() {
     if (this.character.isDead()) return;
-    
     this.checkEnemyCollisions();
     this.checkBottleCollection();
     this.checkCoinCollection();
-    
     this.character.previousY = this.character.y;
   }
 
@@ -246,9 +225,7 @@ class World {
   handleEndbossCollision(endboss) {
     if (!this.character.isHurt()) {
       this.character.hit(20);
-      
       window.playSound(this.hitSound, 0.4);
-      
       this.statusBar.setPercentage(this.character.energy);
     }
   }
@@ -259,10 +236,8 @@ class World {
    */
   handleChickenCollision(chicken) {
     const isJumpingOnTop = this.isCharacterJumpingOnEnemy(chicken);
-    
     if (isJumpingOnTop) {
       this.handleChickenJumpedOn(chicken);
-      
       this.recentlyKilledChicken = true;
       setTimeout(() => {
         this.recentlyKilledChicken = false;
@@ -285,30 +260,22 @@ class World {
     const characterBottom = this.character.y + this.character.height - this.character.offset.bottom;
     const characterLeft = this.character.x + this.character.offset.left;
     const characterRight = this.character.x + this.character.width - this.character.offset.right;
-    
     const enemyTop = enemy.y + enemy.offset.top;
     const enemyLeft = enemy.x + enemy.offset.left;
     const enemyRight = enemy.x + enemy.width - enemy.offset.right;
-    
     const verticalDistance = characterBottom - enemyTop;
-    
     let tolerance = 30;
     if (enemy instanceof Chicken && enemy.height > 50) {
       tolerance = 50;
     } else if (enemy instanceof Endboss) {
       tolerance = 40;
     }
-    
     const isLandingFromAbove = verticalDistance <= tolerance && verticalDistance >= -10;
-    
     const isFalling = this.character.speedY < 0;
-    
     const isOverlapping = characterRight > enemyLeft && characterLeft < enemyRight;
-    
     if (this.recentlyKilledChicken) {
       return true;
     }
-    
     return isLandingFromAbove && isFalling && isOverlapping;
   }
 
@@ -318,7 +285,6 @@ class World {
    */
   handleChickenJumpedOn(chicken) {
     window.playSound(this.squeezeChickenSound, 0.3);
-    
     chicken.die();
     setTimeout(() => {
       const index = this.level.enemies.indexOf(chicken);
@@ -326,7 +292,6 @@ class World {
         this.level.enemies.splice(index, 1);
       }
     }, 300);
-    
     this.character.speedY = 17;
   }
 
@@ -336,9 +301,7 @@ class World {
   handleCharacterDamage() {
     if (!this.character.isHurt()) {
       this.character.hit(5);
-      
       window.playSound(this.hitSound, 0.3);
-      
       this.statusBar.setPercentage(this.character.energy);
     }
   }
@@ -353,7 +316,6 @@ class World {
         this.level.coins.splice(i, 1);
         this.collectedCoins++;
         this.statusBarCoin.setPercentage(this.collectedCoins * 5);
-        
         window.playSound(this.collectCoin, 0.3);
       }
     }
@@ -379,38 +341,29 @@ class World {
    */
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
     if (this.level && this.level.backgroundObjects) {
       this.ctx.translate(this.camera_x, 0);
       this.addObjectsToMap(this.level.backgroundObjects);
       this.ctx.translate(-this.camera_x, 0);
     }
-    
     this.ctx.translate(this.camera_x, 0);
-
     this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.coins);
     this.addObjectsToMap(this.level.bottles);
     this.addObjectsToMap(this.level.enemies);
     this.addToMap(this.character);
-
     this.throwableObject = this.throwableObject.filter((obj) => !obj.exploded);
     this.addObjectsToMap(this.throwableObject);
-
     this.level.tumbleweeds.forEach(tumbleweed => {
       tumbleweed.draw(this.ctx);
     });
-
     this.ctx.translate(-this.camera_x, 0);
-
     this.addToMap(this.statusBar);
     this.addToMap(this.statusBarBottle);
     this.addToMap(this.statusBarCoin);
-
     if (this.endbossStatusBar.visible) {
       this.addToMap(this.endbossStatusBar);
     }
-
     this.animationFrame = requestAnimationFrame(() => {
       this.draw();
     });
@@ -461,30 +414,23 @@ class World {
     if (this.character && this.character.isRunning) {
       this.character.stopRunningSound();
     }
-    
     this.freezeGame();
-    
     if (this.endbossFightMusic) {
       this.fadeOutAudio(this.endbossFightMusic);
     }
-    
     const overlayImg = document.getElementById('overlay-image');
     if (playerWon) {
       overlayImg.src = 'img/You won, you lost/You won A.png';
-      
       window.playSound(this.winSound, 0.7);
     } else {
       overlayImg.src = 'img/You won, you lost/You lost.png';
-      
       window.playSound(this.lostSound, 0.9);
-      
       this.lostSound.onended = () => {
         if (!window.isMuted) {
           window.playSound(this.lostSpeakSound, 0.9);
         }
       };
     }
-    
     const overlay = document.getElementById('game-overlay');
     overlay.classList.remove('hidden');
   }
@@ -494,9 +440,7 @@ class World {
    */
   freezeGame() {
     this.gameIsOver = true;
-    
     cancelAnimationFrame(this.animationFrame);
-    
     if (this.keyboard) {
       this.keyboard.RIGHT = false;
       this.keyboard.LEFT = false;
@@ -504,17 +448,19 @@ class World {
       this.keyboard.DOWN = false;
       this.keyboard.SPACE = false;
       this.keyboard.D = false;
-      
       this.keyboard.deactivate();
     }
-    
     if (this.character) {
       this.character.speedX = 0;
       this.character.speedY = 0;
     }
-    
+    if (window.backgroundMusic) {
+      this.fadeOutAudio(window.backgroundMusic);
+    }
+    if (window.windSound) {
+      this.fadeOutAudio(window.windSound);
+    }
     clearAllIntervals();
-    
     if (this.level && this.level.enemies) {
       this.level.enemies.forEach(enemy => {
         enemy.speed = 0;
@@ -523,7 +469,6 @@ class World {
         if (enemy.attackInterval) clearInterval(enemy.attackInterval);
       });
     }
-    
     if (this.level) {
       if (this.level.clouds) this.level.clouds.forEach(cloud => cloud.speed = 0);
       if (this.level.tumbleweeds) this.level.tumbleweeds.forEach(tumbleweed => tumbleweed.speed = 0);
