@@ -330,4 +330,21 @@ canvas {
   transform: none; /* Kein Effekt */
 }
 
+/* Feste Breite für beide Buttons */
+.restart-button, .back-button {
+  width: 150px; 
+  padding: 10px 15px;
+  font-size: 16px;
+  text-align: center;
+  margin: 0 10px;
+}
+
+/* Optional: Weitere gemeinsame Stile für bessere Einheitlichkeit */
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Gleichmäßiger Abstand zwischen Buttons */
+}
+
 
