@@ -209,8 +209,6 @@ class World {
   checkEnemyCollisions() {
     this.level.enemies.forEach((enemy) => {
       if (this.character.isColliding(enemy)) {
-        console.log('KOLLISION mit:', enemy instanceof Chicken ? 'Chicken' : 'Endboss');
-        
         if (enemy instanceof Endboss) {
           this.handleEndbossCollision(enemy);
         } else if (enemy instanceof Chicken) {
@@ -237,33 +235,37 @@ class World {
    * @param {Chicken} chicken - The chicken object
    */
   handleChickenCollision(chicken) {
-    if (chicken.hasBeenHit || chicken.isBeingRemoved) {
-      return;
-    }
-    const isJumpingOnTop = this.isCharacterJumpingOnEnemy(chicken);
-    if (isJumpingOnTop) {
-      chicken.hasBeenHit = true;
-      chicken.isBeingRemoved = true;
-      window.playSound(this.squeezeChickenSound, 0.3);
-      chicken.die();
-      this.recentlyKilledChicken = true;
-      setTimeout(() => {
-        this.recentlyKilledChicken = false;
-      }, 300);
-      setTimeout(() => {
-        const index = this.level.enemies.indexOf(chicken);
-        if (index !== -1) {
-          this.level.enemies.splice(index, 1);
-        }
-      }, 300);
-      this.character.speedY = 17;
-    } 
-    else if (!this.recentlyKilledChicken && !this.character.isHurt()) {
-      this.character.hit(20);
-      window.playSound(this.hitSound, 0.3);
-      this.statusBar.setPercentage(this.character.energy);
-    }
+  if (chicken.hasBeenHit || chicken.isBeingRemoved) {
+    return;
   }
+  const characterBottom = this.character.y + this.character.height;
+  const characterPrevBottom = this.character.previousY + this.character.height;
+  const enemyTop = chicken.y;
+  const wasAboveEnemy = characterPrevBottom <= enemyTop + 10;
+  const isNowAtOrBelowEnemy = characterBottom >= enemyTop - 5;
+  const horizontallyOverlaps = 
+    this.character.x + this.character.width - 30 > chicken.x + 10 &&
+    this.character.x + 30 < chicken.x + chicken.width - 10;
+  if (wasAboveEnemy && isNowAtOrBelowEnemy && horizontallyOverlaps) {
+    chicken.hasBeenHit = true;
+    chicken.isBeingRemoved = true;
+    window.playSound(this.squeezeChickenSound, 0.3);
+    chicken.die();
+    setTimeout(() => {
+      const index = this.level.enemies.indexOf(chicken);
+      if (index !== -1) {
+        this.level.enemies.splice(index, 1);
+      }
+    }, 300);
+    this.character.speedY = 17;
+    return;
+  }
+  if (!this.character.isHurt()) {
+    this.character.hit(20);
+    window.playSound(this.hitSound, 0.3);
+    this.statusBar.setPercentage(this.character.energy);
+  }
+}
 
   /**
    * Determines if character is jumping on top of an enemy
@@ -295,27 +297,6 @@ class World {
     const tolerance = enemy instanceof Chicken && enemy.height <= 60 ? 45 : 80;
     const isInJumpRange = verticalDistance > -10 && verticalDistance < tolerance;
     return isInJumpRange;
-  }
-
-  /**
-   * Handles events when character jumps on a chicken
-   * @param {Chicken} chicken - The chicken that was jumped on
-   */
-  handleChickenJumpedOn(chicken) {
-    console.log('handleChickenJumpedOn aufgerufen');
-    console.log('Character speedY VOR BOUNCE:', this.character.speedY);
-    
-    window.playSound(this.squeezeChickenSound, 0.3);
-    chicken.die();
-    setTimeout(() => {
-      const index = this.level.enemies.indexOf(chicken);
-      if (index !== -1) {
-        this.level.enemies.splice(index, 1);
-      }
-    }, 300);
-    
-    this.character.speedY = 17;
-    console.log('Character speedY NACH BOUNCE:', this.character.speedY);
   }
 
   /**
