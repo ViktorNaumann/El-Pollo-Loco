@@ -25,7 +25,12 @@
   </head>
   <body onload="init()">
     <h1>El Pollo Loco</h1>
-    <canvas id="canvas" width="720" height="480"></canvas>
+    <div class="game-container">
+      <canvas id="canvas" width="720" height="480"></canvas>
+      <button id="mute-button" class="mute-button sound-on" onclick="toggleMute()">
+        <img src="img/sound-on.png" alt="Sound On" id="sound-icon">
+      </button>
+    </div>
     <div id="game-overlay" class="game-overlay hidden">
       <div class="overlay-content">
         <img id="overlay-image" src="desert">
@@ -38,7 +43,7 @@
     <div id="start-screen" class="start-screen">
       <img src="img/9_intro_outro_screens/start/startscreen_1.png" alt="Start Screen">
       <button id="start-button" class="start-button">PLAY</button>
-      <button id="mute-button" class="mute-button sound-on" onclick="toggleMute()">SOUND</button>
+     
       <button id="impressum-button" class="impressum-button" onclick="openImpressum()">IMPRESSUM</button>
       <div class="controls-box">
         <h3>CONTROLS</h3>

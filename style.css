@@ -188,8 +188,9 @@ canvas {
 /* In style.css hinzufügen */
 .mute-button {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 10px;
+  right: 10px;
+  z-index: 100;
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
@@ -211,6 +212,26 @@ canvas {
 
 .mute-button:hover {
   transform: scale(1.05);
+}
+
+/* In deiner style.css Datei */
+.mute-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.mute-button img {
+    width: 24px; /* Passe die Größe nach Bedarf an */
+    height: 24px;
+}
+
+.mute-button:hover {
+    opacity: 0.8;
 }
 
 /* Impressum Button Styling */
@@ -341,6 +362,12 @@ canvas {
   justify-content: center;
   align-items: center;
   gap: 20px;
+}
+
+.game-container {
+  position: relative;
+  width: 720px;
+  margin: 0 auto;
 }
 
 
