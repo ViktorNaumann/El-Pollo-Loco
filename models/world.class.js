@@ -28,6 +28,7 @@ class World {
   winSound = new Audio("audio/win_sound.mp3");
   lostSound = new Audio("audio/lost_sound.mp3");
   lostSpeakSound = new Audio("audio/lost_speak.mp3");
+  lastBottleThrowTime = 0;
 
   /**
    * Creates a new game world instance
@@ -173,9 +174,16 @@ class World {
 
   /**
    * Handles throwing objects when D key is pressed
+   * Rate-limited to one bottle per second
    */
   checkThrowObjects() {
-    if (this.keyboard.D && this.character.collectedBottles > 0) {
+    const currentTime = new Date().getTime();
+    const timeSinceLastThrow = currentTime - this.lastBottleThrowTime;
+    const throwCooldown = 1000;
+    if (this.keyboard.D && 
+        this.character.collectedBottles > 0 && 
+        timeSinceLastThrow >= throwCooldown) {
+      this.lastBottleThrowTime = currentTime;
       this.character.collectedBottles--;
       this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
       let bottleX = this.character.otherDirection ? 
