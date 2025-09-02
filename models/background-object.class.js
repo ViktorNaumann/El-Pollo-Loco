@@ -18,7 +18,6 @@ class BackgroundObject extends DrawableObject {
         this.y = y;
         this.width = 720;
         this.height = 480;
-
         if (imagePath.includes('sign_transparent.png')) {
             this.width = 100;
             this.height = 100;

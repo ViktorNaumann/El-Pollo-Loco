@@ -131,53 +131,106 @@ class Character extends MovableObject {
    * Sets up character animation and movement intervals
    */
   animate() {
+    this.startMovementAnimation();
+    this.startVisualAnimation();
+  }
+
+  /**
+   * Handles character movement and sound intervals
+   */
+  startMovementAnimation() {
     setInterval(() => {
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-        this.moveRight();
-        this.otherDirection = false;
-        if (!this.isAboveGround() && !this.isRunning) {
-          this.startRunningSound();
-        }
-        this.lastActionTime = new Date().getTime();
-      }
-      else if (this.world.keyboard.LEFT && this.x > 0) {
-        this.moveLeft();
-        this.otherDirection = true;
-        if (!this.isAboveGround() && !this.isRunning) {
-          this.startRunningSound();
-        }
-        this.lastActionTime = new Date().getTime();
-      }
-      else {
-        this.stopRunningSound();
-      }
-      if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-        this.jump();
-        window.playSound(this.jumpSound, 0.4);
-        this.lastActionTime = new Date().getTime();
-      }
-      if (this.isAboveGround()) {
-        this.stopRunningSound();
-      }
-      this.world.camera_x = -this.x + 100;
+      this.handleMovementInput();
+      this.handleJumpInput();
+      this.updateCamera();
     }, 1000 / 60);
-  
+  }
+
+  /**
+   * Handles character visual animation intervals
+   */
+  startVisualAnimation() {
     setInterval(() => {
-      let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
-      if (this.isDead()) {
-        this.setAnimation(this.IMAGES_DEAD);
-      } else if (this.isHurt()) {
-        this.setAnimation(this.IMAGES_HURT);
-      } else if (this.isAboveGround()) {
-        this.setAnimation(this.IMAGES_JUMPING);
-      } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-        this.setAnimation(this.IMAGES_WALKING);
-      } else if (timeSinceLastAction > 5000) {
-        this.setAnimation(this.IMAGES_LONG_IDLE);
-      } else {
-        this.setAnimation(this.IMAGES_IDLE);
-      }
+      this.updateCharacterAnimation();
     }, 1000 / 10);
+  }
+
+  /**
+   * Processes movement input and applies movement
+   */
+  handleMovementInput() {
+    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+      this.handleRightMovement();
+    } else if (this.world.keyboard.LEFT && this.x > 0) {
+      this.handleLeftMovement();
+    } else {
+      this.stopRunningSound();
+    }
+  }
+
+  /**
+   * Handles right movement input
+   */
+  handleRightMovement() {
+    this.moveRight();
+    this.otherDirection = false;
+    if (!this.isAboveGround() && !this.isRunning) {
+      this.startRunningSound();
+    }
+    this.lastActionTime = new Date().getTime();
+  }
+
+  /**
+   * Handles left movement input
+   */
+  handleLeftMovement() {
+    this.moveLeft();
+    this.otherDirection = true;
+    if (!this.isAboveGround() && !this.isRunning) {
+      this.startRunningSound();
+    }
+    this.lastActionTime = new Date().getTime();
+  }
+
+  /**
+   * Processes jump input
+   */
+  handleJumpInput() {
+    if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+      this.jump();
+      window.playSound(this.jumpSound, 0.4);
+      this.lastActionTime = new Date().getTime();
+    }
+    if (this.isAboveGround()) {
+      this.stopRunningSound();
+    }
+  }
+
+  /**
+   * Updates camera position based on character position
+   */
+  updateCamera() {
+    this.world.camera_x = -this.x + 100;
+  }
+
+  /**
+   * Updates character animation based on current state
+   */
+  updateCharacterAnimation() {
+    let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
+    if (this.isDead()) {
+      this.setAnimation(this.IMAGES_DEAD);
+    } else if (this.isHurt()) {
+      this.setAnimation(this.IMAGES_HURT);
+    } else if (this.isAboveGround()) {
+      this.setAnimation(this.IMAGES_JUMPING);
+    } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+      this.setAnimation(this.IMAGES_WALKING);
+    } else if (timeSinceLastAction > 5000) {
+      this.setAnimation(this.IMAGES_LONG_IDLE);
+    } else {
+      this.setAnimation(this.IMAGES_IDLE);
+    }
   }
 
   /**
@@ -214,29 +267,63 @@ class Character extends MovableObject {
    * @param {Array<string>} images - Array of image paths to animate
    */
   setAnimation(images) {
-    if (images === this.IMAGES_DEAD) {
-      if (!this.isDeadAnimationPlayed) {
-        this.isDeadAnimationPlayed = true;
-        this.playAnimationOnce(images);
-        setTimeout(() => {
-          if (this.world) {
-            this.world.triggerGameOver();
-          }
-        }, images.length * 150);
-      }
+    if (this.shouldPlayDeathAnimation(images)) {
+      this.handleDeathAnimation(images);
       return;
     }
+    this.updateCurrentAnimation(images);
+  }
+
+  /**
+   * Checks if death animation should be played
+   * @param {Array<string>} images - Array of image paths
+   * @returns {boolean} True if death animation should play
+   */
+  shouldPlayDeathAnimation(images) {
+    return images === this.IMAGES_DEAD;
+  }
+
+  /**
+   * Handles death animation sequence
+   * @param {Array<string>} images - Death animation images
+   */
+  handleDeathAnimation(images) {
+    if (!this.isDeadAnimationPlayed) {
+      this.isDeadAnimationPlayed = true;
+      this.playAnimationOnce(images);
+      setTimeout(() => {
+        if (this.world) {
+          this.world.triggerGameOver();
+        }
+      }, images.length * 150);
+    }
+  }
+
+  /**
+   * Updates current animation if different from previous
+   * @param {Array<string>} images - Animation images to set
+   */
+  updateCurrentAnimation(images) {
     if (this.currentAnimation !== images) {
       this.currentImage = 0;
       this.currentAnimation = images;
-      let delay = 100;
-      if (images === this.IMAGES_IDLE) delay = 300;
-      if (images === this.IMAGES_LONG_IDLE) delay = 300;
-      if (images === this.IMAGES_WALKING) delay = 80;
-      if (images === this.IMAGES_JUMPING) delay = 120;
-      if (images === this.IMAGES_HURT) delay = 80;
+      let delay = this.getAnimationDelay(images);
       this.playAnimationWithSpeed(images, delay);
     }
+  }
+
+  /**
+   * Gets animation delay based on image type
+   * @param {Array<string>} images - Animation images
+   * @returns {number} Delay in milliseconds
+   */
+  getAnimationDelay(images) {
+    if (images === this.IMAGES_IDLE) return 300;
+    if (images === this.IMAGES_LONG_IDLE) return 300;
+    if (images === this.IMAGES_WALKING) return 80;
+    if (images === this.IMAGES_JUMPING) return 120;
+    if (images === this.IMAGES_HURT) return 80;
+    return 100;
   }
 
   /**
@@ -245,20 +332,27 @@ class Character extends MovableObject {
    */
   isDead() {
     if (this.energy <= 0) {
-      if (!this.gameOverTriggered) {
-        this.gameOverTriggered = true;
-        if (this.playDeathAnimation) {
-          this.playDeathAnimation();
-        }
-        setTimeout(() => {
-          if (this.world) {
-            this.world.triggerGameOver(false);
-          }
-        }, 1000);
-      }
+      this.handleCharacterDeath();
       return true;
     }
     return false;
+  }
+
+  /**
+   * Handles character death sequence
+   */
+  handleCharacterDeath() {
+    if (!this.gameOverTriggered) {
+      this.gameOverTriggered = true;
+      if (this.playDeathAnimation) {
+        this.playDeathAnimation();
+      }
+      setTimeout(() => {
+        if (this.world) {
+          this.world.triggerGameOver(false);
+        }
+      }, 1000);
+    }
   }
 
   /**
