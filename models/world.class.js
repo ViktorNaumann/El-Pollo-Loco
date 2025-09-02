@@ -1,7 +1,7 @@
 /**
  * World class
  * Represents the game world containing all game objects and managing their interactions
- * Handles collision detection, drawing, sound effects, and game state
+ * Handles drawing, sound effects, and game state
  */
 class World {
   character = new Character();
@@ -29,6 +29,8 @@ class World {
   lostSound = new Audio("audio/lost_sound.mp3");
   lostSpeakSound = new Audio("audio/lost_speak.mp3");
   lastBottleThrowTime = 0;
+  collisionHandler;
+  animationFrame;
 
   /**
    * Creates a new game world instance
@@ -43,9 +45,10 @@ class World {
     this.level = level || initLevel();
     this.endbossStatusBar.visible = false;
     this.statusBarCoin.setPercentage(0);
-    this.draw();
+    this.collisionHandler = new CollisionHandler(this);
     this.setWorld();
     this.run();
+    this.draw();
     this.bossHurtSound.volume = 0.4;
   }
 
@@ -66,9 +69,9 @@ class World {
    */
   run() {
     setInterval(() => {
-      this.checkCollisions();
+      this.collisionHandler.checkCollisions();
       this.checkThrowObjects();
-      this.checkBottleHits();
+      this.collisionHandler.checkBottleHits();
       this.checkEndbossVisibility();
     }, 200);
   }
@@ -147,32 +150,6 @@ class World {
   }
 
   /**
-   * Checks for collisions between thrown bottles and enemies
-   */
-  checkBottleHits() {
-    this.throwableObject.forEach((bottle) => {
-      this.level.enemies.forEach((enemy) => {
-        if (bottle.isColliding(enemy) && !bottle.exploded && !bottle.hasHit) {
-          bottle.explode();
-          bottle.hasHit = true;
-          if (enemy instanceof Endboss) {
-            enemy.hit(20);
-            this.endbossStatusBar.setPercentage(enemy.energy);
-          } else if (enemy instanceof Chicken) {
-            enemy.die();
-            setTimeout(() => {
-              const index = this.level.enemies.indexOf(enemy);
-              if (index !== -1) {
-                this.level.enemies.splice(index, 1);
-              }
-            }, 500);
-          }
-        }
-      });
-    });
-  }
-
-  /**
    * Handles throwing objects when D key is pressed
    * Rate-limited to one bottle per second
    */
@@ -197,154 +174,6 @@ class World {
       bottle.world = this;
       window.playSound(this.throwSound, 0.3);
       this.throwableObject.push(bottle);
-    }
-  }
-
-  /**
-   * Main collision detection method that handles all collision types
-   */
-  checkCollisions() {
-    if (this.character.isDead()) return;
-    this.checkEnemyCollisions();
-    this.checkBottleCollection();
-    this.checkCoinCollection();
-    this.character.previousY = this.character.y;
-  }
-
-  /**
-   * Checks for collisions with enemy objects
-   */
-  checkEnemyCollisions() {
-    this.level.enemies.forEach((enemy) => {
-      if (this.character.isColliding(enemy)) {
-        if (enemy instanceof Endboss) {
-          this.handleEndbossCollision(enemy);
-        } else if (enemy instanceof Chicken) {
-          this.handleChickenCollision(enemy);
-        }
-      }
-    });
-  }
-
-  /**
-   * Handles collision with the endboss
-   * @param {Endboss} endboss - The endboss object
-   */
-  handleEndbossCollision(endboss) {
-    if (!this.character.isHurt()) {
-      this.character.hit(20);
-      window.playSound(this.hitSound, 0.4);
-      this.statusBar.setPercentage(this.character.energy);
-    }
-  }
-
-  /**
-   * Handles collision with chicken enemies
-   * @param {Chicken} chicken - The chicken object
-   */
-  handleChickenCollision(chicken) {
-  if (chicken.hasBeenHit || chicken.isBeingRemoved) {
-    return;
-  }
-  const characterBottom = this.character.y + this.character.height;
-  const characterPrevBottom = this.character.previousY + this.character.height;
-  const enemyTop = chicken.y;
-  const wasAboveEnemy = characterPrevBottom <= enemyTop + 10;
-  const isNowAtOrBelowEnemy = characterBottom >= enemyTop - 5;
-  const horizontallyOverlaps = 
-    this.character.x + this.character.width - 30 > chicken.x + 10 &&
-    this.character.x + 30 < chicken.x + chicken.width - 10;
-  if (wasAboveEnemy && isNowAtOrBelowEnemy && horizontallyOverlaps) {
-    chicken.hasBeenHit = true;
-    chicken.isBeingRemoved = true;
-    window.playSound(this.squeezeChickenSound, 0.3);
-    chicken.die();
-    setTimeout(() => {
-      const index = this.level.enemies.indexOf(chicken);
-      if (index !== -1) {
-        this.level.enemies.splice(index, 1);
-      }
-    }, 300);
-    this.character.speedY = 17;
-    return;
-  }
-  if (!this.character.isHurt()) {
-    this.character.hit(20);
-    window.playSound(this.hitSound, 0.3);
-    this.statusBar.setPercentage(this.character.energy);
-  }
-}
-
-  /**
-   * Determines if character is jumping on top of an enemy
-   * @param {MovableObject} enemy - The enemy to check
-   * @returns {boolean} True if character is jumping on enemy from above
-   */
-  isCharacterJumpingOnEnemy(enemy) {
-    const jumpKeyPressed = this.keyboard.SPACE || this.keyboard.UP;
-    const wasJustJumping = this.character.speedY < -25;
-    const isPhysicallyJumping = this.character.isAboveGround();
-    const isStartingJump = this.character.speedY < -15;
-    const isJumping = isPhysicallyJumping || isStartingJump;
-    if (!isJumping) {
-      return false;
-    }
-    if (this.character.speedY >= 0) {
-      return false;
-    }
-    const characterLeft = this.character.x + 40;
-    const characterRight = this.character.x + this.character.width - 40;
-    const enemyLeft = enemy.x + 10;
-    const enemyRight = enemy.x + enemy.width - 10;
-    if (characterRight < enemyLeft || characterLeft > enemyRight) {
-      return false;
-    }
-    const characterFeet = this.character.y + this.character.height;
-    const enemyTop = enemy.y + 10;
-    const verticalDistance = characterFeet - enemyTop;
-    const tolerance = enemy instanceof Chicken && enemy.height <= 60 ? 45 : 80;
-    const isInJumpRange = verticalDistance > -10 && verticalDistance < tolerance;
-    return isInJumpRange;
-  }
-
-  /**
-   * Handles damage to the character
-   */
-  handleCharacterDamage() {
-    if (!this.character.isHurt()) {
-      this.character.hit(5);
-      window.playSound(this.hitSound, 0.3);
-      this.statusBar.setPercentage(this.character.energy);
-    }
-  }
-
-  /**
-   * Checks for collisions with collectable coins
-   */
-  checkCoinCollection() {
-    for (let i = this.level.coins.length - 1; i >= 0; i--) {
-      const coin = this.level.coins[i];
-      if (this.character.isColliding(coin)) {
-        this.level.coins.splice(i, 1);
-        this.collectedCoins++;
-        this.statusBarCoin.setPercentage(this.collectedCoins * 5);
-        window.playSound(this.collectCoin, 0.3);
-      }
-    }
-  }
-
-  /**
-   * Checks for collisions with collectable bottles
-   */
-  checkBottleCollection() {
-    for (let i = this.level.bottles.length - 1; i >= 0; i--) {
-      const bottle = this.level.bottles[i];
-      if (this.character.isColliding(bottle) && this.character.collectedBottles < 5) {
-        this.level.bottles.splice(i, 1);
-        this.character.collectedBottles++;
-        this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
-        window.playSound(this.collectSound, 0.3);
-      }
     }
   }
 
