@@ -1,18 +1,18 @@
 /**
- * CollisionHandler Klasse
- * Verarbeitet alle Kollisionen im Spiel zwischen verschiedenen Objekten
+ * CollisionHandler class
+ * Handles all collisions in the game between different objects
  */
 class CollisionHandler {
   /**
-   * Erzeugt einen neuen CollisionHandler
-   * @param {World} world - Die Spielwelt, in der die Kollisionen erkannt werden sollen
+   * Creates a new CollisionHandler
+   * @param {World} world - The game world where collisions should be detected
    */
   constructor(world) {
     this.world = world;
   }
 
   /**
-   * Hauptmethode zur Überprüfung aller Kollisionstypen
+   * Main method to check all collision types
    */
   checkCollisions() {
     if (this.world.character.isDead()) return;
@@ -23,7 +23,7 @@ class CollisionHandler {
   }
 
   /**
-   * Überprüft Kollisionen mit Feinden
+   * Checks collisions with enemies
    */
   checkEnemyCollisions() {
     this.world.level.enemies.forEach((enemy) => {
@@ -38,8 +38,8 @@ class CollisionHandler {
   }
 
   /**
-   * Behandelt Kollisionen mit dem Endboss
-   * @param {Endboss} endboss - Der Endboss-Gegner
+   * Handles collisions with the endboss
+   * @param {Endboss} endboss - The endboss enemy
    */
   handleEndbossCollision(endboss) {
     if (!this.world.character.isHurt()) {
@@ -50,25 +50,48 @@ class CollisionHandler {
   }
 
   /**
-   * Behandelt Kollisionen mit Hühnern
-   * @param {Chicken} chicken - Das Huhn-Objekt
+   * Handles collisions with chickens
+   * @param {Chicken} chicken - The chicken object
    */
   handleChickenCollision(chicken) {
     if (chicken.hasBeenHit || chicken.isBeingRemoved) {
       return;
     }
+    if (this.isJumpingOnChicken(chicken)) {
+      this.handleChickenJump(chicken);
+      return;
+    }
+    this.applyCharacterDamage();
+  }
+
+  /**
+   * Checks if character is jumping on chicken
+   * @param {Chicken} chicken - The chicken object
+   * @returns {boolean} True if jumping on chicken
+   */
+  isJumpingOnChicken(chicken) {
     const characterBottom = this.world.character.y + this.world.character.height;
     const characterPrevBottom = this.world.character.previousY + this.world.character.height;
     const enemyTop = chicken.y;
     const wasAboveEnemy = characterPrevBottom <= enemyTop + 10;
     const isNowAtOrBelowEnemy = characterBottom >= enemyTop - 5;
-    const horizontallyOverlaps = 
-      this.world.character.x + this.world.character.width - 30 > chicken.x + 10 &&
-      this.world.character.x + 30 < chicken.x + chicken.width - 10;
-    if (wasAboveEnemy && isNowAtOrBelowEnemy && horizontallyOverlaps) {
-      this.handleChickenJump(chicken);
-      return;
-    }
+    return wasAboveEnemy && isNowAtOrBelowEnemy && this.hasHorizontalOverlap(chicken);
+  }
+
+  /**
+   * Checks if character horizontally overlaps with chicken
+   * @param {Chicken} chicken - The chicken object
+   * @returns {boolean} True if overlapping horizontally
+   */
+  hasHorizontalOverlap(chicken) {
+    return this.world.character.x + this.world.character.width - 30 > chicken.x + 10 &&
+           this.world.character.x + 30 < chicken.x + chicken.width - 10;
+  }
+
+  /**
+   * Applies damage to character
+   */
+  applyCharacterDamage() {
     if (!this.world.character.isHurt()) {
       this.world.character.hit(20);
       window.playSound(this.world.hitSound, 0.3);
@@ -77,58 +100,85 @@ class CollisionHandler {
   }
 
   /**
-   * Behandelt das Springen auf ein Huhn
-   * @param {Chicken} chicken - Das Huhn, auf das gesprungen wurde
+   * Handles jumping on a chicken
+   * @param {Chicken} chicken - The chicken that was jumped on
    */
   handleChickenJump(chicken) {
     chicken.hasBeenHit = true;
     chicken.isBeingRemoved = true;
     window.playSound(this.world.squeezeChickenSound, 0.3);
     chicken.die();
+    this.removeChickenAfterDelay(chicken);
+    this.world.character.speedY = 17;
+  }
+
+  /**
+   * Removes chicken from enemies array after delay
+   * @param {Chicken} chicken - The chicken to remove
+   */
+  removeChickenAfterDelay(chicken) {
     setTimeout(() => {
       const index = this.world.level.enemies.indexOf(chicken);
       if (index !== -1) {
         this.world.level.enemies.splice(index, 1);
       }
     }, 300);
-    this.world.character.speedY = 17;
   }
 
   /**
-   * Überprüft, ob der Charakter auf einen Feind springt
-   * @param {MovableObject} enemy - Der zu überprüfende Feind
-   * @returns {boolean} Wahr, wenn der Charakter von oben auf den Feind springt
+   * Checks if the character is jumping on an enemy
+   * @param {MovableObject} enemy - The enemy to check
+   * @returns {boolean} True if character is jumping on the enemy from above
    */
   isCharacterJumpingOnEnemy(enemy) {
-    const jumpKeyPressed = this.world.keyboard.SPACE || this.world.keyboard.UP;
-    const wasJustJumping = this.world.character.speedY < -25;
+    if (!this.isCharacterInJumpingState()) {
+      return false;
+    }
+    if (!this.isHorizontallyAligned(enemy)) {
+      return false;
+    }
+    return this.isInJumpRange(enemy);
+  }
+
+  /**
+   * Checks if character is in jumping state
+   * @returns {boolean} True if character is jumping
+   */
+  isCharacterInJumpingState() {
     const isPhysicallyJumping = this.world.character.isAboveGround();
     const isStartingJump = this.world.character.speedY < -15;
     const isJumping = isPhysicallyJumping || isStartingJump;
-    if (!isJumping) {
-      return false;
-    }
-    if (this.world.character.speedY >= 0) {
-      return false;
-    }
+    return isJumping && this.world.character.speedY < 0;
+  }
+
+  /**
+   * Checks if character is horizontally aligned with enemy
+   * @param {MovableObject} enemy - The enemy to check
+   * @returns {boolean} True if horizontally aligned
+   */
+  isHorizontallyAligned(enemy) {
     const characterLeft = this.world.character.x + 40;
     const characterRight = this.world.character.x + this.world.character.width - 40;
     const enemyLeft = enemy.x + 10;
     const enemyRight = enemy.x + enemy.width - 10;
-    if (characterRight < enemyLeft || characterLeft > enemyRight) {
-      return false;
-    }
+    return !(characterRight < enemyLeft || characterLeft > enemyRight);
+  }
+
+  /**
+   * Checks if character is in jump range of enemy
+   * @param {MovableObject} enemy - The enemy to check
+   * @returns {boolean} True if in jump range
+   */
+  isInJumpRange(enemy) {
     const characterFeet = this.world.character.y + this.world.character.height;
     const enemyTop = enemy.y + 10;
     const verticalDistance = characterFeet - enemyTop;
     const tolerance = enemy instanceof Chicken && enemy.height <= 60 ? 45 : 80;
-    const isInJumpRange = verticalDistance > -10 && verticalDistance < tolerance;
-    
-    return isInJumpRange;
+    return verticalDistance > -10 && verticalDistance < tolerance;
   }
 
   /**
-   * Behandelt Schaden am Charakter
+   * Handles damage to character
    */
   handleCharacterDamage() {
     if (!this.world.character.isHurt()) {
@@ -139,58 +189,110 @@ class CollisionHandler {
   }
 
   /**
-   * Überprüft Kollisionen mit sammelbaren Flaschen
+   * Checks collisions with collectible bottles
    */
   checkBottleCollection() {
     for (let i = this.world.level.bottles.length - 1; i >= 0; i--) {
       const bottle = this.world.level.bottles[i];
       if (this.world.character.isColliding(bottle) && this.world.character.collectedBottles < 5) {
-        this.world.level.bottles.splice(i, 1);
-        this.world.character.collectedBottles++;
-        this.world.statusBarBottle.setPercentage(this.world.character.collectedBottles * 20);
-        window.playSound(this.world.collectSound, 0.3);
+        this.collectBottle(i, bottle);
       }
     }
   }
 
   /**
-   * Überprüft Kollisionen mit sammelbaren Münzen
+   * Handles bottle collection logic
+   * @param {number} index - Index of bottle in array
+   * @param {Object} bottle - The bottle object
+   */
+  collectBottle(index, bottle) {
+    this.world.level.bottles.splice(index, 1);
+    this.world.character.collectedBottles++;
+    this.world.statusBarBottle.setPercentage(this.world.character.collectedBottles * 20);
+    window.playSound(this.world.collectSound, 0.3);
+  }
+
+  /**
+   * Checks collisions with collectible coins
    */
   checkCoinCollection() {
     for (let i = this.world.level.coins.length - 1; i >= 0; i--) {
       const coin = this.world.level.coins[i];
       if (this.world.character.isColliding(coin)) {
-        this.world.level.coins.splice(i, 1);
-        this.world.collectedCoins++;
-        this.world.statusBarCoin.setPercentage(this.world.collectedCoins * 5);
-        window.playSound(this.world.collectCoin, 0.3);
+        this.collectCoin(i);
       }
     }
   }
 
   /**
-   * Überprüft Kollisionen zwischen geworfenen Flaschen und Feinden
+   * Handles coin collection logic
+   * @param {number} index - Index of coin in array
+   */
+  collectCoin(index) {
+    this.world.level.coins.splice(index, 1);
+    this.world.collectedCoins++;
+    this.world.statusBarCoin.setPercentage(this.world.collectedCoins * 5);
+    window.playSound(this.world.collectCoin, 0.3);
+  }
+
+  /**
+   * Checks collisions between thrown bottles and enemies
    */
   checkBottleHits() {
     this.world.throwableObject.forEach((bottle) => {
       this.world.level.enemies.forEach((enemy) => {
-        if (bottle.isColliding(enemy) && !bottle.exploded && !bottle.hasHit) {
-          bottle.explode();
-          bottle.hasHit = true;
-          if (enemy instanceof Endboss) {
-            enemy.hit(20);
-            this.world.endbossStatusBar.setPercentage(enemy.energy);
-          } else if (enemy instanceof Chicken) {
-            enemy.die();
-            setTimeout(() => {
-              const index = this.world.level.enemies.indexOf(enemy);
-              if (index !== -1) {
-                this.world.level.enemies.splice(index, 1);
-              }
-            }, 500);
-          }
+        if (this.isBottleHittingEnemy(bottle, enemy)) {
+          this.handleBottleHit(bottle, enemy);
         }
       });
     });
+  }
+
+  /**
+   * Checks if bottle is hitting enemy
+   * @param {Object} bottle - The thrown bottle
+   * @param {Object} enemy - The enemy object
+   * @returns {boolean} True if bottle hits enemy
+   */
+  isBottleHittingEnemy(bottle, enemy) {
+    return bottle.isColliding(enemy) && !bottle.exploded && !bottle.hasHit;
+  }
+
+  /**
+   * Handles bottle hitting enemy
+   * @param {Object} bottle - The thrown bottle
+   * @param {Object} enemy - The enemy object
+   */
+  handleBottleHit(bottle, enemy) {
+    bottle.explode();
+    bottle.hasHit = true;
+    if (enemy instanceof Endboss) {
+      this.handleEndbossHit(enemy);
+    } else if (enemy instanceof Chicken) {
+      this.handleChickenHit(enemy);
+    }
+  }
+
+  /**
+   * Handles endboss being hit by bottle
+   * @param {Endboss} enemy - The endboss enemy
+   */
+  handleEndbossHit(enemy) {
+    enemy.hit(20);
+    this.world.endbossStatusBar.setPercentage(enemy.energy);
+  }
+
+  /**
+   * Handles chicken being hit by bottle
+   * @param {Chicken} enemy - The chicken enemy
+   */
+  handleChickenHit(enemy) {
+    enemy.die();
+    setTimeout(() => {
+      const index = this.world.level.enemies.indexOf(enemy);
+      if (index !== -1) {
+        this.world.level.enemies.splice(index, 1);
+      }
+    }, 500);
   }
 }

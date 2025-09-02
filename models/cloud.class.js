@@ -20,7 +20,6 @@ class Cloud extends MovableObject {
     super();
     const selectedImage = images[Math.floor(Math.random() * images.length)];
     this.loadImage(selectedImage);
-  
     this.x = x;
     this.y = 20 + Math.random() * 50;
     this.width = 450;
