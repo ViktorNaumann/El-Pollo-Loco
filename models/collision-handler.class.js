@@ -65,12 +65,10 @@ class CollisionHandler {
     const horizontallyOverlaps = 
       this.world.character.x + this.world.character.width - 30 > chicken.x + 10 &&
       this.world.character.x + 30 < chicken.x + chicken.width - 10;
-    
     if (wasAboveEnemy && isNowAtOrBelowEnemy && horizontallyOverlaps) {
       this.handleChickenJump(chicken);
       return;
     }
-    
     if (!this.world.character.isHurt()) {
       this.world.character.hit(20);
       window.playSound(this.world.hitSound, 0.3);
@@ -107,23 +105,19 @@ class CollisionHandler {
     const isPhysicallyJumping = this.world.character.isAboveGround();
     const isStartingJump = this.world.character.speedY < -15;
     const isJumping = isPhysicallyJumping || isStartingJump;
-    
     if (!isJumping) {
       return false;
     }
     if (this.world.character.speedY >= 0) {
       return false;
     }
-    
     const characterLeft = this.world.character.x + 40;
     const characterRight = this.world.character.x + this.world.character.width - 40;
     const enemyLeft = enemy.x + 10;
     const enemyRight = enemy.x + enemy.width - 10;
-    
     if (characterRight < enemyLeft || characterLeft > enemyRight) {
       return false;
     }
-    
     const characterFeet = this.world.character.y + this.world.character.height;
     const enemyTop = enemy.y + 10;
     const verticalDistance = characterFeet - enemyTop;
