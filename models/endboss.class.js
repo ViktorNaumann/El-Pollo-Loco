@@ -63,38 +63,73 @@ class Endboss extends MovableObject{
    */
   constructor(){
     super().loadImage(this.IMAGES_ALERT[0]);
-    this.loadImages(this.IMAGES_ALERT);
-    this.loadImages(this.IMAGES_WALKING);
-    this.loadImages(this.IMAGES_ATTACK);
-    this.loadImages(this.IMAGES_HURT);
-    this.loadImages(this.IMAGES_DEAD);
+    this.loadAllImages();
     this.x=3900;
     this.animate();
     this.startRandomSpeedChanges();
   }
 
   /**
+   * Loads all image sets for endboss animations
+   */
+  loadAllImages() {
+    this.loadImages(this.IMAGES_ALERT);
+    this.loadImages(this.IMAGES_WALKING);
+    this.loadImages(this.IMAGES_ATTACK);
+    this.loadImages(this.IMAGES_HURT);
+    this.loadImages(this.IMAGES_DEAD);
+  }
+
+  /**
    * Sets up animation and movement intervals for the endboss
    */
   animate(){
+    this.startAnimationInterval();
+    this.startMovementInterval();
+    this.startAttackInterval();
+  }
+
+  /**
+   * Starts the animation interval for endboss
+   */
+  startAnimationInterval() {
     this.animationInterval=setInterval(()=>{
-      if(this.isDead() && !this.deadPlayed){
-        clearInterval(this.animationInterval);
-        this.playAnimationOnce(this.IMAGES_DEAD);
-        this.deadPlayed=true;
-      }else if(this.isHurt()){
-        this.playAnimation(this.IMAGES_HURT);
-      }else if(this.isActive && !this.isDead()){
-        this.playAnimation(this.IMAGES_WALKING);
-      }else{
-        this.playAnimation(this.IMAGES_ALERT);
-      }
+      this.updateAnimation();
     },150);
+  }
+
+  /**
+   * Updates endboss animation based on current state
+   */
+  updateAnimation() {
+    if(this.isDead() && !this.deadPlayed){
+      clearInterval(this.animationInterval);
+      this.playAnimationOnce(this.IMAGES_DEAD);
+      this.deadPlayed=true;
+    }else if(this.isHurt()){
+      this.playAnimation(this.IMAGES_HURT);
+    }else if(this.isActive && !this.isDead()){
+      this.playAnimation(this.IMAGES_WALKING);
+    }else{
+      this.playAnimation(this.IMAGES_ALERT);
+    }
+  }
+
+  /**
+   * Starts the movement interval for endboss
+   */
+  startMovementInterval() {
     this.moveInterval=setInterval(()=>{
       if(this.isActive && !this.isDead()){
         this.followCharacter();
       }
     },1000/30);
+  }
+
+  /**
+   * Starts the attack interval for endboss
+   */
+  startAttackInterval() {
     this.attackInterval=setInterval(()=>{
       if(this.isActive && !this.isDead()){
         this.attackPlayer();
@@ -144,13 +179,20 @@ class Endboss extends MovableObject{
     this.energy-=damage;
     if(this.energy<0)this.energy=0;
     this.lastHit=new Date().getTime();
-    this.shakeAnimation();
-    if(this.world && this.world.bossHurtSound){
-      window.playSound(this.world.bossHurtSound,0.4);
-    }
+    this.handleHitEffects();
     if(this.energy<=0 && !this.isDying){
       this.isDying=true;
       this.die();
+    }
+  }
+
+  /**
+   * Handles visual and audio effects when hit
+   */
+  handleHitEffects() {
+    this.shakeAnimation();
+    if(this.world && this.world.bossHurtSound){
+      window.playSound(this.world.bossHurtSound,0.4);
     }
   }
 
@@ -160,17 +202,31 @@ class Endboss extends MovableObject{
   attackPlayer(){
     if(!this.world || !this.world.character || this.isDead())return;
     if(this.isColliding(this.world.character)){
-      this.playAnimation(this.IMAGES_ATTACK);
-      if(!this.world.character.isHurt()){
-        this.world.character.hit(20);
-        if(this.world.hitSound){
-          window.playSound(this.world.hitSound,0.4);
-        }
-        this.world.statusBar.setPercentage(this.world.character.energy);
-        if(this.world.character.energy<=0){
-          this.world.triggerGameOver(false);
-        }
-      }
+      this.executeAttack();
+    }
+  }
+
+  /**
+   * Executes attack on character
+   */
+  executeAttack() {
+    this.playAnimation(this.IMAGES_ATTACK);
+    if(!this.world.character.isHurt()){
+      this.damageCharacter();
+    }
+  }
+
+  /**
+   * Applies damage to character and updates status
+   */
+  damageCharacter() {
+    this.world.character.hit(20);
+    if(this.world.hitSound){
+      window.playSound(this.world.hitSound,0.4);
+    }
+    this.world.statusBar.setPercentage(this.world.character.energy);
+    if(this.world.character.energy<=0){
+      this.world.triggerGameOver(false);
     }
   }  
 
@@ -183,13 +239,28 @@ class Endboss extends MovableObject{
     const char=this.world.character;
     const distance=this.x-char.x;
     if(distance>this.attackDistance){
-      this.otherDirection=false;
-      const speedMultiplier=Math.min(2.0,distance/200);
-      this.x-=this.speed*speedMultiplier;
+      this.pursueCharacter(distance);
     }else{
-      this.attackPlayer();
-      this.x-=Math.random()*3-1.5;
+      this.closeRangeAttack();
     }
+  }
+
+  /**
+   * Pursues character when at distance
+   * @param {number} distance - Distance to character
+   */
+  pursueCharacter(distance) {
+    this.otherDirection=false;
+    const speedMultiplier=Math.min(2.0,distance/200);
+    this.x-=this.speed*speedMultiplier;
+  }
+
+  /**
+   * Handles close range attack behavior
+   */
+  closeRangeAttack() {
+    this.attackPlayer();
+    this.x-=Math.random()*3-1.5;
   }
   
   /**
@@ -199,17 +270,31 @@ class Endboss extends MovableObject{
   startRandomSpeedChanges(){
     setInterval(()=>{
       if(this.isActive){
-        const randomFactor=0.9+Math.random()*1.2;
-        this.speed=this.baseSpeed*randomFactor;
-        if(Math.random()<0.35){
-          this.speed=this.baseSpeed*3.5;
-          setTimeout(()=>{
-            const normalRandomFactor=0.9+Math.random()*1.1;
-            this.speed=this.baseSpeed*normalRandomFactor;
-          },300+Math.random()*700);
-        }
+        this.applySpeedVariation();
       }
     },1000+Math.random()*2000);
+  }
+
+  /**
+   * Applies random speed variations and bursts
+   */
+  applySpeedVariation() {
+    const randomFactor=0.9+Math.random()*1.2;
+    this.speed=this.baseSpeed*randomFactor;
+    if(Math.random()<0.35){
+      this.triggerSpeedBurst();
+    }
+  }
+
+  /**
+   * Triggers temporary speed burst
+   */
+  triggerSpeedBurst() {
+    this.speed=this.baseSpeed*3.5;
+    setTimeout(()=>{
+      const normalRandomFactor=0.9+Math.random()*1.1;
+      this.speed=this.baseSpeed*normalRandomFactor;
+    },300+Math.random()*700);
   }
   
   /**
