@@ -40,7 +40,6 @@ class Keyboard {
       if (e.code === 'Space') this.SPACE = true;
       if (e.code === 'KeyD') this.D = true;
     };
-    
     this.keyupListener = (e) => {
       if (this.deactivated) return;
       
@@ -51,7 +50,6 @@ class Keyboard {
       if (e.code === 'Space') this.SPACE = false;
       if (e.code === 'KeyD') this.D = false;
     };
-    
     window.addEventListener('keydown', this.keydownListener);
     window.addEventListener('keyup', this.keyupListener);
   }

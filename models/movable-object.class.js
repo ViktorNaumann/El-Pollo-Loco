@@ -5,12 +5,12 @@
  * @extends DrawableObject
  */
 class MovableObject extends DrawableObject {
-  speed = 0.1; // Speed of the object
-  otherDirection = false; // Direction of the object
-  speedY = 0; // Speed in Y direction
-  acceleration = 2; // Acceleration in Y direction
-  energy = 100; // Energy of the object
-  lastHit = 0; // Last hit time
+  speed = 0.1;
+  otherDirection = false;
+  speedY = 0;
+  acceleration = 2;
+  energy = 100;
+  lastHit = 0;
 
   /**
    * Applies gravity physics to the object
@@ -19,12 +19,9 @@ class MovableObject extends DrawableObject {
   applyGravity() {
     setInterval(() => {
       if (this.isAboveGround() || this.speedY > 0) {
-        this.y -= this.speedY; // Move the object down by speedY
-        this.speedY -= this.acceleration; // Increase the speedY by acceleration
-        
-        // Landung auf dem Boden - ABER nur wenn es wirklich der Hauptboden ist
+        this.y -= this.speedY;
+        this.speedY -= this.acceleration;
         if (this.y >= 195 && this.speedY <= 0) {
-          // Zum exakten Boden-Level zurücksetzen
           this.y = 185;
           this.speedY = 0;
         }
@@ -40,7 +37,7 @@ class MovableObject extends DrawableObject {
     if (this instanceof ThrowableObject) {
       return true;
     } else {
-      return this.y < 185; // Check if the object is above ground
+      return this.y < 185;
     }
   }
 
@@ -55,12 +52,10 @@ class MovableObject extends DrawableObject {
     const thisRight  = this.x + this.width - this.offset.right;
     const thisTop    = this.y + this.offset.top;
     const thisBottom = this.y + this.height - this.offset.bottom;
-  
     const otherLeft   = other.x + other.offset.left;
     const otherRight  = other.x + other.width - other.offset.right;
     const otherTop    = other.y + other.offset.top;
     const otherBottom = other.y + other.height - other.offset.bottom;
-  
     return (
       thisRight > otherLeft &&
       thisLeft < otherRight &&
@@ -75,13 +70,8 @@ class MovableObject extends DrawableObject {
    * @param {number} [damage=20] - Amount of damage to apply
    */
   hit(damage = 20) {
-    // Immer lastHit setzen, unabhängig vom Energiestand
     this.lastHit = new Date().getTime();
-    
-    // Dann Energie reduzieren
     this.energy -= damage; 
-    
-    // Energie nicht unter 0 fallen lassen
     if (this.energy < 0) {
       this.energy = 0;
     }
@@ -92,8 +82,8 @@ class MovableObject extends DrawableObject {
    * @returns {boolean} True if the object was hit recently
    */
   isHurt() {
-    let timepassed = new Date().getTime() - this.lastHit; // Calculate the time passed since the last hit
-    return timepassed < 1000; // Check if the time passed is less than 1 second
+    let timepassed = new Date().getTime() - this.lastHit;
+    return timepassed < 1000;
   }
 
   /**
@@ -109,10 +99,10 @@ class MovableObject extends DrawableObject {
    * @param {Array<string>} images - Array of image paths to animate
    */
   playAnimation(images) {
-    let i = this.currentImage % images.length; // Get the current image index
-    let path = images[i]; // Get the image path
-    this.img.src = path; // Set the image source to the current image
-    this.currentImage++; // Increment the current image index
+    let i = this.currentImage % images.length;
+    let path = images[i];
+    this.img.src = path;
+    this.currentImage++;
   }
 
   /**
@@ -128,7 +118,6 @@ class MovableObject extends DrawableObject {
         i++;
       } else {
         clearInterval(interval);
-        // Bild explizit auf dem letzten Frame halten
         let lastImage = images[images.length - 1];
         this.img = this.imageCache[lastImage];
       }
