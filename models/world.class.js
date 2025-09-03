@@ -90,24 +90,41 @@ class World {
     const currentTime = new Date().getTime();
     const timeSinceLastThrow = currentTime - this.lastBottleThrowTime;
     const throwCooldown = 1000;
-    if (this.keyboard.D && 
-        this.character.collectedBottles > 0 && 
-        timeSinceLastThrow >= throwCooldown) {
-      this.lastBottleThrowTime = currentTime;
-      this.character.collectedBottles--;
-      this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
-      let bottleX = this.character.otherDirection ? 
-        this.character.x : 
-        this.character.x + 100;
-      let bottle = new ThrowableObject(
-        bottleX,
-        this.character.y + 100,
-        this.character.otherDirection
-      );
-      bottle.world = this;
-      this.audioManager.playThrowSound();
-      this.throwableObject.push(bottle);
+    if (this.canThrowBottle(timeSinceLastThrow, throwCooldown)) {
+      this.throwBottle();
     }
+  }
+
+  /**
+   * Checks if a bottle can be thrown based on conditions
+   * @param {number} timeSinceLastThrow - Time since last bottle throw
+   * @param {number} throwCooldown - Cooldown time for throwing
+   * @returns {boolean} Whether a bottle can be thrown
+   */
+  canThrowBottle(timeSinceLastThrow, throwCooldown) {
+    return this.keyboard.D && 
+           this.character.collectedBottles > 0 && 
+           timeSinceLastThrow >= throwCooldown;
+  }
+
+  /**
+   * Creates and throws a new bottle object
+   */
+  throwBottle() {
+    this.lastBottleThrowTime = new Date().getTime();
+    this.character.collectedBottles--;
+    this.statusBarBottle.setPercentage(this.character.collectedBottles * 20);
+    const bottleX = this.character.otherDirection ? 
+      this.character.x : 
+      this.character.x + 100;
+    const bottle = new ThrowableObject(
+      bottleX,
+      this.character.y + 100,
+      this.character.otherDirection
+    );
+    bottle.world = this;
+    this.audioManager.playThrowSound();
+    this.throwableObject.push(bottle);
   }
 
   /**
@@ -115,29 +132,71 @@ class World {
    */
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.drawBackground();
+    this.drawGameObjects();
+    this.drawUI();
+    this.requestNextFrame();
+  }
+
+  /**
+   * Draws the background objects
+   */
+  drawBackground() {
     if (this.level && this.level.backgroundObjects) {
       this.ctx.translate(this.camera_x, 0);
       this.addObjectsToMap(this.level.backgroundObjects);
       this.ctx.translate(-this.camera_x, 0);
     }
+  }
+
+  /**
+   * Draws all game objects (clouds, coins, bottles, enemies, character, etc.)
+   */
+  drawGameObjects() {
     this.ctx.translate(this.camera_x, 0);
     this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.coins);
     this.addObjectsToMap(this.level.bottles);
     this.addObjectsToMap(this.level.enemies);
     this.addToMap(this.character);
+    this.drawThrowableObjects();
+    this.drawTumbleweeds();
+    this.ctx.translate(-this.camera_x, 0);
+  }
+
+  /**
+   * Draws throwable objects (bottles)
+   */
+  drawThrowableObjects() {
     this.throwableObject = this.throwableObject.filter((obj) => !obj.exploded);
     this.addObjectsToMap(this.throwableObject);
+  }
+
+  /**
+   * Draws tumbleweed objects
+   */
+  drawTumbleweeds() {
     this.level.tumbleweeds.forEach(tumbleweed => {
       tumbleweed.draw(this.ctx);
     });
-    this.ctx.translate(-this.camera_x, 0);
+  }
+
+  /**
+   * Draws UI elements (status bars)
+   */
+  drawUI() {
     this.addToMap(this.statusBar);
     this.addToMap(this.statusBarBottle);
     this.addToMap(this.statusBarCoin);
     if (this.endbossStatusBar.visible) {
       this.addToMap(this.endbossStatusBar);
     }
+  }
+
+  /**
+   * Requests the next animation frame
+   */
+  requestNextFrame() {
     this.animationFrame = requestAnimationFrame(() => {
       this.draw();
     });
@@ -160,24 +219,40 @@ class World {
   addToMap(movableObject) {
     this.ctx.stroke();
     if (movableObject.otherDirection) {
-      this.ctx.save();
-      this.ctx.translate(
-        movableObject.x + movableObject.width,
-        movableObject.y
-      );
-      this.ctx.scale(-1, 1);
-      this.ctx.drawImage(
-        movableObject.img,
-        0,
-        0,
-        movableObject.width,
-        movableObject.height
-      );
-      this.ctx.restore();
+      this.drawFlippedObject(movableObject);
     } else {
-      movableObject.draw(this.ctx);
-      movableObject.drawFrame(this.ctx);
+      this.drawNormalObject(movableObject);
     }
+  }
+
+  /**
+   * Draws an object flipped horizontally
+   * @param {MovableObject} movableObject - Object to draw flipped
+   */
+  drawFlippedObject(movableObject) {
+    this.ctx.save();
+    this.ctx.translate(
+      movableObject.x + movableObject.width,
+      movableObject.y
+    );
+    this.ctx.scale(-1, 1);
+    this.ctx.drawImage(
+      movableObject.img,
+      0,
+      0,
+      movableObject.width,
+      movableObject.height
+    );
+    this.ctx.restore();
+  }
+
+  /**
+   * Draws an object in normal orientation
+   * @param {MovableObject} movableObject - Object to draw normally
+   */
+  drawNormalObject(movableObject) {
+    movableObject.draw(this.ctx);
+    movableObject.drawFrame(this.ctx);
   }
 
   /**
@@ -185,11 +260,26 @@ class World {
    * @param {boolean} playerWon - Whether the player won or lost
    */
   triggerGameOver(playerWon) {
+    this.stopCharacterSounds();
+    this.freezeGame();
+    this.audioManager.fadeOutAllAudio();
+    this.showGameOverScreen(playerWon);
+  }
+
+  /**
+   * Stops character sounds if running
+   */
+  stopCharacterSounds() {
     if (this.character && this.character.isRunning) {
       this.character.stopRunningSound();
     }
-    this.freezeGame();
-    this.audioManager.fadeOutAllAudio();
+  }
+
+  /**
+   * Shows the appropriate game over screen
+   * @param {boolean} playerWon - Whether the player won or lost
+   */
+  showGameOverScreen(playerWon) {
     const overlayImg = document.getElementById('overlay-image');
     if (playerWon) {
       overlayImg.src = 'img/You won, you lost/You won A.png';
@@ -208,6 +298,17 @@ class World {
   freezeGame() {
     this.gameIsOver = true;
     cancelAnimationFrame(this.animationFrame);
+    this.freezeKeyboard();
+    this.freezeCharacter();
+    clearAllIntervals();
+    this.freezeEnemies();
+    this.freezeEnvironmentObjects();
+  }
+
+  /**
+   * Deactivates all keyboard inputs
+   */
+  freezeKeyboard() {
     if (this.keyboard) {
       this.keyboard.RIGHT = false;
       this.keyboard.LEFT = false;
@@ -217,11 +318,22 @@ class World {
       this.keyboard.D = false;
       this.keyboard.deactivate();
     }
+  }
+
+  /**
+   * Stops character movement
+   */
+  freezeCharacter() {
     if (this.character) {
       this.character.speedX = 0;
       this.character.speedY = 0;
     }
-    clearAllIntervals();
+  }
+
+  /**
+   * Stops all enemy movements and animations
+   */
+  freezeEnemies() {
     if (this.level && this.level.enemies) {
       this.level.enemies.forEach(enemy => {
         enemy.speed = 0;
@@ -230,6 +342,12 @@ class World {
         if (enemy.attackInterval) clearInterval(enemy.attackInterval);
       });
     }
+  }
+
+  /**
+   * Stops environment object movements (clouds, tumbleweeds)
+   */
+  freezeEnvironmentObjects() {
     if (this.level) {
       if (this.level.clouds) this.level.clouds.forEach(cloud => cloud.speed = 0);
       if (this.level.tumbleweeds) this.level.tumbleweeds.forEach(tumbleweed => tumbleweed.speed = 0);
