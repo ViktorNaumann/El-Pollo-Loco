@@ -255,7 +255,7 @@ class CollisionHandler {
    * @returns {boolean} True if bottle hits enemy
    */
   isBottleHittingEnemy(bottle, enemy) {
-    return bottle.isColliding(enemy) && !bottle.exploded && !bottle.hasHit;
+    return bottle.isColliding(enemy) && !bottle.exploded && !bottle.exploding && !bottle.hasHit;
   }
 
   /**
