@@ -191,8 +191,8 @@ class Endboss extends MovableObject{
    */
   handleHitEffects() {
     this.shakeAnimation();
-    if(this.world && this.world.bossHurtSound){
-      window.playSound(this.world.bossHurtSound,0.4);
+    if(this.world && this.world.audioManager){
+      this.world.audioManager.playBossHurtSound();
     }
   }
 
@@ -221,8 +221,8 @@ class Endboss extends MovableObject{
    */
   damageCharacter() {
     this.world.character.hit(20);
-    if(this.world.hitSound){
-      window.playSound(this.world.hitSound,0.4);
+    if(this.world.audioManager){
+      this.world.audioManager.playHitSound();
     }
     this.world.statusBar.setPercentage(this.world.character.energy);
     if(this.world.character.energy<=0){

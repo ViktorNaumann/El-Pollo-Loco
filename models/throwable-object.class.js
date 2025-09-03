@@ -35,7 +35,6 @@ class ThrowableObject extends MovableObject {
       this.throw(otherDirection);
       this.loadImages(this.IMAGES_ROTATE);
       this.loadImages(this.IMAGES_SPLASH);
-      this.breakSound = new Audio("audio/break.mp3");
       this.animateRotation();
     }
     /**
@@ -82,7 +81,9 @@ class ThrowableObject extends MovableObject {
       this.isSplashing = true;
       if(this.throwInterval) clearInterval(this.throwInterval);
       this.animateSplash();
-      window.playSound(this.breakSound, 0.5);
+      if(this.world && this.world.audioManager) {
+        this.world.audioManager.playBreakSound();
+      }
       let splashDuration = this.IMAGES_SPLASH.length * 150;
       setTimeout(() => {
         this.exploded = true;

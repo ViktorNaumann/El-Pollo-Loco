@@ -44,7 +44,7 @@ class CollisionHandler {
   handleEndbossCollision(endboss) {
     if (!this.world.character.isHurt()) {
       this.world.character.hit(20);
-      window.playSound(this.world.hitSound, 0.4);
+      this.world.audioManager.playHitSound();
       this.world.statusBar.setPercentage(this.world.character.energy);
     }
   }
@@ -94,7 +94,7 @@ class CollisionHandler {
   applyCharacterDamage() {
     if (!this.world.character.isHurt()) {
       this.world.character.hit(20);
-      window.playSound(this.world.hitSound, 0.3);
+      this.world.audioManager.playHitSound();
       this.world.statusBar.setPercentage(this.world.character.energy);
     }
   }
@@ -106,7 +106,7 @@ class CollisionHandler {
   handleChickenJump(chicken) {
     chicken.hasBeenHit = true;
     chicken.isBeingRemoved = true;
-    window.playSound(this.world.squeezeChickenSound, 0.3);
+    this.world.audioManager.playSqueezeChickenSound();
     chicken.die();
     this.removeChickenAfterDelay(chicken);
     this.world.character.speedY = 17;
@@ -183,7 +183,7 @@ class CollisionHandler {
   handleCharacterDamage() {
     if (!this.world.character.isHurt()) {
       this.world.character.hit(5);
-      window.playSound(this.world.hitSound, 0.3);
+      this.world.audioManager.playHitSound();
       this.world.statusBar.setPercentage(this.world.character.energy);
     }
   }
@@ -209,7 +209,7 @@ class CollisionHandler {
     this.world.level.bottles.splice(index, 1);
     this.world.character.collectedBottles++;
     this.world.statusBarBottle.setPercentage(this.world.character.collectedBottles * 20);
-    window.playSound(this.world.collectSound, 0.3);
+    this.world.audioManager.playCollectSound();
   }
 
   /**
@@ -232,7 +232,7 @@ class CollisionHandler {
     this.world.level.coins.splice(index, 1);
     this.world.collectedCoins++;
     this.world.statusBarCoin.setPercentage(this.world.collectedCoins * 5);
-    window.playSound(this.world.collectCoin, 0.3);
+    this.world.audioManager.playCollectCoinSound();
   }
 
   /**

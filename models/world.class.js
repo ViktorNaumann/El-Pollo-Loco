@@ -16,18 +16,7 @@ class World {
   throwableObject = [];
   statusBarCoin = new StatusBar("coin");
   collectedCoins = 0;
-  hitSound = new Audio("audio/hit.mp3");
-  throwSound = new Audio("audio/throw.mp3");
-  breakSound = new Audio("audio/break.mp3");
-  bossHurtSound = new Audio("audio/boss_hurt.mp3");
-  collectSound = new Audio("audio/collect.mp3");
-  squeezeChickenSound = new Audio("audio/squeeze_chicken.mp3");
-  collectCoin = new Audio("audio/collect_coin.mp3");
-  endbossFightMusic = new Audio("audio/endboss_fight.mp3");
-  endbossMusicPlayed = false;
-  winSound = new Audio("audio/win_sound.mp3");
-  lostSound = new Audio("audio/lost_sound.mp3");
-  lostSpeakSound = new Audio("audio/lost_speak.mp3");
+  audioManager = new AudioManager();
   lastBottleThrowTime = 0;
   collisionHandler;
   animationFrame;
@@ -49,7 +38,6 @@ class World {
     this.setWorld();
     this.run();
     this.draw();
-    this.bossHurtSound.volume = 0.4;
   }
 
   /**
@@ -90,63 +78,8 @@ class World {
       this.endbossStatusBar.visible = true;
       boss.isVisible = true;
       boss.isActive = true;
-      if (!this.endbossMusicPlayed) {
-        if (window.backgroundMusic) {
-          this.fadeOutAudio(window.backgroundMusic);
-        }
-        if (window.windSound) {
-          this.fadeOutAudio(window.windSound);
-        }
-        this.endbossFightMusic.loop = true;
-        if (!window.isMuted) {
-          this.endbossFightMusic.volume = 0;
-          this.endbossFightMusic.play()
-            .then(() => this.fadeInAudio(this.endbossFightMusic, 0.2));
-        }
-        this.endbossMusicPlayed = true;
-      }
+      this.audioManager.startEndbossFightMusic();
     }
-  }
-
-  /**
-   * Gradually decreases audio volume until silent
-   * @param {HTMLAudioElement} audio - The audio element to fade out
-   */
-  fadeOutAudio(audio) {
-    if (!audio || window.isMuted) return;
-    const originalVolume = audio.volume;
-    const fadeInterval = setInterval(() => {
-      if (audio.volume > 0.05) {
-        audio.volume -= 0.05;
-      } else {
-        audio.pause();
-        audio.volume = originalVolume;
-        clearInterval(fadeInterval);
-      }
-    }, 100);
-  }
-
-  /**
-   * Gradually increases audio volume to target level
-   * @param {HTMLAudioElement} audio - The audio element to fade in
-   * @param {number} targetVolume - Target volume level
-   */
-  fadeInAudio(audio, targetVolume = 0.2) {
-    if (!audio || window.isMuted) return;
-    audio.volume = 0.05;
-    const fadeInterval = setInterval(() => {
-      if (window.isMuted) {
-        audio.volume = 0;
-        clearInterval(fadeInterval);
-        return;
-      }
-      if (audio.volume < targetVolume - 0.05) {
-        audio.volume += 0.05;
-      } else {
-        audio.volume = targetVolume;
-        clearInterval(fadeInterval);
-      }
-    }, 100);
   }
 
   /**
@@ -172,7 +105,7 @@ class World {
         this.character.otherDirection
       );
       bottle.world = this;
-      window.playSound(this.throwSound, 0.3);
+      this.audioManager.playThrowSound();
       this.throwableObject.push(bottle);
     }
   }
@@ -256,21 +189,14 @@ class World {
       this.character.stopRunningSound();
     }
     this.freezeGame();
-    if (this.endbossFightMusic) {
-      this.fadeOutAudio(this.endbossFightMusic);
-    }
+    this.audioManager.fadeOutAllAudio();
     const overlayImg = document.getElementById('overlay-image');
     if (playerWon) {
       overlayImg.src = 'img/You won, you lost/You won A.png';
-      window.playSound(this.winSound, 0.7);
+      this.audioManager.playWinSound();
     } else {
       overlayImg.src = 'img/You won, you lost/You lost.png';
-      window.playSound(this.lostSound, 0.9);
-      this.lostSound.onended = () => {
-        if (!window.isMuted) {
-          window.playSound(this.lostSpeakSound, 0.9);
-        }
-      };
+      this.audioManager.playLostSound();
     }
     const overlay = document.getElementById('game-overlay');
     overlay.classList.remove('hidden');
@@ -294,12 +220,6 @@ class World {
     if (this.character) {
       this.character.speedX = 0;
       this.character.speedY = 0;
-    }
-    if (window.backgroundMusic) {
-      this.fadeOutAudio(window.backgroundMusic);
-    }
-    if (window.windSound) {
-      this.fadeOutAudio(window.windSound);
     }
     clearAllIntervals();
     if (this.level && this.level.enemies) {
