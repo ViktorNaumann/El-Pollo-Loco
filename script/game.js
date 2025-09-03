@@ -163,7 +163,6 @@ function toggleMute() {
         muteButton.classList.remove('sound-off');
         muteButton.classList.add('sound-on');
     }
-    
     backgroundMusic.volume = window.isMuted ? 0 : 0.4;
     windSound.volume = window.isMuted ? 0 : 0.3;
     if (world) {
@@ -171,8 +170,6 @@ function toggleMute() {
             world.endbossFightMusic.volume = window.isMuted ? 0 : 0.2;
         }
     }
-
-    // Entferne den Fokus vom Button nach dem Klicken
     muteButton.blur();
 }
 

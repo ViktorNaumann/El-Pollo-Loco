@@ -287,6 +287,7 @@ class CollisionHandler {
    * @param {Chicken} enemy - The chicken enemy
    */
   handleChickenHit(enemy) {
+    this.world.audioManager.playSqueezeChickenSound();
     enemy.die();
     setTimeout(() => {
       const index = this.world.level.enemies.indexOf(enemy);
