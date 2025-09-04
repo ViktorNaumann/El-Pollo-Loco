@@ -196,6 +196,12 @@ canvas {
     }
 }
 
+@media only screen and (max-height: 770px) {
+    .controls-box {
+        display: none !important;
+    }
+}
+
 .game-overlay {
   position: fixed;
   top: 0;
