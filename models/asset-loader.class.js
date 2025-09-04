@@ -35,14 +35,10 @@ class AssetLoader {
   async loadAllAssets() {
     const imageAssets = this.getAllImagePaths();
     const audioAssets = this.getAllAudioPaths();
-    
     this.totalAssets = imageAssets.length + audioAssets.length;
     this.loadedAssets = 0;
-
-    // Load images and audio in parallel
     const imagePromises = imageAssets.map(path => this.loadImage(path));
     const audioPromises = audioAssets.map(path => this.loadAudio(path));
-    
     try {
       await Promise.all([...imagePromises, ...audioPromises]);
       if (this.onCompleteCallback) {
@@ -68,7 +64,7 @@ class AssetLoader {
       img.onerror = () => {
         console.warn(`Failed to load image: ${path}`);
         this.updateProgress();
-        resolve(null); // Continue loading even if one image fails
+        resolve(null);
       };
       img.src = path;
     });
@@ -89,7 +85,7 @@ class AssetLoader {
       audio.onerror = () => {
         console.warn(`Failed to load audio: ${path}`);
         this.updateProgress();
-        resolve(null); // Continue loading even if one audio fails
+        resolve(null);
       };
       audio.src = path;
     });
@@ -226,31 +222,7 @@ class AssetLoader {
       'img/6_salsa_bottle/bottle_rotation/3_bottle_rotation.png',
       'img/6_salsa_bottle/bottle_rotation/4_bottle_rotation.png',
       
-      // Status bars
-      'img/7_statusbars/1_statusbar/blue/0.png',
-      'img/7_statusbars/1_statusbar/blue/20.png',
-      'img/7_statusbars/1_statusbar/blue/40.png',
-      'img/7_statusbars/1_statusbar/blue/60.png',
-      'img/7_statusbars/1_statusbar/blue/80.png',
-      'img/7_statusbars/1_statusbar/blue/100.png',
-      'img/7_statusbars/1_statusbar/orange/0.png',
-      'img/7_statusbars/1_statusbar/orange/20.png',
-      'img/7_statusbars/1_statusbar/orange/40.png',
-      'img/7_statusbars/1_statusbar/orange/60.png',
-      'img/7_statusbars/1_statusbar/orange/80.png',
-      'img/7_statusbars/1_statusbar/orange/100.png',
-      'img/7_statusbars/1_statusbar/green/0.png',
-      'img/7_statusbars/1_statusbar/green/20.png',
-      'img/7_statusbars/1_statusbar/green/40.png',
-      'img/7_statusbars/1_statusbar/green/60.png',
-      'img/7_statusbars/1_statusbar/green/80.png',
-      'img/7_statusbars/1_statusbar/green/100.png',
-      'img/7_statusbars/2_statusbar_endboss/blue/blue0.png',
-      'img/7_statusbars/2_statusbar_endboss/blue/blue20.png',
-      'img/7_statusbars/2_statusbar_endboss/blue/blue40.png',
-      'img/7_statusbars/2_statusbar_endboss/blue/blue60.png',
-      'img/7_statusbars/2_statusbar_endboss/blue/blue80.png',
-      'img/7_statusbars/2_statusbar_endboss/blue/blue100.png',
+      // Status bar icons (only the ones that exist)
       'img/7_statusbars/3_icons/icon_coin.png',
       'img/7_statusbars/3_icons/icon_health.png',
       'img/7_statusbars/3_icons/icon_salsa_bottle.png',

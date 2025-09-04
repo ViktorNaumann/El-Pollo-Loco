@@ -1,4 +1,3 @@
-/* Basic Styles */
 @font-face {
     font-family: 'nashvill';
     src: url('fonts/nashvill.ttf');
@@ -34,7 +33,6 @@ canvas {
     max-width: 720px;
 }
 
-/* Responsive Canvas */
 @media only screen and (max-width: 720px) {
     canvas {
         width: 100%;
