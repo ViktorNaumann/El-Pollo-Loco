@@ -1,4 +1,3 @@
-/* Mobile Controls CSS */
 .mobile-controls {
   display: none;
   position: fixed;
@@ -78,7 +77,6 @@
   background: linear-gradient(145deg, #e55a5a, #d14545);
 }
 
-/* Rotate Device Message */
 .rotate-message {
   display: none;
   position: fixed;
@@ -135,20 +133,17 @@
   color: #ccc;
 }
 
-/* Media Queries for Mobile */
 @media screen and (max-width: 850px) {
   .mobile-controls {
     display: block;
   }
   
-  /* Hide controls explanation on mobile */
   .controls-box {
     display: none;
   }
   
-  /* Ensure buttons are properly sized on mobile */
   .start-button, .impressum-button {
-    min-height: 44px; /* iOS minimum touch target */
+    min-height: 44px;
     min-width: 44px;
   }
 }
@@ -164,7 +159,6 @@
     padding: clamp(6px, 2vw, 10px) clamp(12px, 4vw, 20px);
   }
   
-  /* Extra kleine Buttons für sehr kleine Bildschirme */
   .mobile-btn {
     width: clamp(35px, 5vw, 45px);
     height: clamp(35px, 5vw, 45px);
@@ -191,13 +185,11 @@
     filter: blur(3px);
   }
   
-  /* Hide controls explanation on mobile portrait */
   .controls-box {
     display: none;
   }
 }
 
-/* Additional rule to ensure rotate message shows at 850px width regardless of orientation detection issues */
 @media screen and (max-width: 850px) and (max-height: 850px) {
   .rotate-message {
     display: flex;
