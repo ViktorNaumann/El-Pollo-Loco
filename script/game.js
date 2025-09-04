@@ -12,10 +12,7 @@ window.isMuted = false;
 let gameStarted = false;
 let assetLoader = new AssetLoader();
 let assetsLoaded = false;
-
-// Make asset loader globally available
 window.assetLoader = assetLoader;
-
 backgroundMusic.loop = true;
 windSound.loop = true;
 backgroundMusic.volume = 0.4;
@@ -32,7 +29,7 @@ function restartGame() {
         clearAllIntervals();
     }
     keyboard = new Keyboard();
-    keyboard.bind(); // Bind mobile controls for restart
+    keyboard.bind();
     startGame();
 }
 
@@ -73,10 +70,7 @@ function init() {
     canvas = document.getElementById('canvas');
     setupEventListeners();
     initMobileControls();
-    // Bind keyboard and mobile controls
     keyboard.bind();
-    
-    // Start loading assets
     startAssetLoading();
 }
 
@@ -84,33 +78,48 @@ function init() {
  * Starts the asset loading process with progress tracking
  */
 function startAssetLoading() {
+    setupLoadingScreenElements();
+    setupAssetLoaderCallbacks();
+    assetLoader.loadAllAssets();
+}
+
+/**
+ * Sets up loading screen elements and visibility
+ */
+function setupLoadingScreenElements() {
     const loadingScreen = document.getElementById('loading-screen');
     const startScreen = document.getElementById('start-screen');
-    const progressBar = document.getElementById('loading-progress');
-    const loadingText = document.getElementById('loading-text');
-    
-    // Show loading screen
     loadingScreen.style.display = 'flex';
     startScreen.classList.add('hidden');
-    
-    // Setup asset loader callbacks
+}
+
+/**
+ * Sets up progress and completion callbacks for asset loader
+ */
+function setupAssetLoaderCallbacks() {
+    const progressBar = document.getElementById('loading-progress');
+    const loadingText = document.getElementById('loading-text');
     assetLoader.setProgressCallback((percentage) => {
         progressBar.style.width = percentage + '%';
         loadingText.textContent = percentage + '%';
     });
-    
     assetLoader.setCompleteCallback(() => {
         assetsLoaded = true;
-        // Wait a moment before transitioning to start screen
-        setTimeout(() => {
-            loadingScreen.style.display = 'none';
-            startScreen.classList.remove('hidden');
-            initializeStartScreen();
-        }, 500);
+        showStartScreenAfterLoading();
     });
-    
-    // Start loading
-    assetLoader.loadAllAssets();
+}
+
+/**
+ * Shows start screen after loading is complete
+ */
+function showStartScreenAfterLoading() {
+    setTimeout(() => {
+        const loadingScreen = document.getElementById('loading-screen');
+        const startScreen = document.getElementById('start-screen');
+        loadingScreen.style.display = 'none';
+        startScreen.classList.remove('hidden');
+        initializeStartScreen();
+    }, 500);
 }
 
 /**
@@ -134,22 +143,26 @@ function setupEventListeners() {
  */
 function initializeStartScreen() {
     if (document.getElementById('start-screen') && assetsLoaded) {
-        const startButton = document.getElementById('start-button');
-        const startScreen = document.getElementById('start-screen');
-        
-        // Remove existing event listeners to prevent duplicates
-        const newStartButton = startButton.cloneNode(true);
-        startButton.parentNode.replaceChild(newStartButton, startButton);
-        
-        newStartButton.addEventListener('click', () => {
-            if (assetsLoaded) {
-                startScreen.style.display = 'none';
-                startGame();
-            }
-        });
+        setupStartButton();
     } else if (!document.getElementById('start-screen')) {
         startGame();
     }
+}
+
+/**
+ * Sets up the start button with event listener
+ */
+function setupStartButton() {
+    const startButton = document.getElementById('start-button');
+    const startScreen = document.getElementById('start-screen');
+    const newStartButton = startButton.cloneNode(true);
+    startButton.parentNode.replaceChild(newStartButton, startButton);  
+    newStartButton.addEventListener('click', () => {
+        if (assetsLoaded) {
+            startScreen.style.display = 'none';
+            startGame();
+        }
+    });
 }
 
 /**
@@ -420,29 +433,52 @@ function initMobileControls() {
  * Checks device orientation and shows/hides appropriate UI elements
  */
 function checkOrientation() {
-    const rotateMessage = document.getElementById('rotate-message');
-    const mobileControls = document.getElementById('mobile-controls');
-    const canvas = document.getElementById('canvas');
-    
     const isNarrow = window.innerWidth <= 850;
     const isLandscape = window.innerWidth > window.innerHeight;
     
     if (isNarrow && !isLandscape) {
-        // Show rotate message for narrow screens that are not clearly landscape
-        if (rotateMessage) rotateMessage.style.display = 'flex';
-        if (mobileControls) mobileControls.style.display = 'none';
-        if (canvas) canvas.style.filter = 'blur(3px)';
+        showRotateMessage();
     } else if (isNarrow && isLandscape) {
-        // Hide rotate message and show mobile controls for narrow landscape
-        if (rotateMessage) rotateMessage.style.display = 'none';
-        if (mobileControls) mobileControls.style.display = 'block';
-        if (canvas) canvas.style.filter = 'none';
+        showMobileControls();
     } else {
-        // Desktop view - hide both
-        if (rotateMessage) rotateMessage.style.display = 'none';
-        if (mobileControls) mobileControls.style.display = 'none';
-        if (canvas) canvas.style.filter = 'none';
+        showDesktopMode();
     }
+}
+
+/**
+ * Shows rotate message for narrow portrait mode
+ */
+function showRotateMessage() {
+    const rotateMessage = document.getElementById('rotate-message');
+    const mobileControls = document.getElementById('mobile-controls');
+    const canvas = document.getElementById('canvas');
+    if (rotateMessage) rotateMessage.style.display = 'flex';
+    if (mobileControls) mobileControls.style.display = 'none';
+    if (canvas) canvas.style.filter = 'blur(3px)';
+}
+
+/**
+ * Shows mobile controls for narrow landscape mode
+ */
+function showMobileControls() {
+    const rotateMessage = document.getElementById('rotate-message');
+    const mobileControls = document.getElementById('mobile-controls');
+    const canvas = document.getElementById('canvas');
+    if (rotateMessage) rotateMessage.style.display = 'none';
+    if (mobileControls) mobileControls.style.display = 'block';
+    if (canvas) canvas.style.filter = 'none';
+}
+
+/**
+ * Shows desktop mode (no mobile elements)
+ */
+function showDesktopMode() {
+    const rotateMessage = document.getElementById('rotate-message');
+    const mobileControls = document.getElementById('mobile-controls');
+    const canvas = document.getElementById('canvas');
+    if (rotateMessage) rotateMessage.style.display = 'none';
+    if (mobileControls) mobileControls.style.display = 'none';
+    if (canvas) canvas.style.filter = 'none';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -452,7 +488,5 @@ document.addEventListener('DOMContentLoaded', function() {
             closeImpressum();
         }
     });
-    
-    // Initialize mobile controls
     initMobileControls();
 });
