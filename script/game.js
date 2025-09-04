@@ -65,6 +65,14 @@ function initLevel() {
  */
 function init() {
     canvas = document.getElementById('canvas');
+    setupEventListeners();
+    initializeStartScreen();
+}
+
+/**
+ * Sets up event listeners for restart and back buttons
+ */
+function setupEventListeners() {
     const restartButton = document.querySelector('.restart-button');
     if (restartButton) {
         restartButton.removeEventListener('click', restartGame);
@@ -75,6 +83,12 @@ function init() {
         backButton.removeEventListener('click', backToStartScreen);
         backButton.addEventListener('click', backToStartScreen);
     }
+}
+
+/**
+ * Initializes the start screen or starts the game directly
+ */
+function initializeStartScreen() {
     if (document.getElementById('start-screen')) {
         const startButton = document.getElementById('start-button');
         const startScreen = document.getElementById('start-screen');
@@ -95,12 +109,27 @@ function startGame() {
     gameStarted = true;
     let level = initLevel();
     world = new World(canvas, keyboard, level);
+    initializeGameStats();
+    initializeGameMusic();
+    keyboard.enabled = true;
+}
+
+/**
+ * Initializes game statistics and status bars
+ */
+function initializeGameStats() {
     world.character.energy = 100;
     world.character.collectedBottles = 0;
     world.collectedCoins = 0;
     world.statusBar.setPercentage(100);
     world.statusBarBottle.setPercentage(0);
     world.statusBarCoin.setPercentage(0);
+}
+
+/**
+ * Initializes and starts background music
+ */
+function initializeGameMusic() {
     backgroundMusic.currentTime = 0;
     windSound.currentTime = 0;
     if (!window.isMuted) {
@@ -115,7 +144,6 @@ function startGame() {
         windSound.play();
     }
     musicStarted = true;
-    keyboard.enabled = true;
 }
 
 /**
@@ -123,17 +151,45 @@ function startGame() {
  * Stops all game processes and resets the game state
  */
 function backToStartScreen() {
+    stopGameProcesses();
+    resetCanvas();
+    showStartScreen();
+    stopAllMusic();
+}
+
+/**
+ * Stops all running game processes
+ */
+function stopGameProcesses() {
     if (world) {
         window.cancelAnimationFrame(world.animationFrame);
         clearAllIntervals();
     }
+    gameStarted = false;
+}
+
+/**
+ * Resets the canvas and hides game overlay
+ */
+function resetCanvas() {
     document.getElementById('game-overlay').classList.add('hidden');
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    gameStarted = false;
+}
+
+/**
+ * Shows the start screen
+ */
+function showStartScreen() {
     const startScreen = document.getElementById('start-screen');
     startScreen.classList.remove('hidden');
     startScreen.style.display = 'flex';
+}
+
+/**
+ * Stops all background music and sounds
+ */
+function stopAllMusic() {
     backgroundMusic.currentTime = 0;
     backgroundMusic.pause();
     windSound.currentTime = 0;
@@ -151,9 +207,17 @@ function backToStartScreen() {
  */
 function toggleMute() {
     window.isMuted = !window.isMuted;
+    updateMuteButtonUI();
+    updateAudioVolumes();
+    document.getElementById('mute-button').blur();
+}
+
+/**
+ * Updates the mute button UI based on mute state
+ */
+function updateMuteButtonUI() {
     const muteButton = document.getElementById('mute-button');
     const soundIcon = document.getElementById('sound-icon');
-    
     if (window.isMuted) {
         soundIcon.src = 'img/sound-off.png';
         muteButton.classList.remove('sound-on');
@@ -163,14 +227,17 @@ function toggleMute() {
         muteButton.classList.remove('sound-off');
         muteButton.classList.add('sound-on');
     }
+}
+
+/**
+ * Updates all audio volumes based on mute state
+ */
+function updateAudioVolumes() {
     backgroundMusic.volume = window.isMuted ? 0 : 0.4;
     windSound.volume = window.isMuted ? 0 : 0.3;
-    if (world) {
-        if (world.endbossFightMusic) {
-            world.endbossFightMusic.volume = window.isMuted ? 0 : 0.2;
-        }
+    if (world && world.endbossFightMusic) {
+        world.endbossFightMusic.volume = window.isMuted ? 0 : 0.2;
     }
-    muteButton.blur();
 }
 
 /**
@@ -240,46 +307,48 @@ window.addEventListener("keydown", (event) => {
         windSound.play();
         musicStarted = true;
     }
-    if (event.keyCode == 37) {
-        keyboard.LEFT = true;
-    }
-    if (event.keyCode == 39) {
-        keyboard.RIGHT = true;
-    }
-    if (event.keyCode == 38) {
-        keyboard.UP = true;
-    }
-    if (event.keyCode == 40) {
-        keyboard.DOWN = true;
-    }
-    if (event.keyCode == 32) {
-        keyboard.SPACE = true;
-    }
-    if (event.keyCode == 68) {
-        keyboard.D = true;
-    }
+    handleKeyDown(event.keyCode);
 });
 
 window.addEventListener("keyup", (event) => {
-    if (event.keyCode == 37) {
-        keyboard.LEFT = false;
-    }
-    if (event.keyCode == 39) {
-        keyboard.RIGHT = false;
-    }
-    if (event.keyCode == 38) {
-        keyboard.UP = false;
-    }
-    if (event.keyCode == 40) {
-        keyboard.DOWN = false;
-    }
-    if (event.keyCode == 32) {
-        keyboard.SPACE = false;
-    }
-    if (event.keyCode == 68) {
-        keyboard.D = false;
-    }
+    handleKeyUp(event.keyCode);
 });
+
+/**
+ * Handles keydown events for game controls
+ * @param {number} keyCode - The key code that was pressed
+ */
+function handleKeyDown(keyCode) {
+    const keyMappings = {
+        37: () => keyboard.LEFT = true,
+        39: () => keyboard.RIGHT = true,
+        38: () => keyboard.UP = true,
+        40: () => keyboard.DOWN = true,
+        32: () => keyboard.SPACE = true,
+        68: () => keyboard.D = true
+    };
+    if (keyMappings[keyCode]) {
+        keyMappings[keyCode]();
+    }
+}
+
+/**
+ * Handles keyup events for game controls
+ * @param {number} keyCode - The key code that was released
+ */
+function handleKeyUp(keyCode) {
+    const keyMappings = {
+        37: () => keyboard.LEFT = false,
+        39: () => keyboard.RIGHT = false,
+        38: () => keyboard.UP = false,
+        40: () => keyboard.DOWN = false,
+        32: () => keyboard.SPACE = false,
+        68: () => keyboard.D = false
+    };
+    if (keyMappings[keyCode]) {
+        keyMappings[keyCode]();
+    }
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     const impressumModal = document.getElementById('impressum-modal');
