@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="./style.css" />
     <link rel="stylesheet" href="./mobile-controls.css" />
     <script src="./models/drawable-object.class.js"></script>
+    <script src="./models/asset-loader.class.js"></script>
     <script src="./models/movable-object.class.js"></script>
     <script src="./models/collectable-coin.class.js"></script>
     <script src="./models/collectable-bottle.class.js"></script>
@@ -57,6 +58,24 @@
         </div>
       </div>
     </div>
+    
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+      <div class="loading-content">
+        <img src="img/9_intro_outro_screens/start/startscreen_1.png" alt="El Pollo Loco" class="loading-logo">
+        <h2 class="loading-title">Loading...</h2>
+        <div class="loading-bar-container">
+          <div class="loading-bar">
+            <div id="loading-progress" class="loading-progress"></div>
+          </div>
+          <div class="loading-percentage">
+            <span id="loading-text">0%</span>
+          </div>
+        </div>
+        <p class="loading-subtitle">Loading images and sounds...</p>
+      </div>
+    </div>
+    
     <div id="game-overlay" class="game-overlay hidden">
       <div class="overlay-content">
         <img id="overlay-image" src="desert">
@@ -66,7 +85,7 @@
         </div>
       </div>
     </div>
-    <div id="start-screen" class="start-screen">
+    <div id="start-screen" class="start-screen hidden">
       <img src="img/9_intro_outro_screens/start/startscreen_1.png" alt="Start Screen">
       <button id="start-button" class="start-button">
         <span class="button-text">PLAY</span>

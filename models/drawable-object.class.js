@@ -25,11 +25,18 @@ class DrawableObject {
 
   /**
    * Loads a single image from the given path
+   * Uses preloaded image if available, otherwise loads directly
    * @param {string} path - Path to the image file
    */
   loadImage(path) {
-    this.img = new Image();
-    this.img.src = path;
+    // Try to get preloaded image first
+    if (window.assetLoader && window.assetLoader.getImage(path)) {
+      this.img = window.assetLoader.getImage(path);
+    } else {
+      // Fallback to direct loading
+      this.img = new Image();
+      this.img.src = path;
+    }
   }
 
   /**
@@ -42,13 +49,20 @@ class DrawableObject {
 
   /**
    * Loads multiple images into the image cache for animations
+   * Uses preloaded images if available, otherwise loads directly
    * @param {Array<string>} arr - Array of image paths
    */
   loadImages(arr) {
     arr.forEach((path) => {
-      let img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
+      // Try to get preloaded image first
+      if (window.assetLoader && window.assetLoader.getImage(path)) {
+        this.imageCache[path] = window.assetLoader.getImage(path);
+      } else {
+        // Fallback to direct loading
+        let img = new Image();
+        img.src = path;
+        this.imageCache[path] = img;
+      }
     });
   }
 

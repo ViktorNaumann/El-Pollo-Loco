@@ -10,6 +10,11 @@ let windSound = new Audio('audio/background2.mp3');
 let musicStarted = false;
 window.isMuted = false;
 let gameStarted = false;
+let assetLoader = new AssetLoader();
+let assetsLoaded = false;
+
+// Make asset loader globally available
+window.assetLoader = assetLoader;
 
 backgroundMusic.loop = true;
 windSound.loop = true;
@@ -67,10 +72,45 @@ function initLevel() {
 function init() {
     canvas = document.getElementById('canvas');
     setupEventListeners();
-    initializeStartScreen();
     initMobileControls();
     // Bind keyboard and mobile controls
     keyboard.bind();
+    
+    // Start loading assets
+    startAssetLoading();
+}
+
+/**
+ * Starts the asset loading process with progress tracking
+ */
+function startAssetLoading() {
+    const loadingScreen = document.getElementById('loading-screen');
+    const startScreen = document.getElementById('start-screen');
+    const progressBar = document.getElementById('loading-progress');
+    const loadingText = document.getElementById('loading-text');
+    
+    // Show loading screen
+    loadingScreen.style.display = 'flex';
+    startScreen.classList.add('hidden');
+    
+    // Setup asset loader callbacks
+    assetLoader.setProgressCallback((percentage) => {
+        progressBar.style.width = percentage + '%';
+        loadingText.textContent = percentage + '%';
+    });
+    
+    assetLoader.setCompleteCallback(() => {
+        assetsLoaded = true;
+        // Wait a moment before transitioning to start screen
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            startScreen.classList.remove('hidden');
+            initializeStartScreen();
+        }, 500);
+    });
+    
+    // Start loading
+    assetLoader.loadAllAssets();
 }
 
 /**
@@ -93,14 +133,21 @@ function setupEventListeners() {
  * Initializes the start screen or starts the game directly
  */
 function initializeStartScreen() {
-    if (document.getElementById('start-screen')) {
+    if (document.getElementById('start-screen') && assetsLoaded) {
         const startButton = document.getElementById('start-button');
         const startScreen = document.getElementById('start-screen');
-        startButton.addEventListener('click', () => {
-            startScreen.style.display = 'none';
-            startGame();
+        
+        // Remove existing event listeners to prevent duplicates
+        const newStartButton = startButton.cloneNode(true);
+        startButton.parentNode.replaceChild(newStartButton, startButton);
+        
+        newStartButton.addEventListener('click', () => {
+            if (assetsLoaded) {
+                startScreen.style.display = 'none';
+                startGame();
+            }
         });
-    } else {
+    } else if (!document.getElementById('start-screen')) {
         startGame();
     }
 }
