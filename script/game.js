@@ -27,6 +27,7 @@ function restartGame() {
         clearAllIntervals();
     }
     keyboard = new Keyboard();
+    keyboard.bind(); // Bind mobile controls for restart
     startGame();
 }
 
@@ -67,6 +68,9 @@ function init() {
     canvas = document.getElementById('canvas');
     setupEventListeners();
     initializeStartScreen();
+    initMobileControls();
+    // Bind keyboard and mobile controls
+    keyboard.bind();
 }
 
 /**
@@ -350,6 +354,50 @@ function handleKeyUp(keyCode) {
     }
 }
 
+/**
+ * Mobile orientation and controls management
+ */
+function initMobileControls() {
+    checkOrientation();
+    
+    // Listen for orientation changes
+    window.addEventListener('orientationchange', () => {
+        setTimeout(checkOrientation, 100);
+    });
+    
+    // Listen for resize events (fallback for browsers without orientationchange)
+    window.addEventListener('resize', checkOrientation);
+}
+
+/**
+ * Checks device orientation and shows/hides appropriate UI elements
+ */
+function checkOrientation() {
+    const rotateMessage = document.getElementById('rotate-message');
+    const mobileControls = document.getElementById('mobile-controls');
+    const canvas = document.getElementById('canvas');
+    
+    const isNarrow = window.innerWidth <= 850;
+    const isLandscape = window.innerWidth > window.innerHeight;
+    
+    if (isNarrow && !isLandscape) {
+        // Show rotate message for narrow screens that are not clearly landscape
+        if (rotateMessage) rotateMessage.style.display = 'flex';
+        if (mobileControls) mobileControls.style.display = 'none';
+        if (canvas) canvas.style.filter = 'blur(3px)';
+    } else if (isNarrow && isLandscape) {
+        // Hide rotate message and show mobile controls for narrow landscape
+        if (rotateMessage) rotateMessage.style.display = 'none';
+        if (mobileControls) mobileControls.style.display = 'block';
+        if (canvas) canvas.style.filter = 'none';
+    } else {
+        // Desktop view - hide both
+        if (rotateMessage) rotateMessage.style.display = 'none';
+        if (mobileControls) mobileControls.style.display = 'none';
+        if (canvas) canvas.style.filter = 'none';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const impressumModal = document.getElementById('impressum-modal');
     impressumModal.addEventListener('click', function(event) {
@@ -357,4 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
             closeImpressum();
         }
     });
+    
+    // Initialize mobile controls
+    initMobileControls();
 });

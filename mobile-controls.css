@@ -1,0 +1,181 @@
+/* Mobile Controls CSS */
+.mobile-controls {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.mobile-buttons-left {
+  position: absolute;
+  left: 20px;
+  bottom: 0;
+  display: flex;
+  gap: 15px;
+  pointer-events: auto;
+}
+
+.mobile-buttons-right {
+  position: absolute;
+  right: 20px;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  pointer-events: auto;
+}
+
+.mobile-btn {
+  width: 60px;
+  height: 60px;
+  border: none;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  transition: all 0.1s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.direction-btn {
+  background: linear-gradient(145deg, #4a90e2, #357abd);
+  color: white;
+  font-size: 24px;
+}
+
+.action-btn {
+  background: linear-gradient(145deg, #ff6b6b, #e55a5a);
+  color: white;
+  font-size: 12px;
+  width: 70px;
+  height: 50px;
+  border-radius: 25px;
+}
+
+.mobile-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mobile-btn.pressed {
+  background: linear-gradient(145deg, #357abd, #2863a0);
+  transform: scale(0.95);
+}
+
+.action-btn.pressed {
+  background: linear-gradient(145deg, #e55a5a, #d14545);
+}
+
+/* Rotate Device Message */
+.rotate-message {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.rotate-content {
+  padding: 40px;
+}
+
+.rotate-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phone-icon {
+  display: inline-block;
+  animation: rotatePhone 2s infinite ease-in-out;
+}
+
+@keyframes rotatePhone {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(90deg); }
+  50% { transform: rotate(90deg); }
+  75% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.rotate-content h3 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #FFAE00;
+}
+
+.rotate-content p {
+  font-size: 16px;
+  color: #ccc;
+}
+
+/* Media Queries for Mobile */
+@media screen and (max-width: 850px) {
+  .mobile-controls {
+    display: block;
+  }
+  
+  /* Hide controls explanation on mobile */
+  .controls-box {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 850px) and (orientation: portrait) {
+  .rotate-message {
+    display: flex;
+  }
+  
+  .mobile-controls {
+    display: none;
+  }
+  
+  canvas {
+    filter: blur(3px);
+  }
+  
+  /* Hide controls explanation on mobile portrait */
+  .controls-box {
+    display: none;
+  }
+}
+
+/* Additional rule to ensure rotate message shows at 850px width regardless of orientation detection issues */
+@media screen and (max-width: 850px) and (max-height: 850px) {
+  .rotate-message {
+    display: flex;
+  }
+  
+  .mobile-controls {
+    display: none;
+  }
+  
+  canvas {
+    filter: blur(3px);
+  }
+}

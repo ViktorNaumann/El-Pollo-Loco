@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./mobile-controls.css" />
     <script src="./models/drawable-object.class.js"></script>
     <script src="./models/movable-object.class.js"></script>
     <script src="./models/collectable-coin.class.js"></script>
@@ -32,6 +33,29 @@
       <button id="mute-button" class="mute-button sound-on" onclick="toggleMute()">
         <img src="img/sound-on.png" alt="Sound On" id="sound-icon">
       </button>
+      
+      <!-- Mobile Controls -->
+      <div id="mobile-controls" class="mobile-controls">
+        <div class="mobile-buttons-left">
+          <button id="mobile-left" class="mobile-btn direction-btn">◀</button>
+          <button id="mobile-right" class="mobile-btn direction-btn">▶</button>
+        </div>
+        <div class="mobile-buttons-right">
+          <button id="mobile-jump" class="mobile-btn action-btn">JUMP</button>
+          <button id="mobile-throw" class="mobile-btn action-btn">THROW</button>
+        </div>
+      </div>
+      
+      <!-- Rotate Device Message -->
+      <div id="rotate-message" class="rotate-message">
+        <div class="rotate-content">
+          <div class="rotate-icon">
+            <span class="phone-icon">📱</span>
+          </div>
+          <h3>Bitte drehen Sie Ihr Gereat</h3>
+          <p>Fuer das beste Spielerlebnis verwenden Sie das Querformat</p>
+        </div>
+      </div>
     </div>
     <div id="game-overlay" class="game-overlay hidden">
       <div class="overlay-content">
