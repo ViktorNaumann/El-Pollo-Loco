@@ -136,10 +136,10 @@ canvas {
   border: 3px solid #8b4513;
   color: #8b4513;
   font-family: 'nashvill', Arial, sans-serif;
-  font-size: 24px;
+  font-size: clamp(18px, 3vw, 24px);
   font-weight: bold;
   text-shadow: 1px 1px 0 #fff;
-  padding: 12px 36px;
+  padding: clamp(8px, 2vw, 12px) clamp(24px, 5vw, 36px);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -147,6 +147,8 @@ canvas {
   overflow: hidden;
   letter-spacing: 2px;
   transform: rotate(-2deg);
+  max-width: 80vw;
+  white-space: nowrap;
 }
 
 .start-button::before {
@@ -279,10 +281,10 @@ canvas {
   border: 3px solid #8b4513;
   color: #8b4513;
   font-family: 'nashvill', Arial, sans-serif;
-  font-size: 18px;
+  font-size: clamp(14px, 2.5vw, 18px);
   font-weight: bold;
   text-shadow: 1px 1px 0 #fff;
-  padding: 8px 24px;
+  padding: clamp(6px, 1.5vw, 8px) clamp(16px, 4vw, 24px);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -290,6 +292,8 @@ canvas {
   overflow: hidden;
   letter-spacing: 2px;
   transform: rotate(2deg);
+  max-width: 80vw;
+  white-space: nowrap;
 }
 
 .impressum-button:hover {
@@ -369,6 +373,97 @@ canvas {
   padding: 12px;
   color: white;
   max-width: 250px;
+}
+
+/* Responsive Media Queries für Buttons */
+@media screen and (max-width: 768px) {
+  .start-button {
+    font-size: clamp(16px, 4vw, 20px);
+    padding: clamp(10px, 3vw, 14px) clamp(20px, 6vw, 30px);
+    margin-bottom: 15px;
+  }
+  
+  .impressum-button {
+    font-size: clamp(12px, 3vw, 16px);
+    padding: clamp(8px, 2vw, 10px) clamp(16px, 5vw, 20px);
+  }
+  
+  .controls-box {
+    position: static;
+    margin: 20px auto 0;
+    max-width: 90%;
+    left: auto;
+    bottom: auto;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .start-button {
+    font-size: 16px;
+    padding: 10px 20px;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  
+  .impressum-button {
+    font-size: 14px;
+    padding: 8px 16px;
+    letter-spacing: 1px;
+  }
+  
+  .start-screen img {
+    max-width: 90%;
+    max-height: 50vh;
+    margin-bottom: 15px;
+  }
+  
+  .controls-box {
+    font-size: 12px;
+    padding: 10px;
+    margin-top: 15px;
+  }
+  
+  .key-icon {
+    min-width: 30px;
+    height: 30px;
+    font-size: 14px;
+    margin-right: 10px;
+  }
+  
+  .key-space {
+    min-width: 80px;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .start-button {
+    font-size: 14px;
+    padding: 8px 16px;
+    transform: rotate(0deg);
+  }
+  
+  .impressum-button {
+    font-size: 12px;
+    padding: 6px 12px;
+    transform: rotate(0deg);
+  }
+}
+
+/* Touch-optimierte Anpassungen */
+@media (hover: none) and (pointer: coarse) {
+  .start-button, .impressum-button {
+    min-height: 44px;
+    min-width: 44px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  .start-button:active, .impressum-button:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
 }
 
 .controls-box h3 {
