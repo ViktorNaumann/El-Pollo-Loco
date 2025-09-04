@@ -40,6 +40,10 @@ canvas {
     canvas {
         height: 100vh;
     }
+    
+    h1 {
+        display: none;
+    }
 }
 
 .game-overlay {
