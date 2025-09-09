@@ -21,6 +21,7 @@ class Character extends MovableObject {
   gravityInterval = null;
   wasAboveGroundLastFrame = false;
   justLanded = false;
+  lastLandingTime = 0;
 
   IMAGES_IDLE = [
     'img/2_character_pepe/1_idle/idle/I-1.png',
@@ -277,19 +278,20 @@ class Character extends MovableObject {
    */
   update() {
     this.previousY = this.y;
-    const wasAboveGround = this.isAboveGround();
     this.move();
     this.applyGravity();
-    const isNowOnGround = !this.isAboveGround();
-    if (wasAboveGround && isNowOnGround && this.speedY <= 0) {
-      this.handleLanding();
-    }
   }
 
   /**
    * Handles character landing on the ground
    */
   handleLanding() {
+    const currentTime = new Date().getTime();
+    if (currentTime - this.lastLandingTime < 200) {
+      return;
+    }
+    
+    this.lastLandingTime = currentTime;
     if (this.world && this.world.audioManager) {
       this.world.audioManager.playLandingSound();
     }
