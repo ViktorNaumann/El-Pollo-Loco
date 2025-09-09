@@ -132,55 +132,24 @@
   font-family: 'nashvill', Arial, sans-serif;
   font-size: clamp(14px, 2.5vw, 18px);
   font-weight: bold;
-  text-shadow: 1px 1px 0 #fff;
   padding: clamp(6px, 1.5vw, 8px) clamp(16px, 4vw, 24px);
   border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), inset 0 -4px 0 #d89e00;
-  overflow: hidden;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   letter-spacing: 2px;
-  transform: rotate(2deg);
   max-width: 80vw;
   white-space: nowrap;
-  position: relative;
-}
-
-.impressum-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0.1) 10px,
-    rgba(255, 255, 255, 0) 10px,
-    rgba(255, 255, 255, 0) 20px
-  );
-  z-index: 1;
+  display: inline-block;
 }
 
 .impressum-button:hover {
-  transform: rotate(0deg) scale(1.05);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 -4px 0 #d89e00;
   background-color: #ffc930;
+  transform: scale(1.05);
 }
 
 .impressum-button:active {
-  transform: translateY(4px) scale(0.98);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-.impressum-button::after {
-  content: '📜';
-  position: absolute;
-  right: 8px;
-  bottom: 6px;
-  font-size: 14px;
-  z-index: 2;
+  transform: scale(0.95);
 }
 
 .restart-button {
