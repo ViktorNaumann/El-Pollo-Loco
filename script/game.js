@@ -448,6 +448,7 @@ function handleKeyUp(keyCode) {
  */
 function initMobileControls() {
     checkOrientation();
+    loadTouchControlsState();
     window.addEventListener('orientationchange', () => {
         setTimeout(checkOrientation, 100);
     });
@@ -464,9 +465,28 @@ function checkOrientation() {
     if (isNarrow && !isLandscape) {
         showRotateMessage();
     } else if (isNarrow && isLandscape) {
-        showMobileControls();
+        updateMobileControlsVisibility();
     } else {
         showDesktopMode();
+    }
+}
+
+/**
+ * Updates mobile controls visibility based on user preference
+ */
+function updateMobileControlsVisibility() {
+    const rotateMessage = document.getElementById('rotate-message');
+    const mobileControls = document.getElementById('mobile-controls');
+    const canvas = document.getElementById('canvas');
+    const toggleButton = document.getElementById('touch-controls-toggle');
+    if (rotateMessage) rotateMessage.style.display = 'none';
+    if (canvas) canvas.style.filter = 'none';
+    const touchControlsEnabled = localStorage.getItem('touchControlsEnabled') !== 'false';
+    if (mobileControls) {
+        mobileControls.style.display = touchControlsEnabled ? 'block' : 'none';
+    }
+    if (toggleButton) {
+        toggleButton.classList.toggle('active', touchControlsEnabled);
     }
 }
 
@@ -495,15 +515,43 @@ function showMobileControls() {
 }
 
 /**
+ * Loads touch controls state from localStorage
+ */
+function loadTouchControlsState() {
+    const touchControlsEnabled = localStorage.getItem('touchControlsEnabled') !== 'false';
+    const toggleButton = document.getElementById('touch-controls-toggle');
+    if (toggleButton) {
+        toggleButton.classList.toggle('active', touchControlsEnabled);
+    }
+}
+
+/**
+ * Toggles touch controls visibility and saves state
+ */
+function toggleTouchControls() {
+    const mobileControls = document.getElementById('mobile-controls');
+    const toggleButton = document.getElementById('touch-controls-toggle');
+    if (!mobileControls || !toggleButton) return;
+    const isCurrentlyVisible = mobileControls.style.display === 'block';
+    const newState = !isCurrentlyVisible;
+    mobileControls.style.display = newState ? 'block' : 'none';
+    toggleButton.classList.toggle('active', newState);
+    localStorage.setItem('touchControlsEnabled', newState.toString());
+    toggleButton.blur();
+}
+
+/**
  * Shows desktop mode (no mobile elements)
  */
 function showDesktopMode() {
     const rotateMessage = document.getElementById('rotate-message');
     const mobileControls = document.getElementById('mobile-controls');
     const canvas = document.getElementById('canvas');
+    const toggleButton = document.getElementById('touch-controls-toggle');
     if (rotateMessage) rotateMessage.style.display = 'none';
     if (mobileControls) mobileControls.style.display = 'none';
     if (canvas) canvas.style.filter = 'none';
+    if (toggleButton) toggleButton.style.display = 'none';
 }
 
 document.addEventListener('DOMContentLoaded', function() {

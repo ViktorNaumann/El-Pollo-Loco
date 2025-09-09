@@ -230,12 +230,12 @@
 }
 
 .sound-on {
-  background-color: #28a745;
+  background-color: transparent;
   color: white;
 }
 
 .sound-off {
-  background-color: #dc3545;
+  background-color: transparent;
   color: white;
 }
 
