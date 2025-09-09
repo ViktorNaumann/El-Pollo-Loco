@@ -18,6 +18,8 @@ class Character extends MovableObject {
   isDeadAnimationPlayed = false;
   isRunning = false;
   isSleeping = false;
+  gravityInterval = null;
+  wasAboveGroundLastFrame = false;
 
   IMAGES_IDLE = [
     'img/2_character_pepe/1_idle/idle/I-1.png',
@@ -144,6 +146,7 @@ class Character extends MovableObject {
    */
   startMovementAnimation() {
     setInterval(() => {
+      this.checkForLanding(); // Check for landing every frame
       this.handleMovementInput();
       this.handleJumpInput();
       this.updateCamera();
@@ -218,6 +221,17 @@ class Character extends MovableObject {
   }
 
   /**
+   * Checks if character just landed and plays landing sound
+   */
+  checkForLanding() {
+    const isCurrentlyAboveGround = this.isAboveGround();
+    if (this.wasAboveGroundLastFrame && !isCurrentlyAboveGround && this.speedY <= 0) {
+      this.handleLanding();
+    }
+    this.wasAboveGroundLastFrame = isCurrentlyAboveGround;
+  }
+
+  /**
    * Updates character animation based on current state
    */
   updateCharacterAnimation() {
@@ -248,8 +262,22 @@ class Character extends MovableObject {
    */
   update() {
     this.previousY = this.y;
+    const wasAboveGround = this.isAboveGround();
     this.move();
     this.applyGravity();
+    const isNowOnGround = !this.isAboveGround();
+    if (wasAboveGround && isNowOnGround && this.speedY <= 0) {
+      this.handleLanding();
+    }
+  }
+
+  /**
+   * Handles character landing on the ground
+   */
+  handleLanding() {
+    if (this.world && this.world.audioManager) {
+      this.world.audioManager.playLandingSound();
+    }
   }
 
   /**

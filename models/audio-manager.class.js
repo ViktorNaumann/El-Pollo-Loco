@@ -16,6 +16,7 @@ class AudioManager {
   winSound;
   lostSound;
   lostSpeakSound;
+  landingSound;
 
   /**
    * Creates a new AudioManager instance and initializes all audio files
@@ -40,6 +41,7 @@ class AudioManager {
     this.winSound = new Audio("audio/win_sound.mp3");
     this.lostSound = new Audio("audio/lost_sound.mp3");
     this.lostSpeakSound = new Audio("audio/lost_speak.mp3");
+    this.landingSound = new Audio("audio/landing.mp3");
   }
 
   /**
@@ -97,6 +99,13 @@ class AudioManager {
    */
   playCollectCoinSound() {
     window.playSound(this.collectCoin, 0.5);
+  }
+
+  /**
+   * Plays the landing sound effect
+   */
+  playLandingSound() {
+    window.playSound(this.landingSound, 0.3);
   }
 
   /**
