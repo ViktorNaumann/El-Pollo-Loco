@@ -17,6 +17,7 @@ class Character extends MovableObject {
   };
   isDeadAnimationPlayed = false;
   isRunning = false;
+  isSleeping = false;
 
   IMAGES_IDLE = [
     'img/2_character_pepe/1_idle/idle/I-1.png',
@@ -109,8 +110,11 @@ class Character extends MovableObject {
   initSounds() {
     this.jumpSound = new Audio("audio/jump.mp3");
     this.runSound = new Audio("audio/run.mp3");
+    this.sleepingSound = new Audio("audio/sleeping.mp3");
     this.jumpSound.volume = 0.4;
     this.runSound.volume = 0.4;
+    this.sleepingSound.volume = 0.3;
+    this.sleepingSound.loop = true;
   }
 
   /**
@@ -219,16 +223,22 @@ class Character extends MovableObject {
   updateCharacterAnimation() {
     let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
     if (this.isDead()) {
+      this.stopSleepingSound();
       this.setAnimation(this.IMAGES_DEAD);
     } else if (this.isHurt()) {
+      this.stopSleepingSound();
       this.setAnimation(this.IMAGES_HURT);
     } else if (this.isAboveGround()) {
+      this.stopSleepingSound();
       this.setAnimation(this.IMAGES_JUMPING);
     } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+      this.stopSleepingSound();
       this.setAnimation(this.IMAGES_WALKING);
     } else if (timeSinceLastAction > 5000) {
+      this.startSleepingSound();
       this.setAnimation(this.IMAGES_LONG_IDLE);
     } else {
+      this.stopSleepingSound();
       this.setAnimation(this.IMAGES_IDLE);
     }
   }
@@ -375,6 +385,29 @@ class Character extends MovableObject {
       this.isRunning = false;
       this.runSound.pause();
       this.runSound.currentTime = 0;
+    }
+  }
+
+  /**
+   * Starts the sleeping sound if not already playing
+   */
+  startSleepingSound() {
+    if (!this.isSleeping && !window.isMuted) {
+      this.isSleeping = true;
+      this.sleepingSound.loop = true;
+      this.sleepingSound.volume = 0.3;
+      this.sleepingSound.play().catch(err => console.log('Sleep sound error:', err));
+    }
+  }
+  
+  /**
+   * Stops the sleeping sound
+   */
+  stopSleepingSound() {
+    if (this.isSleeping) {
+      this.isSleeping = false;
+      this.sleepingSound.pause();
+      this.sleepingSound.currentTime = 0;
     }
   }
 }
