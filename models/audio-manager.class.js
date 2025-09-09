@@ -203,4 +203,22 @@ class AudioManager {
     }
     this.stopEndbossFightMusic();
   }
+
+  /**
+   * Immediately stops all game audio (for game over scenarios)
+   */
+  stopAllAudio() {
+    if (window.backgroundMusic) {
+      window.backgroundMusic.pause();
+      window.backgroundMusic.currentTime = 0;
+    }
+    if (window.windSound) {
+      window.windSound.pause();
+      window.windSound.currentTime = 0;
+    }
+    if (this.endbossFightMusic) {
+      this.endbossFightMusic.pause();
+      this.endbossFightMusic.currentTime = 0;
+    }
+  }
 }

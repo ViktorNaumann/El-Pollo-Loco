@@ -10,9 +10,13 @@ let windSound = new Audio('audio/background2.mp3');
 let musicStarted = false;
 window.isMuted = false;
 let gameStarted = false;
+let gameOver = false;
 let assetLoader = new AssetLoader();
 let assetsLoaded = false;
 window.assetLoader = assetLoader;
+window.backgroundMusic = backgroundMusic;
+window.windSound = windSound;
+window.gameOver = false;
 backgroundMusic.loop = true;
 windSound.loop = true;
 backgroundMusic.volume = 0.4;
@@ -23,6 +27,8 @@ windSound.volume = 0.3;
  * Resets all game elements and starts a new game session
  */
 function restartGame() {
+    gameOver = false;
+    window.gameOver = false;
     document.getElementById('game-overlay').classList.add('hidden');
     if (world) {
         window.cancelAnimationFrame(world.animationFrame);
@@ -195,6 +201,7 @@ function initializeGameStats() {
  * Initializes and starts background music
  */
 function initializeGameMusic() {
+    if (window.gameOver) return;
     backgroundMusic.currentTime = 0;
     windSound.currentTime = 0;
     if (!window.isMuted) {
@@ -441,13 +448,9 @@ function handleKeyUp(keyCode) {
  */
 function initMobileControls() {
     checkOrientation();
-    
-    // Listen for orientation changes
     window.addEventListener('orientationchange', () => {
         setTimeout(checkOrientation, 100);
     });
-    
-    // Listen for resize events (fallback for browsers without orientationchange)
     window.addEventListener('resize', checkOrientation);
 }
 

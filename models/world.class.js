@@ -260,18 +260,22 @@ class World {
    * @param {boolean} playerWon - Whether the player won or lost
    */
   triggerGameOver(playerWon) {
+    window.gameOver = true;
     this.stopCharacterSounds();
     this.freezeGame();
-    this.audioManager.fadeOutAllAudio();
-    this.showGameOverScreen(playerWon);
+    this.audioManager.stopAllAudio();
+    setTimeout(() => {
+      this.showGameOverScreen(playerWon);
+    }, 100);
   }
 
   /**
    * Stops character sounds if running
    */
   stopCharacterSounds() {
-    if (this.character && this.character.isRunning) {
+    if (this.character) {
       this.character.stopRunningSound();
+      this.character.stopSleepingSound();
     }
   }
 
