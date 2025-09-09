@@ -10,6 +10,7 @@ body {
     justify-content: center;
     min-height: 100vh;
     margin: 0;
+    background-color: #8B4513;
     background-image: url('img/desert_background/desert.png');
     background-position: center;
     background-size: cover;
@@ -26,7 +27,7 @@ h1 {
 }
 
 canvas {
-    background-color: black;
+    background-color: transparent;
     display: block;
     margin: 0 auto;
     width: 100%;

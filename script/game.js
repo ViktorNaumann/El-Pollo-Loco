@@ -74,6 +74,13 @@ function initLevel() {
  */
 function init() {
     canvas = document.getElementById('canvas');
+    const loadingScreen = document.getElementById('loading-screen');
+    const startScreen = document.getElementById('start-screen');
+    const gameOverlay = document.getElementById('game-overlay');
+    loadingScreen.style.display = 'flex';
+    loadingScreen.classList.remove('hidden');
+    startScreen.classList.add('hidden');
+    gameOverlay.classList.add('hidden');
     loadMuteStateFromStorage();
     setupEventListeners();
     initMobileControls();
@@ -123,8 +130,11 @@ function showStartScreenAfterLoading() {
     setTimeout(() => {
         const loadingScreen = document.getElementById('loading-screen');
         const startScreen = document.getElementById('start-screen');
-        loadingScreen.style.display = 'none';
+        loadingScreen.classList.add('hidden');
         startScreen.classList.remove('hidden');
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+        }, 500);
         initializeStartScreen();
     }, 500);
 }
@@ -254,6 +264,11 @@ function resetCanvas() {
  */
 function showStartScreen() {
     const startScreen = document.getElementById('start-screen');
+    const loadingScreen = document.getElementById('loading-screen');
+    const gameOverlay = document.getElementById('game-overlay');
+    loadingScreen.classList.add('hidden');
+    loadingScreen.style.display = 'none';
+    gameOverlay.classList.add('hidden');
     startScreen.classList.remove('hidden');
     startScreen.style.display = 'flex';
 }
