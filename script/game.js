@@ -68,6 +68,7 @@ function initLevel() {
  */
 function init() {
     canvas = document.getElementById('canvas');
+    loadMuteStateFromStorage();
     setupEventListeners();
     initMobileControls();
     keyboard.bind();
@@ -266,6 +267,26 @@ function stopAllMusic() {
 }
 
 /**
+ * Loads the mute state from localStorage
+ * Sets the initial mute state and updates UI accordingly
+ */
+function loadMuteStateFromStorage() {
+    const savedMuteState = localStorage.getItem('elPolloLocoMuteState');
+    if (savedMuteState !== null) {
+        window.isMuted = savedMuteState === 'true';
+        updateMuteButtonUI();
+        updateAudioVolumes();
+    }
+}
+
+/**
+ * Saves the current mute state to localStorage
+ */
+function saveMuteStateToStorage() {
+    localStorage.setItem('elPolloLocoMuteState', window.isMuted.toString());
+}
+
+/**
  * Toggles sound mute state
  * Updates UI and applies mute state to all audio elements
  */
@@ -273,6 +294,7 @@ function toggleMute() {
     window.isMuted = !window.isMuted;
     updateMuteButtonUI();
     updateAudioVolumes();
+    saveMuteStateToStorage();
     document.getElementById('mute-button').blur();
 }
 
