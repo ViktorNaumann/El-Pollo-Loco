@@ -221,7 +221,7 @@
 
 @media screen and (max-width: 850px) {
   .mobile-controls {
-    display: none; /* Standardmäßig ausgeblendet, wird per JavaScript gesteuert */
+    display: none;
   }
   
   .touch-controls-toggle {

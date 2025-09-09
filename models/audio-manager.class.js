@@ -132,16 +132,12 @@ class AudioManager {
    */
   startEndbossFightMusic() {
     if (this.endbossMusicPlayed) return;
-
-    // Fade out background music and wind sound
     if (window.backgroundMusic) {
       this.fadeOutAudio(window.backgroundMusic);
     }
     if (window.windSound) {
       this.fadeOutAudio(window.windSound);
     }
-
-    // Start endboss music
     if (!window.isMuted) {
       this.endbossFightMusic.volume = 0;
       this.endbossFightMusic.play()

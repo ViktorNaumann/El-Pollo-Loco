@@ -23,67 +23,17 @@ class Character extends MovableObject {
   justLanded = false;
   lastLandingTime = 0;
 
-  IMAGES_IDLE = [
-    'img/2_character_pepe/1_idle/idle/I-1.png',
-    'img/2_character_pepe/1_idle/idle/I-2.png',
-    'img/2_character_pepe/1_idle/idle/I-3.png',
-    'img/2_character_pepe/1_idle/idle/I-4.png',
-    'img/2_character_pepe/1_idle/idle/I-5.png',
-    'img/2_character_pepe/1_idle/idle/I-6.png',
-    'img/2_character_pepe/1_idle/idle/I-7.png',
-    'img/2_character_pepe/1_idle/idle/I-8.png',
-    'img/2_character_pepe/1_idle/idle/I-9.png',
-    'img/2_character_pepe/1_idle/idle/I-10.png'
-  ];
-  IMAGES_LONG_IDLE = [
-    'img/2_character_pepe/1_idle/long_idle/I-11.png',
-    'img/2_character_pepe/1_idle/long_idle/I-12.png',
-    'img/2_character_pepe/1_idle/long_idle/I-13.png',
-    'img/2_character_pepe/1_idle/long_idle/I-14.png',
-    'img/2_character_pepe/1_idle/long_idle/I-15.png',
-    'img/2_character_pepe/1_idle/long_idle/I-16.png',
-    'img/2_character_pepe/1_idle/long_idle/I-17.png',
-    'img/2_character_pepe/1_idle/long_idle/I-18.png',
-    'img/2_character_pepe/1_idle/long_idle/I-19.png',
-    'img/2_character_pepe/1_idle/long_idle/I-20.png'
-  ];
-  IMAGES_WALKING = [
-    'img/2_character_pepe/2_walk/W-21.png',
-    'img/2_character_pepe/2_walk/W-22.png',
-    'img/2_character_pepe/2_walk/W-23.png',
-    'img/2_character_pepe/2_walk/W-24.png',
-    'img/2_character_pepe/2_walk/W-25.png',
-    'img/2_character_pepe/2_walk/W-26.png',
-  ];
-  IMAGES_JUMPING = [
-    'img/2_character_pepe/3_jump/J-31.png',
-    'img/2_character_pepe/3_jump/J-32.png',
-    'img/2_character_pepe/3_jump/J-33.png',
-    'img/2_character_pepe/3_jump/J-34.png',
-    'img/2_character_pepe/3_jump/J-35.png',
-    'img/2_character_pepe/3_jump/J-36.png',
-    'img/2_character_pepe/3_jump/J-37.png',
-    'img/2_character_pepe/3_jump/J-38.png',
-    'img/2_character_pepe/3_jump/J-39.png',
-  ];
-  IMAGES_DEAD = [
-    'img/2_character_pepe/5_dead/D-51.png',
-    'img/2_character_pepe/5_dead/D-52.png',
-    'img/2_character_pepe/5_dead/D-53.png',
-    'img/2_character_pepe/5_dead/D-54.png',
-    'img/2_character_pepe/5_dead/D-55.png',
-    'img/2_character_pepe/5_dead/D-56.png',
-    'img/2_character_pepe/5_dead/D-57.png',
-  ];
-  IMAGES_HURT = [
-    'img/2_character_pepe/4_hurt/H-41.png',
-    'img/2_character_pepe/4_hurt/H-42.png',
-    'img/2_character_pepe/4_hurt/H-43.png',
-  ];
+  IMAGES_IDLE = ['img/2_character_pepe/1_idle/idle/I-1.png', 'img/2_character_pepe/1_idle/idle/I-2.png', 'img/2_character_pepe/1_idle/idle/I-3.png', 'img/2_character_pepe/1_idle/idle/I-4.png', 'img/2_character_pepe/1_idle/idle/I-5.png', 'img/2_character_pepe/1_idle/idle/I-6.png', 'img/2_character_pepe/1_idle/idle/I-7.png', 'img/2_character_pepe/1_idle/idle/I-8.png', 'img/2_character_pepe/1_idle/idle/I-9.png', 'img/2_character_pepe/1_idle/idle/I-10.png'];
+  IMAGES_LONG_IDLE = ['img/2_character_pepe/1_idle/long_idle/I-11.png', 'img/2_character_pepe/1_idle/long_idle/I-12.png', 'img/2_character_pepe/1_idle/long_idle/I-13.png', 'img/2_character_pepe/1_idle/long_idle/I-14.png', 'img/2_character_pepe/1_idle/long_idle/I-15.png', 'img/2_character_pepe/1_idle/long_idle/I-16.png', 'img/2_character_pepe/1_idle/long_idle/I-17.png', 'img/2_character_pepe/1_idle/long_idle/I-18.png', 'img/2_character_pepe/1_idle/long_idle/I-19.png', 'img/2_character_pepe/1_idle/long_idle/I-20.png'];
+  IMAGES_WALKING = ['img/2_character_pepe/2_walk/W-21.png', 'img/2_character_pepe/2_walk/W-22.png', 'img/2_character_pepe/2_walk/W-23.png', 'img/2_character_pepe/2_walk/W-24.png', 'img/2_character_pepe/2_walk/W-25.png', 'img/2_character_pepe/2_walk/W-26.png'];
+  IMAGES_JUMPING = ['img/2_character_pepe/3_jump/J-31.png', 'img/2_character_pepe/3_jump/J-32.png', 'img/2_character_pepe/3_jump/J-33.png', 'img/2_character_pepe/3_jump/J-34.png', 'img/2_character_pepe/3_jump/J-35.png', 'img/2_character_pepe/3_jump/J-36.png', 'img/2_character_pepe/3_jump/J-37.png', 'img/2_character_pepe/3_jump/J-38.png', 'img/2_character_pepe/3_jump/J-39.png'];
+  IMAGES_DEAD = ['img/2_character_pepe/5_dead/D-51.png', 'img/2_character_pepe/5_dead/D-52.png', 'img/2_character_pepe/5_dead/D-53.png', 'img/2_character_pepe/5_dead/D-54.png', 'img/2_character_pepe/5_dead/D-55.png', 'img/2_character_pepe/5_dead/D-56.png', 'img/2_character_pepe/5_dead/D-57.png'];
+  IMAGES_HURT = ['img/2_character_pepe/4_hurt/H-41.png', 'img/2_character_pepe/4_hurt/H-42.png', 'img/2_character_pepe/4_hurt/H-43.png'];
   world;
 
   /**
-   * Creates a new Character instance
+   * Creates a new Character instance and initializes all properties
+   * Sets up animations, sounds, gravity and starts the animation loop
    */
   constructor() {
     super();
@@ -97,7 +47,8 @@ class Character extends MovableObject {
   }
   
   /**
-   * Loads all animation image sets
+   * Loads all animation images for different character states
+   * Preloads walking, jumping, death, hurt, idle and long idle animations
    */
   loadAllAnimationImages() {
     this.loadImages(this.IMAGES_WALKING);
@@ -109,7 +60,8 @@ class Character extends MovableObject {
   }
   
   /**
-   * Initializes all sounds used by the character
+   * Initializes all sound effects for the character
+   * Sets up jump, run and sleeping sounds with appropriate volumes
    */
   initSounds() {
     this.jumpSound = new Audio("audio/jump.mp3");
@@ -122,9 +74,9 @@ class Character extends MovableObject {
   }
 
   /**
-   * Plays animation with specified delay time
-   * @param {Array<string>} images - Array of image paths to animate
-   * @param {number} delay - Delay in ms between frames
+   * Plays animation with a custom speed/delay
+   * @param {string[]} images - Array of image paths for the animation
+   * @param {number} delay - Delay between animation frames in milliseconds
    */
   playAnimationWithSpeed(images, delay) {
     if (this.animationInterval) {
@@ -136,7 +88,8 @@ class Character extends MovableObject {
   }
 
   /**
-   * Sets up character animation and movement intervals
+   * Starts all animation loops for the character
+   * Initializes both movement and visual animation intervals
    */
   animate() {
     this.startMovementAnimation();
@@ -144,11 +97,12 @@ class Character extends MovableObject {
   }
 
   /**
-   * Handles character movement and sound intervals
+   * Starts the movement animation loop at 60 FPS
+   * Handles landing detection, movement input, jumping and camera updates
    */
   startMovementAnimation() {
     setInterval(() => {
-      this.checkForLanding(); // Check for landing every frame
+      this.checkForLanding();
       this.handleMovementInput();
       this.handleJumpInput();
       this.updateCamera();
@@ -156,7 +110,8 @@ class Character extends MovableObject {
   }
 
   /**
-   * Handles character visual animation intervals
+   * Starts the visual animation loop at 10 FPS
+   * Updates character sprite animations based on current state
    */
   startVisualAnimation() {
     setInterval(() => {
@@ -165,7 +120,8 @@ class Character extends MovableObject {
   }
 
   /**
-   * Processes movement input and applies movement
+   * Handles keyboard input for left and right movement
+   * Checks boundaries and triggers appropriate movement methods
    */
   handleMovementInput() {
     if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
@@ -178,7 +134,8 @@ class Character extends MovableObject {
   }
 
   /**
-   * Handles right movement input
+   * Handles movement to the right
+   * Sets direction, plays running sound and updates action time
    */
   handleRightMovement() {
     this.moveRight();
@@ -190,7 +147,8 @@ class Character extends MovableObject {
   }
 
   /**
-   * Handles left movement input
+   * Handles movement to the left
+   * Sets direction, plays running sound and updates action time
    */
   handleLeftMovement() {
     this.moveLeft();
@@ -202,7 +160,8 @@ class Character extends MovableObject {
   }
 
   /**
-   * Processes jump input
+   * Handles jumping input and stops running sound when airborne
+   * Only allows jumping when character is on the ground
    */
   handleJumpInput() {
     if (this.world.keyboard.SPACE && !this.isAboveGround()) {
@@ -216,65 +175,126 @@ class Character extends MovableObject {
   }
 
   /**
-   * Updates camera position based on character position
+   * Updates the camera position to follow the character
+   * Centers the character in the viewport with an offset
    */
   updateCamera() {
     this.world.camera_x = -this.x + 100;
   }
 
   /**
-   * Checks if character just landed and plays landing sound
+   * Checks if the character has just landed on the ground
+   * Detects transition from airborne to ground state
    */
   checkForLanding() {
     const isCurrentlyAboveGround = this.isAboveGround();
-    if (this.wasAboveGroundLastFrame && !isCurrentlyAboveGround && this.speedY <= 0) {
-      this.handleLanding();
-      this.justLanded = true;
-      this.stopSleepingSound();
-      if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-        this.forceAnimation(this.IMAGES_WALKING);
-      } else {
-        this.forceAnimation(this.IMAGES_IDLE);
-      }
-      setTimeout(() => {
-        this.updateCharacterAnimation();
-      }, 16);
-      setTimeout(() => {
-        this.justLanded = false;
-      }, 150);
+    if (this.hasJustLanded(isCurrentlyAboveGround)) {
+      this.processLanding();
     }
     this.wasAboveGroundLastFrame = isCurrentlyAboveGround;
   }
 
   /**
-   * Updates character animation based on current state
+   * Determines if character has just landed
+   * @param {boolean} isCurrentlyAboveGround - Current airborne state
+   * @returns {boolean} True if character just landed
    */
-  updateCharacterAnimation() {
-    let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
-    
-    if (this.isDead()) {
-      this.stopSleepingSound();
-      this.setAnimation(this.IMAGES_DEAD);
-    } else if (this.isHurt()) {
-      this.stopSleepingSound();
-      this.setAnimation(this.IMAGES_HURT);
-    } else if (this.isAboveGround()) {
-      this.stopSleepingSound();
-      this.setAnimation(this.IMAGES_JUMPING);
-    } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-      this.stopSleepingSound();
-      this.setAnimation(this.IMAGES_WALKING);
-    } else if (timeSinceLastAction > 5000) {
-      this.startSleepingSound();
-      this.setAnimation(this.IMAGES_LONG_IDLE);
+  hasJustLanded(isCurrentlyAboveGround) {
+    return this.wasAboveGroundLastFrame && !isCurrentlyAboveGround && this.speedY <= 0;
+  }
+
+  /**
+   * Processes character landing sequence
+   * Handles landing effects, animations and sound management
+   */
+  processLanding() {
+    this.handleLanding();
+    this.justLanded = true;
+    this.stopSleepingSound();
+    this.setLandingAnimation();
+    this.scheduleLandingUpdates();
+  }
+
+  /**
+   * Sets appropriate animation when character lands
+   * Chooses between walking or idle animation based on input
+   */
+  setLandingAnimation() {
+    if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+      this.forceAnimation(this.IMAGES_WALKING);
     } else {
-      this.stopSleepingSound();
-      this.setAnimation(this.IMAGES_IDLE);
+      this.forceAnimation(this.IMAGES_IDLE);
     }
   }
 
   /**
-   * Updates character position and applies gravity
+   * Schedules animation updates after landing
+   * Sets timers for immediate animation update and landing state reset
+   */
+  scheduleLandingUpdates() {
+    setTimeout(() => this.updateCharacterAnimation(), 16);
+    setTimeout(() => this.justLanded = false, 150);
+  }
+
+  /**
+   * Updates character animation based on current state
+   * Determines and sets appropriate animation based on time since last action
+   */
+  updateCharacterAnimation() {
+    const timeSinceLastAction = this.getTimeSinceLastAction();
+    const animationImages = this.determineAnimationImages(timeSinceLastAction);
+    this.setAnimation(animationImages);
+  }
+
+  /**
+   * Calculates time elapsed since last character action
+   * @returns {number} Time in milliseconds since last action
+   */
+  getTimeSinceLastAction() {
+    return new Date().getTime() - this.lastActionTime;
+  }
+
+  /**
+   * Determines appropriate animation images based on character state
+   * @param {number} timeSinceLastAction - Time elapsed since last action
+   * @returns {string[]} Array of animation image paths
+   */
+  determineAnimationImages(timeSinceLastAction) {
+    if (this.isDead()) {
+      this.stopSleepingSound();
+      return this.IMAGES_DEAD;
+    }
+    if (this.isHurt()) {
+      this.stopSleepingSound();
+      return this.IMAGES_HURT;
+    }
+    if (this.isAboveGround()) {
+      this.stopSleepingSound();
+      return this.IMAGES_JUMPING;
+    }
+    if (this.isMoving()) {
+      this.stopSleepingSound();
+      return this.IMAGES_WALKING;
+    }
+    if (timeSinceLastAction > 5000) {
+      this.startSleepingSound();
+      return this.IMAGES_LONG_IDLE;
+    }
+    this.stopSleepingSound();
+    return this.IMAGES_IDLE;
+  }
+
+  /**
+   * Checks if character is currently moving
+   * @returns {boolean} True if left or right key is pressed
+   */
+  isMoving() {
+    return this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
+  }
+
+  /**
+   * Updates character position and applies physics
+   * Stores previous Y position, moves character and applies gravity
    */
   update() {
     this.previousY = this.y;
@@ -283,14 +303,14 @@ class Character extends MovableObject {
   }
 
   /**
-   * Handles character landing on the ground
+   * Handles character landing effects and sound
+   * Prevents rapid repeated landing sounds with cooldown
    */
   handleLanding() {
     const currentTime = new Date().getTime();
     if (currentTime - this.lastLandingTime < 200) {
       return;
     }
-    
     this.lastLandingTime = currentTime;
     if (this.world && this.world.audioManager) {
       this.world.audioManager.playLandingSound();
@@ -298,28 +318,60 @@ class Character extends MovableObject {
   }
 
   /**
-   * Sets up interval to check for idle state
+   * Sets up idle check interval for long idle detection
+   * Runs idle check every 250ms to manage sleeping animation
    */
   idleCheckInterval() {
     setInterval(() => {
-      let now = new Date().getTime();
-      let timeSinceLastAction = now - this.lastActionTime;
-      if (timeSinceLastAction > 5000 && !this.isDead() && !this.isHurt()) {
-        if (!this.longIdleInterval) {
-          this.longIdleInterval = setInterval(() => {
-            this.playAnimation(this.IMAGES_LONG_IDLE);
-          }, 400);
-        }
-      } else {
-        clearInterval(this.longIdleInterval);
-        this.longIdleInterval = null;
-      }
+      this.processIdleCheck();
     }, 250);
   }
 
   /**
+   * Processes idle state check for long idle animation
+   * Starts or stops long idle animation based on inactivity
+   */
+  processIdleCheck() {
+    const timeSinceLastAction = this.getTimeSinceLastAction();
+    if (this.shouldStartLongIdle(timeSinceLastAction)) {
+      this.startLongIdleAnimation();
+    } else {
+      this.stopLongIdleAnimation();
+    }
+  }
+
+  /**
+   * Determines if long idle animation should start
+   * @param {number} timeSinceLastAction - Time elapsed since last action
+   * @returns {boolean} True if character should start long idle
+   */
+  shouldStartLongIdle(timeSinceLastAction) {
+    return timeSinceLastAction > 5000 && !this.isDead() && !this.isHurt();
+  }
+
+  /**
+   * Starts the long idle animation if not already running
+   * Sets up interval for long idle animation sequence
+   */
+  startLongIdleAnimation() {
+    if (!this.longIdleInterval) {
+      this.longIdleInterval = setInterval(() => {
+        this.playAnimation(this.IMAGES_LONG_IDLE);
+      }, 400);
+    }
+  }
+
+  /**
+   * Stops the long idle animation
+   * Clears the long idle interval and resets the reference
+   */
+  stopLongIdleAnimation() {
+    clearInterval(this.longIdleInterval);
+    this.longIdleInterval = null;
+  }
+
+  /**
    * Sets the current animation based on character state
-   * @param {Array<string>} images - Array of image paths to animate
    */
   setAnimation(images) {
     if (this.shouldPlayDeathAnimation(images)) {
@@ -331,8 +383,6 @@ class Character extends MovableObject {
 
   /**
    * Checks if death animation should be played
-   * @param {Array<string>} images - Array of image paths
-   * @returns {boolean} True if death animation should play
    */
   shouldPlayDeathAnimation(images) {
     return images === this.IMAGES_DEAD;
@@ -340,7 +390,6 @@ class Character extends MovableObject {
 
   /**
    * Handles death animation sequence
-   * @param {Array<string>} images - Death animation images
    */
   handleDeathAnimation(images) {
     if (!this.isDeadAnimationPlayed) {
@@ -356,7 +405,6 @@ class Character extends MovableObject {
 
   /**
    * Updates current animation if different from previous
-   * @param {Array<string>} images - Animation images to set
    */
   updateCurrentAnimation(images) {
     if (this.currentAnimation !== images) {
@@ -369,8 +417,6 @@ class Character extends MovableObject {
 
   /**
    * Forces animation change even if same animation type
-   * Used when character state changes significantly (like landing)
-   * @param {Array<string>} images - Animation images to set
    */
   forceAnimation(images) {
     if (this.animationInterval) {
@@ -387,8 +433,6 @@ class Character extends MovableObject {
 
   /**
    * Gets animation delay based on image type
-   * @param {Array<string>} images - Animation images
-   * @returns {number} Delay in milliseconds
    */
   getAnimationDelay(images) {
     if (images === this.IMAGES_IDLE) return 300;
@@ -401,7 +445,6 @@ class Character extends MovableObject {
 
   /**
    * Checks if character is dead and triggers game over
-   * @returns {boolean} True if character is dead
    */
   isDead() {
     if (this.energy <= 0) {

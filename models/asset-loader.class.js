@@ -97,7 +97,6 @@ class AssetLoader {
   updateProgress() {
     this.loadedAssets++;
     const percentage = Math.round((this.loadedAssets / this.totalAssets) * 100);
-    
     if (this.onProgressCallback) {
       this.onProgressCallback(percentage);
     }
@@ -108,7 +107,6 @@ class AssetLoader {
    */
   getAllImagePaths() {
     return [
-      // Character images
       'img/2_character_pepe/1_idle/idle/I-1.png',
       'img/2_character_pepe/1_idle/idle/I-2.png',
       'img/2_character_pepe/1_idle/idle/I-3.png',
@@ -129,16 +127,12 @@ class AssetLoader {
       'img/2_character_pepe/1_idle/long_idle/I-18.png',
       'img/2_character_pepe/1_idle/long_idle/I-19.png',
       'img/2_character_pepe/1_idle/long_idle/I-20.png',
-      
-      // Walking images
       'img/2_character_pepe/2_walk/W-21.png',
       'img/2_character_pepe/2_walk/W-22.png',
       'img/2_character_pepe/2_walk/W-23.png',
       'img/2_character_pepe/2_walk/W-24.png',
       'img/2_character_pepe/2_walk/W-25.png',
       'img/2_character_pepe/2_walk/W-26.png',
-      
-      // Jumping images
       'img/2_character_pepe/3_jump/J-31.png',
       'img/2_character_pepe/3_jump/J-32.png',
       'img/2_character_pepe/3_jump/J-33.png',
@@ -148,13 +142,9 @@ class AssetLoader {
       'img/2_character_pepe/3_jump/J-37.png',
       'img/2_character_pepe/3_jump/J-38.png',
       'img/2_character_pepe/3_jump/J-39.png',
-      
-      // Hurt images
       'img/2_character_pepe/4_hurt/H-41.png',
       'img/2_character_pepe/4_hurt/H-42.png',
       'img/2_character_pepe/4_hurt/H-43.png',
-      
-      // Dead images
       'img/2_character_pepe/5_dead/D-51.png',
       'img/2_character_pepe/5_dead/D-52.png',
       'img/2_character_pepe/5_dead/D-53.png',
@@ -162,8 +152,6 @@ class AssetLoader {
       'img/2_character_pepe/5_dead/D-55.png',
       'img/2_character_pepe/5_dead/D-56.png',
       'img/2_character_pepe/5_dead/D-57.png',
-      
-      // Chicken enemies
       'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
       'img/3_enemies_chicken/chicken_normal/1_walk/2_w.png',
       'img/3_enemies_chicken/chicken_normal/1_walk/3_w.png',
@@ -172,8 +160,6 @@ class AssetLoader {
       'img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
       'img/3_enemies_chicken/chicken_small/1_walk/3_w.png',
       'img/3_enemies_chicken/chicken_small/2_dead/dead.png',
-      
-      // Endboss
       'img/4_enemie_boss_chicken/1_walk/G1.png',
       'img/4_enemie_boss_chicken/1_walk/G2.png',
       'img/4_enemie_boss_chicken/1_walk/G3.png',
@@ -200,8 +186,6 @@ class AssetLoader {
       'img/4_enemie_boss_chicken/5_dead/G24.png',
       'img/4_enemie_boss_chicken/5_dead/G25.png',
       'img/4_enemie_boss_chicken/5_dead/G26.png',
-      
-      // Background
       'img/5_background/layers/air.png',
       'img/5_background/layers/3_third_layer/1.png',
       'img/5_background/layers/3_third_layer/2.png',
@@ -209,40 +193,26 @@ class AssetLoader {
       'img/5_background/layers/2_second_layer/2.png',
       'img/5_background/layers/1_first_layer/1.png',
       'img/5_background/layers/1_first_layer/2.png',
-      
-      // Clouds
       'img/5_background/layers/4_clouds/1.png',
       'img/5_background/layers/4_clouds/2.png',
-      
-      // Bottles
       'img/6_salsa_bottle/1_salsa_bottle_on_ground.png',
       'img/6_salsa_bottle/2_salsa_bottle_on_ground.png',
       'img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
       'img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png',
       'img/6_salsa_bottle/bottle_rotation/3_bottle_rotation.png',
       'img/6_salsa_bottle/bottle_rotation/4_bottle_rotation.png',
-      
-      // Status bar icons (only the ones that exist)
       'img/7_statusbars/3_icons/icon_coin.png',
       'img/7_statusbars/3_icons/icon_health.png',
       'img/7_statusbars/3_icons/icon_salsa_bottle.png',
-      
-      // Coins
       'img/8_coin/coin_1.png',
       'img/8_coin/coin_2.png',
-      
-      // Intro/Outro screens
       'img/9_intro_outro_screens/start/startscreen_1.png',
       'img/9_intro_outro_screens/game_over/game over.png',
       'img/9_intro_outro_screens/game_over/oh no you lost!.png',
       'img/You won, you lost/You won A.png',
       'img/You won, you lost/You Won B.png',
-      
-      // UI elements
       'img/sound-off.png',
       'img/sound-on.png',
-      
-      // Desert background elements
       'img/desert_background/desert.png',
       'img/desert_background/Steppenhexe.png'
     ];

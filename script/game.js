@@ -461,7 +461,6 @@ function initMobileControls() {
 function checkOrientation() {
     const isNarrow = window.innerWidth <= 850;
     const isLandscape = window.innerWidth > window.innerHeight;
-    
     if (isNarrow && !isLandscape) {
         showRotateMessage();
     } else if (isNarrow && isLandscape) {
