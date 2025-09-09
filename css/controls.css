@@ -8,6 +8,7 @@
   padding: 15px;
   color: white;
   max-width: 250px;
+  font-family: Arial, sans-serif;
 }
 
 .controls-box h3 {
@@ -48,18 +49,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
+.key-icon {
   min-width: 35px;
   height: 35px;
   background-color: #f5f5f5;
   color: #333;
   border-radius: 5px;
   font-weight: bold;
-  font-family: 'Courier New', monospace;
+  font-family: Arial, sans-serif;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 -2px 0 #d0d0d0;
   border: 1px solid #999;
   margin-right: 15px;
   font-size: 16px;
   padding: 0 5px;
+}
 }
 
 .key-icon:active {
