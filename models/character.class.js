@@ -20,6 +20,7 @@ class Character extends MovableObject {
   isSleeping = false;
   gravityInterval = null;
   wasAboveGroundLastFrame = false;
+  justLanded = false;
 
   IMAGES_IDLE = [
     'img/2_character_pepe/1_idle/idle/I-1.png',
@@ -227,6 +228,19 @@ class Character extends MovableObject {
     const isCurrentlyAboveGround = this.isAboveGround();
     if (this.wasAboveGroundLastFrame && !isCurrentlyAboveGround && this.speedY <= 0) {
       this.handleLanding();
+      this.justLanded = true;
+      this.stopSleepingSound();
+      if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+        this.forceAnimation(this.IMAGES_WALKING);
+      } else {
+        this.forceAnimation(this.IMAGES_IDLE);
+      }
+      setTimeout(() => {
+        this.updateCharacterAnimation();
+      }, 16);
+      setTimeout(() => {
+        this.justLanded = false;
+      }, 150);
     }
     this.wasAboveGroundLastFrame = isCurrentlyAboveGround;
   }
@@ -236,6 +250,7 @@ class Character extends MovableObject {
    */
   updateCharacterAnimation() {
     let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
+    
     if (this.isDead()) {
       this.stopSleepingSound();
       this.setAnimation(this.IMAGES_DEAD);
@@ -348,6 +363,24 @@ class Character extends MovableObject {
       let delay = this.getAnimationDelay(images);
       this.playAnimationWithSpeed(images, delay);
     }
+  }
+
+  /**
+   * Forces animation change even if same animation type
+   * Used when character state changes significantly (like landing)
+   * @param {Array<string>} images - Animation images to set
+   */
+  forceAnimation(images) {
+    if (this.animationInterval) {
+      clearInterval(this.animationInterval);
+    }
+    this.currentImage = 0;
+    this.currentAnimation = images;
+    if (images.length > 0 && this.imageCache[images[0]]) {
+      this.img = this.imageCache[images[0]];
+    }
+    let delay = this.getAnimationDelay(images);
+    this.playAnimationWithSpeed(images, delay);
   }
 
   /**
