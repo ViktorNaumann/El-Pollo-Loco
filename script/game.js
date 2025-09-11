@@ -463,11 +463,24 @@ function handleKeyUp(keyCode) {
  */
 function initMobileControls() {
     checkOrientation();
-    loadTouchControlsState();
+    setupTouchControlsVisibility();
     window.addEventListener('orientationchange', () => {
         setTimeout(checkOrientation, 100);
     });
     window.addEventListener('resize', checkOrientation);
+}
+
+/**
+ * Setup initial touch controls visibility based on device capabilities
+ */
+function setupTouchControlsVisibility() {
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isTabletOrMobile = window.innerWidth <= 1024;
+    const toggleButton = document.getElementById('touch-controls-toggle');
+    if (toggleButton && (isTouchDevice || isTabletOrMobile)) {
+        toggleButton.style.display = 'block';
+        toggleButton.classList.add('active');
+    }
 }
 
 /**
@@ -489,18 +502,60 @@ function checkOrientation() {
  * Updates mobile controls visibility based on user preference
  */
 function updateMobileControlsVisibility() {
+    hideRotateMessage();
+    const touchControlsEnabled = getTouchControlsState();
+    const shouldShowControls = shouldDisplayMobileControls(touchControlsEnabled);
+    updateControlsDisplay(shouldShowControls);
+    updateToggleButtonDisplay();
+}
+
+/**
+ * Hides rotate message and removes canvas blur
+ */
+function hideRotateMessage() {
     const rotateMessage = document.getElementById('rotate-message');
-    const mobileControls = document.getElementById('mobile-controls');
     const canvas = document.getElementById('canvas');
-    const toggleButton = document.getElementById('touch-controls-toggle');
     if (rotateMessage) rotateMessage.style.display = 'none';
     if (canvas) canvas.style.filter = 'none';
-    const touchControlsEnabled = localStorage.getItem('touchControlsEnabled') !== 'false';
+}
+
+/**
+ * Gets current touch controls state from toggle button
+ */
+function getTouchControlsState() {
+    const toggleButton = document.getElementById('touch-controls-toggle');
+    return toggleButton ? toggleButton.classList.contains('active') : true;
+}
+
+/**
+ * Checks if mobile controls should be displayed
+ */
+function shouldDisplayMobileControls(touchControlsEnabled) {
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isTabletOrMobile = window.innerWidth <= 1024;
+    return touchControlsEnabled && (isTouchDevice || isTabletOrMobile || window.innerWidth <= 850);
+}
+
+/**
+ * Updates mobile controls display based on conditions
+ */
+function updateControlsDisplay(shouldShow) {
+    const mobileControls = document.getElementById('mobile-controls');
     if (mobileControls) {
-        mobileControls.style.display = touchControlsEnabled ? 'block' : 'none';
+        mobileControls.style.display = shouldShow ? 'block' : 'none';
     }
+}
+
+/**
+ * Updates toggle button display based on device type
+ */
+function updateToggleButtonDisplay() {
+    const toggleButton = document.getElementById('touch-controls-toggle');
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isTabletOrMobile = window.innerWidth <= 1024;
     if (toggleButton) {
-        toggleButton.classList.toggle('active', touchControlsEnabled);
+        const shouldShow = isTouchDevice || isTabletOrMobile || window.innerWidth <= 850;
+        toggleButton.style.display = shouldShow ? 'block' : 'none';
     }
 }
 
@@ -529,18 +584,7 @@ function showMobileControls() {
 }
 
 /**
- * Loads touch controls state from localStorage
- */
-function loadTouchControlsState() {
-    const touchControlsEnabled = localStorage.getItem('touchControlsEnabled') !== 'false';
-    const toggleButton = document.getElementById('touch-controls-toggle');
-    if (toggleButton) {
-        toggleButton.classList.toggle('active', touchControlsEnabled);
-    }
-}
-
-/**
- * Toggles touch controls visibility and saves state
+ * Toggles touch controls visibility without saving state
  */
 function toggleTouchControls() {
     const mobileControls = document.getElementById('mobile-controls');
@@ -550,22 +594,42 @@ function toggleTouchControls() {
     const newState = !isCurrentlyVisible;
     mobileControls.style.display = newState ? 'block' : 'none';
     toggleButton.classList.toggle('active', newState);
-    localStorage.setItem('touchControlsEnabled', newState.toString());
     toggleButton.blur();
 }
 
 /**
- * Shows desktop mode (no mobile elements)
+ * Shows desktop mode with conditional touch controls
  */
 function showDesktopMode() {
-    const rotateMessage = document.getElementById('rotate-message');
+    hideRotateMessage();
+    const touchControlsEnabled = getTouchControlsState();
+    handleDesktopMobileControls(touchControlsEnabled);
+    handleDesktopToggleButton();
+}
+
+/**
+ * Handles mobile controls display in desktop mode
+ */
+function handleDesktopMobileControls(touchControlsEnabled) {
     const mobileControls = document.getElementById('mobile-controls');
-    const canvas = document.getElementById('canvas');
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isTabletOrMobile = window.innerWidth <= 1024;
+    if (mobileControls) {
+        const shouldShow = (isTouchDevice || isTabletOrMobile) && touchControlsEnabled;
+        mobileControls.style.display = shouldShow ? 'block' : 'none';
+    }
+}
+
+/**
+ * Handles toggle button display in desktop mode
+ */
+function handleDesktopToggleButton() {
     const toggleButton = document.getElementById('touch-controls-toggle');
-    if (rotateMessage) rotateMessage.style.display = 'none';
-    if (mobileControls) mobileControls.style.display = 'none';
-    if (canvas) canvas.style.filter = 'none';
-    if (toggleButton) toggleButton.style.display = 'none';
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isTabletOrMobile = window.innerWidth <= 1024;
+    if (toggleButton) {
+        toggleButton.style.display = (isTouchDevice || isTabletOrMobile) ? 'block' : 'none';
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {

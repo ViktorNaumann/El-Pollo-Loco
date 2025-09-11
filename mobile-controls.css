@@ -8,6 +8,18 @@
   pointer-events: none;
 }
 
+@media (pointer: coarse) {
+  .mobile-controls {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .mobile-controls {
+    display: block;
+  }
+}
+
 .mobile-buttons-left {
   position: absolute;
   left: 20px;
@@ -69,10 +81,22 @@
   z-index: 100;
   opacity: 0.95;
   -webkit-tap-highlight-color: transparent;
-  display: block !important;
+  display: none; /* Standardmäßig versteckt */
   visibility: visible !important;
   backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+@media (pointer: coarse) {
+  .touch-controls-toggle {
+    display: block !important;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .touch-controls-toggle {
+    display: block !important;
+  }
 }
 
 .touch-controls-toggle:hover {
@@ -221,11 +245,11 @@
 
 @media screen and (max-width: 850px) {
   .mobile-controls {
-    display: none;
+    display: block;
   }
   
   .touch-controls-toggle {
-    display: block;
+    display: block !important;
   }
   
   .controls-box {
