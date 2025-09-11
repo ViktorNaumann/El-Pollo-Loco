@@ -474,10 +474,9 @@ function initMobileControls() {
  * Setup initial touch controls visibility based on device capabilities
  */
 function setupTouchControlsVisibility() {
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const isTabletOrMobile = window.innerWidth <= 1024;
     const toggleButton = document.getElementById('touch-controls-toggle');
-    if (toggleButton && (isTouchDevice || isTabletOrMobile)) {
+    if (toggleButton && isTabletOrMobile) {
         toggleButton.style.display = 'block';
         toggleButton.classList.add('active');
     }
@@ -531,9 +530,8 @@ function getTouchControlsState() {
  * Checks if mobile controls should be displayed
  */
 function shouldDisplayMobileControls(touchControlsEnabled) {
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const isTabletOrMobile = window.innerWidth <= 1024;
-    return touchControlsEnabled && (isTouchDevice || isTabletOrMobile || window.innerWidth <= 850);
+    return touchControlsEnabled && (isTabletOrMobile || window.innerWidth <= 850);
 }
 
 /**
@@ -551,10 +549,9 @@ function updateControlsDisplay(shouldShow) {
  */
 function updateToggleButtonDisplay() {
     const toggleButton = document.getElementById('touch-controls-toggle');
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const isTabletOrMobile = window.innerWidth <= 1024;
     if (toggleButton) {
-        const shouldShow = isTouchDevice || isTabletOrMobile || window.innerWidth <= 850;
+        const shouldShow = isTabletOrMobile || window.innerWidth <= 850;
         toggleButton.style.display = shouldShow ? 'block' : 'none';
     }
 }
@@ -612,10 +609,9 @@ function showDesktopMode() {
  */
 function handleDesktopMobileControls(touchControlsEnabled) {
     const mobileControls = document.getElementById('mobile-controls');
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const isTabletOrMobile = window.innerWidth <= 1024;
     if (mobileControls) {
-        const shouldShow = (isTouchDevice || isTabletOrMobile) && touchControlsEnabled;
+        const shouldShow = isTabletOrMobile && touchControlsEnabled;
         mobileControls.style.display = shouldShow ? 'block' : 'none';
     }
 }
@@ -625,10 +621,9 @@ function handleDesktopMobileControls(touchControlsEnabled) {
  */
 function handleDesktopToggleButton() {
     const toggleButton = document.getElementById('touch-controls-toggle');
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const isTabletOrMobile = window.innerWidth <= 1024;
     if (toggleButton) {
-        toggleButton.style.display = (isTouchDevice || isTabletOrMobile) ? 'block' : 'none';
+        toggleButton.style.display = isTabletOrMobile ? 'block' : 'none';
     }
 }
 

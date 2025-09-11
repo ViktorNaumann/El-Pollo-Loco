@@ -8,12 +8,6 @@
   pointer-events: none;
 }
 
-@media (pointer: coarse) {
-  .mobile-controls {
-    display: block;
-  }
-}
-
 @media screen and (max-width: 1024px) {
   .mobile-controls {
     display: block;
@@ -85,12 +79,6 @@
   visibility: visible !important;
   backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-@media (pointer: coarse) {
-  .touch-controls-toggle {
-    display: block !important;
-  }
 }
 
 @media screen and (max-width: 1024px) {
