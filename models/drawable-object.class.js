@@ -29,11 +29,9 @@ class DrawableObject {
    * @param {string} path - Path to the image file
    */
   loadImage(path) {
-    // Try to get preloaded image first
     if (window.assetLoader && window.assetLoader.getImage(path)) {
       this.img = window.assetLoader.getImage(path);
     } else {
-      // Fallback to direct loading
       this.img = new Image();
       this.img.src = path;
     }
@@ -54,11 +52,9 @@ class DrawableObject {
    */
   loadImages(arr) {
     arr.forEach((path) => {
-      // Try to get preloaded image first
       if (window.assetLoader && window.assetLoader.getImage(path)) {
         this.imageCache[path] = window.assetLoader.getImage(path);
       } else {
-        // Fallback to direct loading
         let img = new Image();
         img.src = path;
         this.imageCache[path] = img;
@@ -71,6 +67,5 @@ class DrawableObject {
    * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
    */
   drawFrame(ctx) {
-    // Implementation removed as requested
   }
 }

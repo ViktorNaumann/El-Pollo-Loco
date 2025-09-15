@@ -22,8 +22,6 @@ class Character extends MovableObject {
   wasAboveGroundLastFrame = false;
   justLanded = false;
   lastLandingTime = 0;
-
-  // Animation manager handles all animation-related functionality
   animationManager;
   world;
 
