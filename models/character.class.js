@@ -258,10 +258,10 @@ class Character extends MovableObject {
    * Starts the running sound if not already playing
    */
   startRunningSound() {
-    if (!this.isRunning && !window.isMuted) {
+    if (!this.isRunning) {
       this.isRunning = true;
       this.runSound.loop = true;
-      this.runSound.volume = 0.4;
+      this.runSound.volume = window.isMuted ? 0 : 0.4;
       this.runSound.play().catch(err => console.log('Sound-Fehler:', err));
     }
   }
@@ -281,10 +281,10 @@ class Character extends MovableObject {
    * Starts the sleeping sound if not already playing
    */
   startSleepingSound() {
-    if (!this.isSleeping && !window.isMuted) {
+    if (!this.isSleeping) {
       this.isSleeping = true;
       this.sleepingSound.loop = true;
-      this.sleepingSound.volume = 0.3;
+      this.sleepingSound.volume = window.isMuted ? 0 : 0.3;
       this.sleepingSound.play().catch(err => console.log('Sleep sound error:', err));
     }
   }

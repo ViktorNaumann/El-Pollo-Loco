@@ -346,6 +346,12 @@ function updateAudioVolumes() {
     if (world && world.endbossFightMusic) {
         world.endbossFightMusic.volume = window.isMuted ? 0 : 0.2;
     }
+    if (world && world.character && world.character.sleepingSound) {
+        world.character.sleepingSound.volume = window.isMuted ? 0 : 0.3;
+    }
+    if (world && world.character && world.character.runSound) {
+        world.character.runSound.volume = window.isMuted ? 0 : 0.4;
+    }
 }
 
 /**
