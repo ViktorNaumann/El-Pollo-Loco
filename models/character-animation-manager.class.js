@@ -6,13 +6,25 @@
 class CharacterAnimationManager {
   constructor(character) {
     this.character = character;
+    this.initializeProperties();
+    this.initializeImageArrays();
+  }
+
+  /**
+   * Initializes basic animation properties
+   */
+  initializeProperties() {
     this.animationInterval = null;
     this.longIdleInterval = null;
     this.currentAnimation = null;
     this.isDeadAnimationPlayed = false;
     this.justLanded = false;
-    
-    // Animation image arrays
+  }
+
+  /**
+   * Initializes all image arrays for different animation states
+   */
+  initializeImageArrays() {
     this.IMAGES_IDLE = ['img/2_character_pepe/1_idle/idle/I-1.png', 'img/2_character_pepe/1_idle/idle/I-2.png', 'img/2_character_pepe/1_idle/idle/I-3.png', 'img/2_character_pepe/1_idle/idle/I-4.png', 'img/2_character_pepe/1_idle/idle/I-5.png', 'img/2_character_pepe/1_idle/idle/I-6.png', 'img/2_character_pepe/1_idle/idle/I-7.png', 'img/2_character_pepe/1_idle/idle/I-8.png', 'img/2_character_pepe/1_idle/idle/I-9.png', 'img/2_character_pepe/1_idle/idle/I-10.png'];
     this.IMAGES_LONG_IDLE = ['img/2_character_pepe/1_idle/long_idle/I-11.png', 'img/2_character_pepe/1_idle/long_idle/I-12.png', 'img/2_character_pepe/1_idle/long_idle/I-13.png', 'img/2_character_pepe/1_idle/long_idle/I-14.png', 'img/2_character_pepe/1_idle/long_idle/I-15.png', 'img/2_character_pepe/1_idle/long_idle/I-16.png', 'img/2_character_pepe/1_idle/long_idle/I-17.png', 'img/2_character_pepe/1_idle/long_idle/I-18.png', 'img/2_character_pepe/1_idle/long_idle/I-19.png', 'img/2_character_pepe/1_idle/long_idle/I-20.png'];
     this.IMAGES_WALKING = ['img/2_character_pepe/2_walk/W-21.png', 'img/2_character_pepe/2_walk/W-22.png', 'img/2_character_pepe/2_walk/W-23.png', 'img/2_character_pepe/2_walk/W-24.png', 'img/2_character_pepe/2_walk/W-25.png', 'img/2_character_pepe/2_walk/W-26.png'];
@@ -74,22 +86,57 @@ class CharacterAnimationManager {
    * @returns {string[]} Array of animation image paths
    */
   determineAnimationImages(timeSinceLastAction) {
-    if (this.character.isDead()) {
-      this.character.stopSleepingSound();
-      return this.IMAGES_DEAD;
+    if (this.isHighPriorityState()) {
+      return this.getHighPriorityAnimation();
     }
-    if (this.character.isHurt()) {
-      this.character.stopSleepingSound();
-      return this.IMAGES_HURT;
+    if (this.isMovementState()) {
+      return this.getMovementAnimation();
     }
-    if (this.character.isAboveGround()) {
-      this.character.stopSleepingSound();
-      return this.IMAGES_JUMPING;
-    }
-    if (this.character.isMoving()) {
-      this.character.stopSleepingSound();
-      return this.IMAGES_WALKING;
-    }
+    return this.getIdleAnimation(timeSinceLastAction);
+  }
+
+  /**
+   * Checks if character is in high priority state (dead, hurt, jumping)
+   * @returns {boolean} True if character is in high priority state
+   */
+  isHighPriorityState() {
+    return this.character.isDead() || this.character.isHurt() || this.character.isAboveGround();
+  }
+
+  /**
+   * Gets animation for high priority states
+   * @returns {string[]} Animation images for current high priority state
+   */
+  getHighPriorityAnimation() {
+    this.character.stopSleepingSound();
+    if (this.character.isDead()) return this.IMAGES_DEAD;
+    if (this.character.isHurt()) return this.IMAGES_HURT;
+    return this.IMAGES_JUMPING;
+  }
+
+  /**
+   * Checks if character is in movement state
+   * @returns {boolean} True if character is moving
+   */
+  isMovementState() {
+    return this.character.isMoving();
+  }
+
+  /**
+   * Gets walking animation for movement state
+   * @returns {string[]} Walking animation images
+   */
+  getMovementAnimation() {
+    this.character.stopSleepingSound();
+    return this.IMAGES_WALKING;
+  }
+
+  /**
+   * Gets appropriate idle animation based on time since last action
+   * @param {number} timeSinceLastAction - Time elapsed since last action
+   * @returns {string[]} Idle or long idle animation images
+   */
+  getIdleAnimation(timeSinceLastAction) {
     if (timeSinceLastAction > 5000) {
       this.character.startSleepingSound();
       return this.IMAGES_LONG_IDLE;
@@ -187,11 +234,26 @@ class CharacterAnimationManager {
     if (!this.isDeadAnimationPlayed) {
       this.isDeadAnimationPlayed = true;
       this.character.playAnimationOnce(images);
-      setTimeout(() => {
-        if (this.character.world) {
-          this.character.world.triggerGameOver();
-        }
-      }, images.length * 150);
+      this.scheduleGameOver(images);
+    }
+  }
+
+  /**
+   * Schedules game over trigger after death animation
+   * @param {string[]} images - Death animation images for timing calculation
+   */
+  scheduleGameOver(images) {
+    setTimeout(() => {
+      this.triggerGameOverIfWorldExists();
+    }, images.length * 150);
+  }
+
+  /**
+   * Triggers game over if world exists
+   */
+  triggerGameOverIfWorldExists() {
+    if (this.character.world) {
+      this.character.world.triggerGameOver();
     }
   }
 
@@ -200,25 +262,63 @@ class CharacterAnimationManager {
    */
   updateCurrentAnimation(images) {
     if (this.currentAnimation !== images) {
-      this.character.currentImage = 0;
-      this.currentAnimation = images;
-      let delay = this.getAnimationDelay(images);
-      this.playAnimationWithSpeed(images, delay);
+      this.resetAnimationState();
+      this.applyNewAnimation(images);
     }
+  }
+
+  /**
+   * Resets animation state for new animation
+   */
+  resetAnimationState() {
+    this.character.currentImage = 0;
+  }
+
+  /**
+   * Applies new animation with appropriate delay
+   * @param {string[]} images - Animation images to apply
+   */
+  applyNewAnimation(images) {
+    this.currentAnimation = images;
+    let delay = this.getAnimationDelay(images);
+    this.playAnimationWithSpeed(images, delay);
   }
 
   /**
    * Forces animation change even if same animation type
    */
   forceAnimation(images) {
+    this.stopCurrentAnimation();
+    this.setupForcedAnimation(images);
+    this.startForcedAnimation(images);
+  }
+
+  /**
+   * Stops current animation interval
+   */
+  stopCurrentAnimation() {
     if (this.animationInterval) {
       clearInterval(this.animationInterval);
     }
+  }
+
+  /**
+   * Sets up forced animation parameters
+   * @param {string[]} images - Animation images to set up
+   */
+  setupForcedAnimation(images) {
     this.character.currentImage = 0;
     this.currentAnimation = images;
     if (images.length > 0 && this.character.imageCache[images[0]]) {
       this.character.img = this.character.imageCache[images[0]];
     }
+  }
+
+  /**
+   * Starts the forced animation with appropriate delay
+   * @param {string[]} images - Animation images to start
+   */
+  startForcedAnimation(images) {
     let delay = this.getAnimationDelay(images);
     this.playAnimationWithSpeed(images, delay);
   }
