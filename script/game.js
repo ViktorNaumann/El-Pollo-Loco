@@ -480,7 +480,7 @@ function initMobileControls() {
  * Setup initial touch controls visibility based on device capabilities
  */
 function setupTouchControlsVisibility() {
-    const isTabletOrMobile = window.innerWidth <= 1024;
+    const isTabletOrMobile = window.innerWidth <= 1600;
     const toggleButton = document.getElementById('touch-controls-toggle');
     if (toggleButton && isTabletOrMobile) {
         toggleButton.style.display = 'block';
@@ -536,7 +536,7 @@ function getTouchControlsState() {
  * Checks if mobile controls should be displayed
  */
 function shouldDisplayMobileControls(touchControlsEnabled) {
-    const isTabletOrMobile = window.innerWidth <= 1024;
+    const isTabletOrMobile = window.innerWidth <= 1600;
     return touchControlsEnabled && (isTabletOrMobile || window.innerWidth <= 850);
 }
 
@@ -555,7 +555,7 @@ function updateControlsDisplay(shouldShow) {
  */
 function updateToggleButtonDisplay() {
     const toggleButton = document.getElementById('touch-controls-toggle');
-    const isTabletOrMobile = window.innerWidth <= 1024;
+    const isTabletOrMobile = window.innerWidth <= 1600;
     if (toggleButton) {
         const shouldShow = isTabletOrMobile || window.innerWidth <= 850;
         toggleButton.style.display = shouldShow ? 'block' : 'none';
@@ -615,7 +615,7 @@ function showDesktopMode() {
  */
 function handleDesktopMobileControls(touchControlsEnabled) {
     const mobileControls = document.getElementById('mobile-controls');
-    const isTabletOrMobile = window.innerWidth <= 1024;
+    const isTabletOrMobile = window.innerWidth <= 1600;
     if (mobileControls) {
         const shouldShow = isTabletOrMobile && touchControlsEnabled;
         mobileControls.style.display = shouldShow ? 'block' : 'none';
@@ -627,7 +627,7 @@ function handleDesktopMobileControls(touchControlsEnabled) {
  */
 function handleDesktopToggleButton() {
     const toggleButton = document.getElementById('touch-controls-toggle');
-    const isTabletOrMobile = window.innerWidth <= 1024;
+    const isTabletOrMobile = window.innerWidth <= 1600;
     if (toggleButton) {
         toggleButton.style.display = isTabletOrMobile ? 'block' : 'none';
     }
