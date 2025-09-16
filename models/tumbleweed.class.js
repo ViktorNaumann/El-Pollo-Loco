@@ -28,6 +28,7 @@ class Tumbleweed extends MovableObject {
         });
         this.animate();
     }
+    
     /**
      * Loads an image and returns a promise that resolves when loaded
      * @param {string} path - Path to the image file
@@ -42,6 +43,7 @@ class Tumbleweed extends MovableObject {
             this.img.src = path;
         });
     }
+
     /**
      * Sets up animation for the tumbleweed
      * Controls movement, rotation and respawning when offscreen
@@ -57,6 +59,7 @@ class Tumbleweed extends MovableObject {
             }
         }, 1000 / 60);
     }
+
     /**
      * Custom drawing method to handle rotation
      * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
